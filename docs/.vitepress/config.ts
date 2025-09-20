@@ -11,13 +11,17 @@ export default defineConfig({
 
     // Menambahkan sosial link di header
     socialLinks: [
-      { icon: "github", link: "https://github.com/vuejs/vitepress" },
+      {
+        icon: "github",
+        link: "https://github.com/alifmusthofa354/laravel-alif-documentation",
+      },
       // Anda bisa menambahkan ikon lain seperti 'twitter', 'linkedin', dll.
     ],
 
     // Tombol untuk mengedit halaman
     editLink: {
-      pattern: "https://github.com/vuejs/vitepress/edit/main/docs/:path",
+      pattern:
+        "https://github.com/alifmusthofa354/laravel-alif-documentation/edit/main/docs/:path",
       text: "Edit halaman ini di GitHub",
     },
 
