@@ -1,0 +1,17 @@
+{
+  "name": "laravel-alif-documentation",
+  "version": "1.0.0",
+    "license": "ISC",
+   "private": true,
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "keywords": [],
+
+  "type": "module",
+    "devDependencies": {
+    "vitepress": "^2.0.0-alpha"
+  }
+}
