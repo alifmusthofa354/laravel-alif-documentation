@@ -1,6 +1,6 @@
 # Routing di Laravel 🚀
 
-## 📑 Daftar Isi
+## 📑 Table of Contents
 
 * [1️⃣ Konsep Dasar & Pengantar](#_1%EF%B8%8F⃣-konsep-dasar-pengantar)
 
