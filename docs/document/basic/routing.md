@@ -7,23 +7,23 @@
   * [📌 Apa Itu Routing?](#📌-apa-itu-routing)
   * [⚡ Basic Routing](#⚡-basic-routing)
   * [🗂 Default Route Files: Web vs. API](#🗂-default-route-files-web-vs-api)
-* [2️⃣ Elemen-elemen Penting dalam Routing](#2-elemen-elemen-penting-dalam-routing)
+* [2️⃣ Elemen-elemen Penting dalam Routing](#_2%EF%B8%8F⃣-elemen-elemen-penting-dalam-routing)
 
-  * [📝 HTTP Methods](#http-methods)
-  * [📍 Route Parameters](#route-parameters)
-  * [🔒 Regex Constraints](#regex-constraints)
-* [3️⃣ Fitur Organisasi & Reusabilitas](#3-fitur-organisasi--reusabilitas)
+  * [📝 HTTP Methods](#📝-http-methods)
+  * [📍 Route Parameters](#📍-route-parameters)
+  * [🔒 Regex Constraints](#%F0%9F%94%92-regex-constraints)
+* [3️⃣ Fitur Organisasi & Reusabilitas](#_3%EF%B8%8F⃣-fitur-organisasi-reusabilitas)
 
-  * [🏷 Named Routes](#named-routes)
-  * [🧩 Route Groups](#route-groups)
-  * [🧰 Dependency Injection & Model Binding](#dependency-injection--model-binding)
-* [4️⃣ Fitur Lanjutan & Utility](#4-fitur-lanjutan--utility)
+  * [🏷 Named Routes](#🏷-named-routes)
+  * [🧩 Route Groups](#🧩-route-groups)
+  * [🧰 Dependency Injection & Model Binding](#🧰-dependency-injection-model-binding)
+* [4️⃣ Fitur Lanjutan & Utility](#_4%EF%B8%8F⃣-fitur-lanjutan-utility)
 
-  * [🛡 CSRF Protection](#csrf-protection)
-  * [🔄 Redirect & View Routes](#redirect--view-routes)
-  * [🚨 Fallback Route](#fallback-route)
-  * [⏱ Rate Limiting](#rate-limiting)
-  * [📋 Listing & Caching Routes](#listing--caching-routes)
+  * [🛡 CSRF Protection](#🛡-csrf-protection)
+  * [🔄 Redirect & View Routes](#🔄-redirect-view-routes)
+  * [🚨 Fallback Route](#🚨-fallback-route)
+  * [⏱ Rate Limiting](#⏱-rate-limiting)
+  * [📋 Listing & Caching Routes](#📋-listing-caching-routes)
 
 
 
