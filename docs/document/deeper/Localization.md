@@ -1,4 +1,4 @@
-# 🌍 Dokumentasi Laravel Localization
+# 🌍 Laravel Localization
 
 ## 📌 Pendahuluan
 

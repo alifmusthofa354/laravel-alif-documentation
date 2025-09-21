@@ -51,7 +51,7 @@ export default defineConfig({
           { text: "Middleware", link: "/document/basic/middleware" },
           { text: "CSRF Token", link: "/document/basic/csrf" },
           { text: "Validation", link: "/document/basic/validation" },
-          { text: "Error Handling", link: "/document/basic/errorhandling" },
+          { text: "Error Handling", link: "/document/basic/errorHandling" },
           { text: "Logging", link: "/document/basic/logging" },
           { text: "Session", link: "/document/basic/session" },
           { text: "Url Regeneration", link: "/document/basic/urlRegeneration" },
