@@ -15,13 +15,13 @@ Opsi ini menentukan seberapa banyak detail error yang ditampilkan ke pengguna.
 
 * Pada **development/local**, set `.env`:
 
-```env
+```bash
 APP_DEBUG=true
 ```
 
 * Pada **production**, selalu gunakan:
 
-```env
+```bash
 APP_DEBUG=false
 ```
 

@@ -385,7 +385,7 @@ Echo.private('App.Models.User.' + userId)
 composer require laravel/vonage-notification-channel guzzlehttp/guzzle
 ```
 
-```env
+```bash
 VONAGE_KEY=xxxx
 VONAGE_SECRET=xxxx
 VONAGE_SMS_FROM=15556666666

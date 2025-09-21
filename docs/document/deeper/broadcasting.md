@@ -35,7 +35,7 @@ Laravel mendukung beberapa driver:
 
 Atur di `.env`:
 
-```env
+```bash
 BROADCAST_DRIVER=pusher
 ```
 

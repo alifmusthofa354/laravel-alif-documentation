@@ -80,7 +80,7 @@ Contoh konfigurasi:
 
 Untuk mengirim log ke Slack, kita perlu membuat webhook URL, lalu masukkan ke file `.env`:
 
-```env
+```bash
 LOG_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/xxx/yyy/zzz
 ```
 

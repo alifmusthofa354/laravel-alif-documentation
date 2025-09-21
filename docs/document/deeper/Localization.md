@@ -51,7 +51,7 @@ php artisan lang:publish
 
 Bahasa default aplikasi Laravel diatur di file `config/app.php` pada opsi `locale`, biasanya dikendalikan melalui variabel `.env`:
 
-```env
+```bash
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en
 ```
