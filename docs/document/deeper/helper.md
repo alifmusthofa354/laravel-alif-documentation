@@ -134,7 +134,7 @@ Jika kamu ingin **menghafal atau sering pakai di daily Laravel**, fokus ke:
 
 Yang lain itu **bonus/helper canggih** tergantung kebutuhan proyek.
 
----
+
 
 ## **1. Arrays & Objects Helpers (Arr, data\_\*, head, last)**
 
@@ -508,9 +508,6 @@ echo Number::currency(1500); // $1,500.00
 echo Number::withCurrency('EUR', fn() => Number::currency(1500)); // €1,500.00
 ```
 
-
----
-
 ## **3. Paths Helpers**
 
 | Helper            | Deskripsi             | Contoh                                   |
@@ -557,10 +554,6 @@ echo $resourcePath; // /project/resources
 $storagePath = storage_path();
 echo $storagePath; // /project/storage
 ```
-
-
----
-
 
 ## **4. URLs Helpers**
 
@@ -616,7 +609,7 @@ $fullUrl = url('/home');
 echo $fullUrl; // e.g., https://example.com/home
 ```
 
----
+
 
 ## **5. Miscellaneous Helpers**
 
@@ -824,8 +817,6 @@ $output = when(true, fn()=>1, 0); // 1
 // 41. Return view
 return view('welcome');
 ```
-
----
 
 ## **6. Other Utilities**
 

@@ -8,7 +8,7 @@ Misalnya, ketika sebuah pesanan dikirim, kita ingin mengirim notifikasi ke Slack
 
 Event disimpan di direktori `app/Events`, sedangkan listener disimpan di `app/Listeners`. Direktori ini akan otomatis dibuat saat kita membuat event dan listener menggunakan **Artisan**.
 
----
+
 
 ## 1. Membuat Event dan Listener
 
@@ -26,7 +26,7 @@ php artisan make:event
 php artisan make:listener
 ```
 
----
+
 
 ## 2. Mendaftarkan Event dan Listener
 
@@ -113,7 +113,7 @@ Event::listen(queueable(function (PodcastProcessed $event) {
 }));
 ```
 
----
+
 
 ## 3. Listener Wildcard
 
@@ -125,7 +125,7 @@ Event::listen('event.*', function (string $eventName, array $data) {
 });
 ```
 
----
+
 
 ## 4. Mendefinisikan Event
 
@@ -146,7 +146,7 @@ class OrderShipped
 }
 ```
 
----
+
 
 ## 5. Mendefinisikan Listener
 
@@ -168,7 +168,7 @@ class SendShipmentNotification
 
 Listener dapat menghentikan propagasi event dengan **return false**.
 
----
+
 
 ## 6. Listener Queueable
 
@@ -228,7 +228,7 @@ public $timeout = 120; // detik
 public $failOnTimeout = true;
 ```
 
----
+
 
 ## 7. Dispatching Events
 
@@ -257,7 +257,7 @@ class OrderShipped implements ShouldDispatchAfterCommit
 }
 ```
 
----
+
 
 ## 8. Deferred Events
 
@@ -270,7 +270,7 @@ Event::defer(function () {
 });
 ```
 
----
+
 
 ## 9. Event Subscribers
 
@@ -298,7 +298,7 @@ Mendaftarkan subscriber:
 Event::subscribe(UserEventSubscriber::class);
 ```
 
----
+
 
 ## 10. Testing Events
 

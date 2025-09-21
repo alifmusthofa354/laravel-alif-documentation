@@ -4,7 +4,7 @@
 Laravel menyediakan API yang ekspresif dan minimalis di atas Guzzle HTTP client. Ini memungkinkan Anda untuk dengan cepat melakukan permintaan HTTP keluar (outgoing requests) untuk berkomunikasi dengan aplikasi web lain.  
 Laravel membungkus Guzzle dengan fokus pada kasus penggunaan yang paling umum dan memberikan pengalaman pengembang yang nyaman.
 
----
+
 
 ## Membuat Permintaan (Making Requests)
 Untuk melakukan permintaan HTTP, Anda dapat menggunakan metode `head`, `get`, `post`, `put`, `patch`, dan `delete` yang disediakan oleh **Http facade**.
@@ -48,7 +48,7 @@ $response->notFound();     // 404 Not Found
 $response->serverError();  // 500 Internal Server Error
 ```
 
----
+
 
 ## URI Templates
 
@@ -65,7 +65,7 @@ Http::withUrlParameters([
 
 Ini mempermudah membuat URL kompleks tanpa harus menggabungkan string manual.
 
----
+
 
 ## Dumping Requests
 
@@ -75,7 +75,7 @@ Jika ingin **men-debug request** sebelum dikirim, gunakan `dd()`:
 return Http::dd()->get('http://example.com');
 ```
 
----
+
 
 ## Data Permintaan (Request Data)
 
@@ -141,7 +141,7 @@ $response = Http::attach(
 )->post('http://example.com/attachments');
 ```
 
----
+
 
 ## Header
 
@@ -171,7 +171,7 @@ $response = Http::withHeaders([
 ])->post('http://example.com/users', ['name' => 'Taylor']);
 ```
 
----
+
 
 ## Autentikasi
 
@@ -188,7 +188,7 @@ Http::withDigestAuth('user', 'secret')->post(/* ... */);
 Http::withToken('token')->post(/* ... */);
 ```
 
----
+
 
 ## Timeout
 
@@ -199,7 +199,7 @@ Http::timeout(3)->get(/* ... */);
 Http::connectTimeout(3)->get(/* ... */);
 ```
 
----
+
 
 ## Retry (Percobaan Ulang)
 
@@ -223,7 +223,7 @@ Http::retry(3, 100, function (Exception $e, PendingRequest $request) {
 })->post(/* ... */);
 ```
 
----
+
 
 ## Penanganan Error
 
@@ -235,7 +235,7 @@ $response->serverError();  // 500–599
 $response->onError(fn() => ...); // Callback jika error
 ```
 
----
+
 
 ## Melempar Exception
 
@@ -253,7 +253,7 @@ Http::post(/* ... */)->throw(function (Response $response, RequestException $e) 
 })->json();
 ```
 
----
+
 
 ## Middleware Guzzle
 
@@ -282,7 +282,7 @@ Http::globalRequestMiddleware(fn($req) => $req->withHeader('User-Agent', 'App/1.
 Http::globalResponseMiddleware(fn($res) => $res->withHeader('X-Finished-At', now()));
 ```
 
----
+
 
 ## Opsi
 
@@ -298,7 +298,7 @@ Http::withOptions(['debug' => true])->get('http://example.com');
 Http::globalOptions(['allow_redirects' => false]);
 ```
 
----
+
 
 ## Concurrent Requests
 
@@ -329,7 +329,7 @@ Http::pool(fn(Pool $pool) => [
 ]);
 ```
 
----
+
 
 ## Macros
 
@@ -344,7 +344,7 @@ Http::macro('github', function () {
 $response = Http::github()->get('/');
 ```
 
----
+
 
 ## Testing
 
@@ -414,7 +414,7 @@ Http::preventStrayRequests();
 Http::allowStrayRequests(['http://127.0.0.1:5000/*']);
 ```
 
----
+
 
 ## Events
 

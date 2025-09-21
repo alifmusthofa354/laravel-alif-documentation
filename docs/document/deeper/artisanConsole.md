@@ -1,23 +1,40 @@
-# Laravel Artisan Documentation
+# 🚀 Laravel Artisan Console
 
-## 1. Artisan Console
 
-### Introduction
+## 📑 Table of Contents
+
+1. [⚡ Artisan Console](#-artisan-console)  
+2. [🧪 Tinker (REPL)](#-tinker-repl)  
+3. [📝 Writing Commands](#-writing-commands)  
+4. [🔒 Isolatable Commands](#-isolatable-commands)  
+5. [🛠 Defining Input Expectations](#-defining-input-expectations)  
+6. [💻 Command I/O](#-command-io)  
+7. [🗂 Registering Commands](#-registering-commands)  
+8. [🔄 Programmatically Executing Commands](#-programmatically-executing-commands)  
+9. [📡 Signal Handling](#-signal-handling)  
+10. [🛠 Stub Customization](#-stub-customization)  
+11. [🎉 Events](#-events)  
+
+
+
+## ⚡ Artisan Console
+
+### 📖 Introduction
 Artisan adalah command line interface yang disertakan dengan Laravel. File Artisan berada di root aplikasi Anda dan menyediakan banyak perintah yang membantu saat membangun aplikasi.
 
-Untuk melihat daftar perintah Artisan yang tersedia:
+🔹 Untuk melihat daftar perintah Artisan:
 
 ```bash
 php artisan list
 ````
 
-Setiap perintah juga memiliki layar `help` yang menampilkan argumen dan opsi yang tersedia:
+🔹 Untuk melihat bantuan perintah tertentu:
 
 ```bash
 php artisan help migrate
 ```
 
-### Laravel Sail
+### 🐳 Laravel Sail
 
 Jika menggunakan Laravel Sail sebagai lingkungan pengembangan lokal, gunakan perintah `sail` untuk memanggil Artisan:
 
@@ -25,21 +42,21 @@ Jika menggunakan Laravel Sail sebagai lingkungan pengembangan lokal, gunakan per
 ./vendor/bin/sail artisan list
 ```
 
----
 
-## 2. Tinker (REPL)
+
+## 🧪 Tinker (REPL)
 
 Laravel Tinker adalah REPL yang kuat untuk Laravel, menggunakan package PsySH.
 
-### Installation
+### 💾 Installation
 
-Tinker sudah termasuk secara default di semua aplikasi Laravel. Jika perlu, instal Tinker:
+Tinker sudah termasuk secara default. Jika perlu:
 
 ```bash
 composer require laravel/tinker
 ```
 
-### Usage
+### 🏃 Usage
 
 Masuk ke lingkungan Tinker:
 
@@ -55,19 +72,19 @@ php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
 
 Tinker menggunakan **command allow list** dan **dont\_alias** untuk mengatur perintah dan class yang bisa digunakan.
 
----
 
-## 3. Writing Commands
 
-### Generating Commands
+## 📝 Writing Commands
 
-Buat command baru dengan:
+### ✨ Generating Commands
+
+Buat command baru:
 
 ```bash
 php artisan make:command SendEmails
 ```
 
-### Command Structure
+### 🏗️ Command Structure
 
 ```php
 <?php
@@ -89,7 +106,7 @@ class SendEmails extends Command
 }
 ```
 
-#### Exit Codes
+#### ❌ Exit Codes
 
 ```php
 $this->error('Something went wrong.');
@@ -99,7 +116,7 @@ return 1;
 $this->fail('Something went wrong.');
 ```
 
-### Closure Commands
+### 🧩 Closure Commands
 
 ```php
 Artisan::command('mail:send {user}', function (string $user) {
@@ -107,11 +124,11 @@ Artisan::command('mail:send {user}', function (string $user) {
 })->purpose('Send a marketing email to a user');
 ```
 
----
 
-## 4. Isolatable Commands
 
-Untuk memastikan hanya satu instance command berjalan:
+## 🔒 Isolatable Commands
+
+Pastikan hanya satu instance command berjalan:
 
 ```php
 use Illuminate\Contracts\Console\Isolatable;
@@ -136,11 +153,11 @@ public function isolationLockExpiresAt(): DateTimeInterface|DateInterval
 }
 ```
 
----
 
-## 5. Defining Input Expectations
 
-### Arguments
+## 🛠 Defining Input Expectations
+
+### 📌 Arguments
 
 ```php
 protected $signature = 'mail:send {user}';
@@ -148,7 +165,7 @@ protected $signature = 'mail:send {user?}';
 protected $signature = 'mail:send {user=foo}';
 ```
 
-### Options
+### ⚙️ Options
 
 ```php
 protected $signature = 'mail:send {user} {--queue}';
@@ -156,7 +173,7 @@ protected $signature = 'mail:send {user} {--queue=}';
 protected $signature = 'mail:send {user} {--Q|queue}';
 ```
 
-### Arrays
+### 📚 Arrays
 
 ```php
 'mail:send {user*}'
@@ -164,7 +181,7 @@ protected $signature = 'mail:send {user} {--Q|queue}';
 'mail:send {--id=*}'
 ```
 
-### Input Descriptions
+### 📝 Input Descriptions
 
 ```php
 protected $signature = 'mail:send
@@ -172,7 +189,7 @@ protected $signature = 'mail:send
                         {--queue : Whether the job should be queued}';
 ```
 
-### Prompting for Missing Input
+### 🤔 Prompting for Missing Input
 
 ```php
 class SendEmails extends Command implements PromptsForMissingInput
@@ -192,11 +209,11 @@ protected function promptForMissingArgumentsUsing(): array
 }
 ```
 
----
 
-## 6. Command I/O
 
-### Retrieving Input
+## 💻 Command I/O
+
+### 🔹 Retrieving Input
 
 ```php
 $userId = $this->argument('user');
@@ -205,7 +222,7 @@ $queueName = $this->option('queue');
 $options = $this->options();
 ```
 
-### Prompting for Input
+### 🗣 Prompting for Input
 
 ```php
 $name = $this->ask('What is your name?', 'Taylor');
@@ -215,7 +232,7 @@ $name = $this->anticipate('What is your address?', ['Option1','Option2']);
 $name = $this->choice('What is your name?', ['Taylor', 'Dayle'], $defaultIndex);
 ```
 
-### Writing Output
+### 📣 Writing Output
 
 ```php
 $this->info('Success!');
@@ -226,9 +243,9 @@ $this->table(['Name','Email'], User::all(['name','email'])->toArray());
 $users = $this->withProgressBar(User::all(), fn($user) => $this->performTask($user));
 ```
 
----
 
-## 7. Registering Commands
+
+## 🗂 Registering Commands
 
 ```php
 ->withCommands([
@@ -237,9 +254,9 @@ $users = $this->withProgressBar(User::all(), fn($user) => $this->performTask($us
 ])
 ```
 
----
 
-## 8. Programmatically Executing Commands
+
+## 🔄 Programmatically Executing Commands
 
 ```php
 $exitCode = Artisan::call('mail:send', ['user'=>$user,'--queue'=>'default']);
@@ -249,28 +266,28 @@ $this->call('mail:send', ['user'=>1,'--queue'=>'default']);
 $this->callSilently('mail:send', ['user'=>1,'--queue'=>'default']);
 ```
 
----
 
-## 9. Signal Handling
+
+## 📡 Signal Handling
 
 ```php
 $this->trap(SIGTERM, fn()=> $this->shouldKeepRunning = false);
 $this->trap([SIGTERM, SIGQUIT], function(int $signal){ $this->shouldKeepRunning=false; dump($signal); });
 ```
 
----
 
-## 10. Stub Customization
+
+## 🛠 Stub Customization
 
 ```bash
 php artisan stub:publish
 ```
 
-Stubs akan berada di folder `stubs` pada root aplikasi.
+📂 Stubs akan berada di folder `stubs` pada root aplikasi.
 
----
 
-## 11. Events
+
+## 🎉 Events
 
 Artisan memicu tiga event saat menjalankan perintah:
 
@@ -278,3 +295,4 @@ Artisan memicu tiga event saat menjalankan perintah:
 * `CommandStarting`
 * `CommandFinished`
 
+```

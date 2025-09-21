@@ -4,7 +4,7 @@
 
 Mengirim email di Laravel tidak harus rumit. Laravel menyediakan API email yang bersih dan sederhana yang didukung oleh **Symfony Mailer**. Laravel dan Symfony Mailer menyediakan driver untuk mengirim email melalui **SMTP, Mailgun, Postmark, Resend, Amazon SES, Sendmail**, dan lainnya, sehingga memungkinkan aplikasi Anda mengirim email melalui layanan lokal maupun cloud.
 
----
+
 
 ## **1. Konfigurasi Email**
 
@@ -18,13 +18,13 @@ Laravel mengatur layanan email melalui file konfigurasi `config/mail.php`. Setia
 
 Nilai default ini menentukan mailer mana yang akan digunakan ketika aplikasi mengirim email.
 
----
+
 
 ### **1.2 Prasyarat Driver/Transport**
 
 API-based driver seperti **Mailgun, Postmark, Resend, MailerSend** lebih cepat dan sederhana dibanding SMTP. Laravel menyarankan menggunakan driver ini bila memungkinkan.
 
----
+
 
 ## **2. Driver Umum Laravel**
 
@@ -57,7 +57,7 @@ composer require symfony/mailgun-mailer symfony/http-client
 ],
 ```
 
----
+
 
 ### **2.2 Postmark**
 
@@ -86,7 +86,7 @@ composer require symfony/postmark-mailer symfony/http-client
 ],
 ```
 
----
+
 
 ### **2.3 Resend**
 
@@ -112,7 +112,7 @@ Di `config/services.php`:
 ],
 ```
 
----
+
 
 ### **2.4 Amazon SES**
 
@@ -136,7 +136,7 @@ composer require aws/aws-sdk-php
 ],
 ```
 
----
+
 
 ## **3. Failover dan Round Robin Mailers**
 
@@ -158,7 +158,7 @@ composer require aws/aws-sdk-php
 ],
 ```
 
----
+
 
 ## **4. Membuat Mailable**
 
@@ -192,7 +192,7 @@ class OrderShipped extends Mailable
 }
 ```
 
----
+
 
 ### **4.2 Konfigurasi Pengirim**
 
@@ -218,7 +218,7 @@ Global dari `config/mail.php`:
 ],
 ```
 
----
+
 
 ### **4.3 Menentukan Template (View)**
 
@@ -232,7 +232,7 @@ public function content(): Content
 }
 ```
 
----
+
 
 ### **4.4 Mengirim Data ke View**
 
@@ -263,7 +263,7 @@ public function content(): Content
 }
 ```
 
----
+
 
 ### **4.5 Lampiran (Attachments)**
 
@@ -280,7 +280,7 @@ public function attachments(): array
 }
 ```
 
----
+
 
 ### **4.6 Headers, Tags, Metadata**
 
@@ -308,7 +308,7 @@ public function envelope(): Envelope
 }
 ```
 
----
+
 
 ## **5. Mengirim Email**
 
@@ -319,7 +319,7 @@ Mail::to($user)->send(new OrderShipped($order));
 Mail::to($user)->cc($moreUsers)->bcc($moreUsers)->send(new OrderShipped($order));
 ```
 
----
+
 
 ### **5.1 Queueing Email**
 
@@ -336,7 +336,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class OrderShipped extends Mailable implements ShouldQueue {}
 ```
 
----
+
 
 ## **6. Markdown Mailables**
 
@@ -359,7 +359,7 @@ Thanks,<br>{{ config('app.name') }}
 </x-mail::message>
 ```
 
----
+
 
 ## **7. Testing Mailables**
 
@@ -378,7 +378,7 @@ Mail::assertSent(OrderShipped::class);
 Mail::assertQueued(OrderShipped::class);
 ```
 
----
+
 
 ## **8. Pengembangan Lokal**
 
@@ -390,14 +390,14 @@ Mail::assertQueued(OrderShipped::class);
 Mail::alwaysTo('dev@example.com');
 ```
 
----
+
 
 ## **9. Event Email**
 
 * `MessageSending`: Sebelum email dikirim.
 * `MessageSent`: Setelah email dikirim.
 
----
+
 
 ## **10. Custom Transport**
 
@@ -417,7 +417,7 @@ Registrasi di `AppServiceProvider`:
 Mail::extend('mailchimp', fn($config) => new MailchimpTransport($client));
 ```
 
----
+
 
 ## **Kesimpulan**
 
@@ -429,5 +429,5 @@ Laravel menyediakan sistem pengiriman email yang fleksibel dan modular. Anda bis
 * Mengatur failover, round-robin, dan custom transport.
 * Menguji mailables tanpa mengirim email nyata.
 
----
+
 

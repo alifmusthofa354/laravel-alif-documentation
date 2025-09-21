@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Laravel Docs
   text: Laravel Alif Private.
-  tagline: Digunakan untuk para newbe dalam belajar framework Laravel secara mudah dan urut.
+  tagline: Digunakan untuk para newbe dalam belajar framework Laravel yang sudah diterjemahkan ke bahasa Indonesia menggunakan Chat GPT.
   actions:
     - theme: brand
       text: Get Started

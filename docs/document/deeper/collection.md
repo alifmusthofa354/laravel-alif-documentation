@@ -22,7 +22,6 @@ $collection = collect(['Taylor', 'Abigail', null])
 
 Dalam contoh di atas, kita membuat Collection, mengubah semua nama menjadi huruf besar, dan menghapus elemen yang kosong.
 
----
 
 ### 1.2 Membuat Collections
 
@@ -39,7 +38,7 @@ Selain itu, Collection juga bisa dibuat menggunakan metode:
 
 > Catatan: Hasil query Eloquent selalu berupa instance Collection.
 
----
+
 
 ### 1.3 Memperluas Collections
 
@@ -78,7 +77,7 @@ $translated = $collection->toLocale('es');
 
 > Biasanya, macro didefinisikan di `boot()` pada Service Provider.
 
----
+
 
 ### 1.4 Metode yang Tersedia
 
@@ -90,7 +89,6 @@ Collection menyediakan ratusan metode yang bisa di-*chain* untuk manipulasi data
 
 > Hampir semua metode mengembalikan Collection baru, sehingga koleksi asli tetap utuh.
 
----
 
 ### 1.5 Higher Order Messages
 
@@ -127,7 +125,6 @@ $totalVotes = $users->sum->votes;
 | `isNotEmpty`       | Mengecek koleksi tidak kosong            | `collect([1])->isNotEmpty(); // true`    |
 | `count`            | Menghitung jumlah item                   | `collect([1,2,3])->count(); // 3`        |
 
----
 
 #### 2. Iterasi / Loop
 
@@ -140,7 +137,6 @@ $totalVotes = $users->sum->votes;
 | `dd`         | Dump & die koleksi                               | `collect([1,2])->dd();`                                 |
 | `dump`       | Dump koleksi tanpa menghentikan eksekusi         | `collect([1,2])->dump();`                               |
 
----
 
 #### 3. Transformasi / Mapping
 
@@ -155,7 +151,7 @@ $totalVotes = $users->sum->votes;
 | `transform`   | Ubah koleksi asli                | `collect([1,2])->transform(fn($x)=>$x*2); // [2,4]`              |
 | `flip`        | Tukar key dan value              | `collect(['a'=>1])->flip(); // [1=>'a']`                         |
 
----
+
 
 #### 4. Filter / Seleksi
 
@@ -173,7 +169,6 @@ $totalVotes = $users->sum->votes;
 | `whereNotNull`    | Filter bukan null                    | `collect([null,1])->whereNotNull(); // [1]`                     |
 | `firstWhere`      | Ambil item pertama yang cocok        | `collect([1,2,3])->firstWhere(fn($x)=>$x>1); // 2`              |
 
----
 
 #### 5. Agregasi / Statistik
 
@@ -189,7 +184,6 @@ $totalVotes = $users->sum->votes;
 | `every`           | Cek semua item sesuai kondisi           | `collect([2,4])->every(fn($x)=>$x%2===0); // true` |
 | `some`            | Cek setidaknya satu item sesuai kondisi | `collect([1,2])->some(fn($x)=>$x>1); // true`      |
 
----
 
 #### 6. Menggabungkan / Mengubah Struktur
 
@@ -209,7 +203,6 @@ $totalVotes = $users->sum->votes;
 | `intersectAssocUsing` | Intersect assoc dengan callback | `...`                                                                    |
 | `intersectByKeys`     | Intersect berdasarkan key saja  | `collect(['a'=>1,'b'=>2])->intersectByKeys(['b'=>3]); // ['b'=>2]`       |
 
----
 
 #### 7. Sorting / Ordering
 
@@ -223,7 +216,6 @@ $totalVotes = $users->sum->votes;
 | `sortKeysDesc`  | Urutkan key menurun                  | `collect(['b'=>1,'a'=>2])->sortKeysDesc();`                |
 | `sortKeysUsing` | Urutkan key dengan callback          | `...`                                                      |
 
----
 
 #### 8. Chunk / Paging
 
@@ -262,8 +254,6 @@ LazyCollection::make(function () {
 });
 ```
 
----
-
 ### 2.2 Membuat Lazy Collections
 
 Gunakan **generator PHP** dengan `LazyCollection::make()`:
@@ -278,7 +268,7 @@ $lazy = LazyCollection::make(function () {
 });
 ```
 
----
+
 
 ### 2.3 Kontrak Enumerable
 
@@ -288,7 +278,7 @@ Hampir semua metode Collection juga tersedia di LazyCollection karena keduanya m
 
 > Catatan: Metode yang mengubah koleksi (`shift`, `pop`, `prepend`) **tidak tersedia** di LazyCollection.
 
----
+
 
 ### 2.4 Metode Khusus LazyCollection
 

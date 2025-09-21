@@ -4,7 +4,7 @@
 
 Laravel menyediakan abstraksi sistem file yang kuat berkat paket PHP **Flysystem**. Dengan integrasi ini, Laravel mempermudah penggunaan berbagai *driver* penyimpanan seperti lokal, SFTP, FTP, dan Amazon S3. Kelebihan utama adalah API yang konsisten, sehingga Anda dapat beralih antar *disk* tanpa mengubah kode.
 
----
+
 
 ## **2. Konfigurasi Sistem File**
 
@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 Storage::disk('local')->put('example.txt', 'Isi file contoh');
 ```
 
----
+
 
 ### **2.2 Disk Publik**
 
@@ -53,7 +53,7 @@ Untuk menghapus link simbolik:
 php artisan storage:unlink
 ```
 
----
+
 
 ### **2.3 Prasyarat Driver**
 
@@ -109,7 +109,7 @@ php artisan storage:unlink
   ],
   ```
 
----
+
 
 ### **2.4 Disk Scoped dan Read-Only**
 
@@ -135,7 +135,7 @@ php artisan storage:unlink
   ],
   ```
 
----
+
 
 ## **3. Menggunakan Disk**
 
@@ -158,7 +158,7 @@ $disk = Storage::build([
 $disk->put('image.jpg', $content);
 ```
 
----
+
 
 ## **4. Mengambil dan Mengunduh File**
 
@@ -188,7 +188,7 @@ return Storage::download('file.jpg', 'nama_file.jpg', ['Content-Type' => 'image/
 $url = Storage::url('file.jpg');
 ```
 
----
+
 
 ## **5. Menyimpan File**
 
@@ -222,7 +222,7 @@ $path = Storage::putFile('photos', new File('/path/to/photo'));
 $path = Storage::putFileAs('photos', new File('/path/to/photo'), 'photo.jpg');
 ```
 
----
+
 
 ## **6. Upload File**
 
@@ -244,7 +244,7 @@ $path = $request->file('avatar')->storeAs('avatars', $request->user()->id);
 $path = $request->file('avatar')->store('avatars/'.$request->user()->id, 's3');
 ```
 
----
+
 
 ## **7. Visibilitas File**
 
@@ -258,7 +258,7 @@ Storage::setVisibility('file.jpg', 'public');
 * Lokal: `public` = 0644, `private` = 0600
 * Direktori: `public` = 0755, `private` = 0700
 
----
+
 
 ## **8. Menghapus File dan Direktori**
 
@@ -268,7 +268,7 @@ Storage::delete(['file1.jpg','file2.jpg']);
 Storage::deleteDirectory('nama_folder');
 ```
 
----
+
 
 ## **9. Direktori**
 
@@ -283,7 +283,7 @@ Storage::makeDirectory('folder_baru');
 Storage::deleteDirectory('folder_baru');
 ```
 
----
+
 
 ## **10. Testing File Uploads**
 
@@ -300,7 +300,7 @@ Storage::disk('photos')->assertExists('photo1.jpg');
 Storage::disk('photos')->assertMissing('missing.jpg');
 ```
 
----
+
 
 ## **11. Custom Filesystems**
 

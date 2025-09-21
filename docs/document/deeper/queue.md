@@ -13,7 +13,7 @@ Laravel menyediakan sistem **Queues (Antrian)** yang memungkinkan pekerjaan dija
 
 Pengaturan antrian Laravel berada di file **`config/queue.php`**.
 
----
+
 
 ## **1. Koneksi vs. Antrian**
 
@@ -40,7 +40,7 @@ Memproses antrian dengan prioritas:
 php artisan queue:work --queue=high,default
 ```
 
----
+
 
 ## **2. Driver Queue dan Persyaratan**
 
@@ -77,7 +77,7 @@ Konfigurasi Redis di `config/database.php`:
 * Redis: `predis/predis` atau `phpredis`
 * MongoDB: `mongodb/laravel-mongodb`
 
----
+
 
 ## **3. Membuat Job**
 
@@ -132,7 +132,7 @@ $this->app->bindMethod([ProcessPodcast::class, 'handle'], function (ProcessPodca
 * Semua relasi yang dimuat ikut diserialisasi → payload bisa besar.
 * Gunakan `$model->withoutRelations()` atau atribut `#[WithoutRelations]` untuk mencegah serialisasi relasi.
 
----
+
 
 ## **4. Job Unik**
 
@@ -157,7 +157,7 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeUnique
 * Gunakan **`ShouldBeUniqueUntilProcessing`** untuk unlock sebelum diproses.
 * Gunakan metode **`uniqueVia()`** untuk memilih cache driver.
 
----
+
 
 ## **5. Job Encrypted**
 
@@ -173,7 +173,7 @@ class UpdateSearchIndex implements ShouldQueue, ShouldBeEncrypted
 }
 ```
 
----
+
 
 ## **6. Middleware Job**
 
@@ -262,7 +262,7 @@ public function middleware(): array
 * `Skip::when()` → hapus job jika kondisi true.
 * `Skip::unless()` → hapus job jika kondisi false.
 
----
+
 
 ## **7. Dispatching Jobs**
 
@@ -301,7 +301,7 @@ dispatch(fn() => Mail::to($user)->send(new WelcomeMessage))->afterResponse();
 ProcessPodcast::dispatchSync($podcast);
 ```
 
----
+
 
 ## **8. Jobs & Database Transactions**
 
@@ -320,7 +320,7 @@ ProcessPodcast::dispatch($podcast)->afterCommit();
 ProcessPodcast::dispatch($podcast)->beforeCommit();
 ```
 
----
+
 
 ## **9. Job Chaining**
 
@@ -352,7 +352,7 @@ $this->appendToChain(new TranscribePodcast);
 ->catch(function (Throwable $e) { ... });
 ```
 
----
+
 
 ## **10. Queue Customization**
 
@@ -374,7 +374,7 @@ ProcessPodcast::dispatch($podcast)->onConnection('sqs');
 ProcessPodcast::dispatch($podcast)->onConnection('sqs')->onQueue('processing');
 ```
 
----
+
 
 ## **11. Job Attempts dan Timeouts**
 
@@ -410,7 +410,7 @@ public $failOnTimeout = true;
 php artisan queue:work --timeout=30 --tries=3
 ```
 
----
+
 
 ## **12. Amazon SQS FIFO Queues**
 
@@ -426,7 +426,7 @@ php artisan queue:work --timeout=30 --tries=3
 public function deduplicationId(): string { return "renewal-{$this->subscription->id}"; }
 ```
 
----
+
 
 ## **13. Error Handling**
 
@@ -453,7 +453,7 @@ public function middleware(): array {
 }
 ```
 
----
+
 
 ## **14. Job Batching**
 
@@ -526,7 +526,7 @@ php artisan queue:prune-batches --hours=48 --unfinished=72 --cancelled=72
 
 * DynamoDB support untuk TTL pruning.
 
----
+
 
 ## **15. Queueing Closures**
 
@@ -534,7 +534,7 @@ php artisan queue:prune-batches --hours=48 --unfinished=72 --cancelled=72
 dispatch(fn() => $podcast->publish())->name('Publish Podcast')->catch(fn(Throwable $e) => ...);
 ```
 
----
+
 
 ## **16. Menjalankan Queue Workers**
 
@@ -567,7 +567,7 @@ php artisan queue:work --force
 php artisan queue:restart
 ```
 
----
+
 
 ## **17. Job Expirations dan Retry Logic**
 
@@ -575,7 +575,7 @@ php artisan queue:restart
 * `--timeout`: memastikan worker membunuh job sebelum retry.
 * Pastikan `--timeout` sedikit lebih pendek dari `retry_after` untuk menghindari duplikasi.
 
----
+
 
 ## **18. Menjaga Queue Worker Tetap Berjalan (Supervisor)**
 
@@ -619,7 +619,7 @@ sudo supervisorctl update
 sudo supervisorctl start "laravel-worker:*"
 ```
 
----
+
 
 ## **19. Menangani Failed Jobs**
 
@@ -653,7 +653,7 @@ public function failed(?Throwable $exception): void
   * `MaxAttemptsExceededException`
   * `TimeoutExceededException`
 
----
+
 
 ## **20. Mengelola Failed Jobs**
 
@@ -705,7 +705,7 @@ Update `config/queue.php`:
 ],
 ```
 
----
+
 
 ## **21. Mengabaikan Model yang Hilang**
 
@@ -715,7 +715,7 @@ public $deleteWhenMissingModels = true;
 
 > Mencegah `ModelNotFoundException` jika model dihapus saat job berada di antrian.
 
----
+
 
 ## **22. Monitoring Queues**
 
@@ -727,7 +727,7 @@ php artisan queue:monitor redis:default,redis:deployments --max=100
 
 * Bisa mendengarkan event `QueueBusy` untuk notifikasi.
 
----
+
 
 ## **23. Membersihkan Jobs dari Queue**
 
@@ -745,7 +745,7 @@ php artisan queue:clear redis --queue=emails
 
 * Laravel Horizon: `horizon:clear`
 
----
+
 
 ## **24. Testing Jobs**
 
@@ -790,7 +790,7 @@ $job->assertDeleted();
 $job->assertFailedWith(CorruptedAudioException::class);
 ```
 
----
+
 
 ## **25. Job Events**
 
@@ -809,4 +809,4 @@ Queue::looping(function () {
 });
 ```
 
----
+

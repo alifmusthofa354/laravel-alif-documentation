@@ -6,7 +6,7 @@ Cache adalah mekanisme penyimpanan sementara data yang sering diakses agar aplik
 
 Laravel menyediakan **API cache yang terpadu dan ekspresif**, mendukung berbagai backend cache populer seperti **Memcached**, **Redis**, **DynamoDB**, **Database**, dan **file-based cache**. Ini memudahkan pengembang memanfaatkan cache tanpa bergantung pada implementasi spesifik backend tertentu.
 
----
+
 
 ## **2. Konfigurasi Cache**
 
@@ -27,7 +27,7 @@ Di sini, Anda dapat menentukan **driver cache default**, serta pengaturan lain s
 
 Secara default, Laravel menggunakan **database driver**.
 
----
+
 
 ## **3. Prasyarat Driver**
 
@@ -106,7 +106,7 @@ composer require aws/aws-sdk-php
 
 Gunakan package `mongodb/laravel-mongodb`. Mendukung TTL index untuk pembersihan otomatis cache.
 
----
+
 
 ## **4. Penggunaan Cache**
 
@@ -214,7 +214,7 @@ cache()->remember('users', 600, function () {
 });
 ```
 
----
+
 
 ## **5. Cache Tags**
 
@@ -237,7 +237,7 @@ Cache::tags(['people', 'authors'])->flush();
 Cache::tags('authors')->flush();
 ```
 
----
+
 
 ## **6. Atomic Locks**
 
@@ -285,7 +285,7 @@ if ($lock->get()) {
 Cache::restoreLock('processing', $this->owner)->release();
 ```
 
----
+
 
 ## **7. Menambahkan Custom Cache Driver**
 
@@ -309,7 +309,7 @@ Cache::extend('mongo', function ($app) {
 });
 ```
 
----
+
 
 ## **8. Events**
 
@@ -328,7 +328,7 @@ Menonaktifkan event untuk performa:
 ],
 ```
 
----
+
 
 ✅ **Dokumentasi ini sudah lengkap** dengan:
 
@@ -336,4 +336,4 @@ Menonaktifkan event untuk performa:
 * Contoh kode nyata
 * Semua topik utama Laravel Cache (driver, penggunaan, tags, locks, custom driver, events)
 
----
+

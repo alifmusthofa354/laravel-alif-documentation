@@ -10,7 +10,7 @@ Pada proyek sebelumnya, mungkin Anda pernah menulis entri **cron** untuk setiap 
 
 Laravel menyediakan **Command Scheduler**, solusi modern untuk mengelola tugas terjadwal langsung di dalam aplikasi Laravel. Dengan scheduler ini, Anda hanya perlu satu entri cron di server, dan semua jadwal tugas didefinisikan di `routes/console.php`.
 
----
+
 
 ## Definisi Jadwal Tugas
 
@@ -53,7 +53,7 @@ Gunakan perintah Artisan berikut untuk melihat daftar tugas yang dijadwalkan:
 php artisan schedule:list
 ```
 
----
+
 
 ## Menjadwalkan Artisan Commands
 
@@ -87,7 +87,7 @@ Artisan::command('emails:send {user} {--force}', function ($user) {
 })->purpose('Send emails to the specified user')->schedule(['Taylor', '--force'])->daily();
 ```
 
----
+
 
 ## Menjadwalkan Jobs Antrian
 
@@ -103,7 +103,7 @@ Menentukan queue dan koneksi:
 Schedule::job(new Heartbeat, 'heartbeats', 'sqs')->everyFiveMinutes();
 ```
 
----
+
 
 ## Menjadwalkan Perintah Shell
 
@@ -111,14 +111,14 @@ Schedule::job(new Heartbeat, 'heartbeats', 'sqs')->everyFiveMinutes();
 Schedule::exec('node /home/forge/script.js')->daily();
 ```
 
----
+
 
 ## Opsi Frekuensi Jadwal
 
 Laravel menyediakan banyak metode untuk menentukan frekuensi eksekusi:
 
 | Metode                 | Deskripsi                                  |
-| ---------------------- | ------------------------------------------ |
+| - |  |
 | `->daily()`            | Setiap hari tengah malam                   |
 | `->hourly()`           | Setiap jam                                 |
 | `->weekly()`           | Setiap minggu                              |
@@ -136,7 +136,7 @@ Schedule::call(function () {
 })->weekly()->mondays()->at('13:00');
 ```
 
----
+
 
 ## Pembatasan Hari dan Waktu
 
@@ -171,7 +171,7 @@ Schedule::command('emails:send')->daily()->skip(function () {
 Schedule::command('emails:send')->daily()->environments(['staging', 'production']);
 ```
 
----
+
 
 ## Zona Waktu
 
@@ -181,7 +181,7 @@ Schedule::command('report:generate')
     ->at('2:00');
 ```
 
----
+
 
 ## Mencegah Overlap Tugas
 
@@ -190,7 +190,7 @@ Schedule::command('emails:send')->withoutOverlapping();
 Schedule::command('emails:send')->withoutOverlapping(10); // Lock 10 menit
 ```
 
----
+
 
 ## Menjalankan Tugas di Satu Server
 
@@ -210,7 +210,7 @@ Schedule::job(new CheckUptime('https://laravel.com'))
     ->onOneServer();
 ```
 
----
+
 
 ## Tugas Latar Belakang
 
@@ -218,7 +218,7 @@ Schedule::job(new CheckUptime('https://laravel.com'))
 Schedule::command('analytics:report')->daily()->runInBackground();
 ```
 
----
+
 
 ## Mode Maintenance
 
@@ -226,7 +226,7 @@ Schedule::command('analytics:report')->daily()->runInBackground();
 Schedule::command('emails:send')->evenInMaintenanceMode();
 ```
 
----
+
 
 ## Grup Jadwal
 
@@ -237,7 +237,7 @@ Schedule::daily()->onOneServer()->timezone('America/New_York')->group(function (
 });
 ```
 
----
+
 
 ## Menjalankan Scheduler
 
@@ -263,7 +263,7 @@ Schedule::call(function () {
 php artisan schedule:work
 ```
 
----
+
 
 ## Output Tugas
 
@@ -274,7 +274,7 @@ Schedule::command('report:generate')->daily()->emailOutputTo('taylor@example.com
 Schedule::command('report:generate')->daily()->emailOutputOnFailure('taylor@example.com');
 ```
 
----
+
 
 ## Task Hooks
 
@@ -287,7 +287,7 @@ Schedule::command('emails:send')
     ->onFailure(fn($output) => // jika gagal);
 ```
 
----
+
 
 ## Pinging URL
 
@@ -300,7 +300,7 @@ Schedule::command('emails:send')
     ->pingOnFailure($failureUrl);
 ```
 
----
+
 
 ## Events Scheduler
 
@@ -312,4 +312,4 @@ Laravel menyediakan event selama proses scheduling, misalnya:
 * `ScheduledTaskSkipped`
 * `ScheduledTaskFailed`
 
----
+
