@@ -61,7 +61,9 @@ php artisan serve
 ```
 
 Laravel akan berjalan di:
-👉 [http://localhost:8000](http://localhost:8000)
+```
+http://localhost:8000
+```
 
 ---
 
