@@ -135,6 +135,18 @@ export default defineConfig({
           { text: "Facades", link: "/document/architecture-concepts/facades" },
         ],
       },
+      {
+        text: "Security",
+        collapsed: true,
+        items: [
+          { text: "Authentication", link: "/document/security/authentication" },
+          { text: "Authorization", link: "/document/security/authorization" },
+          { text: "Email Verification", link: "/document/security/email-verification" },
+          { text: "Encryption", link: "/document/security/encryption" },
+          { text: "Hashing", link: "/document/security/hashing" },
+          { text: "Password Reset", link: "/document/security/password-reset" },
+        ],
+      },
     ],
 
     // Konfigurasi sidebar kanan (outline/daftar isi) yang diperbaiki
