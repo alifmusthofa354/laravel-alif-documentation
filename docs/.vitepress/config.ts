@@ -117,9 +117,23 @@ export default defineConfig({
         ],
       },
       {
-        text: "Testing",
+        text: "Architecture Concepts",
         collapsed: true,
-        items: [],
+        items: [
+          {
+            text: "Request Lifecycle",
+            link: "/document/architecture-concepts/request-lifecycle",
+          },
+          {
+            text: "Service Container",
+            link: "/document/architecture-concepts/service-container",
+          },
+          {
+            text: "Service Providers",
+            link: "/document/architecture-concepts/service-providers",
+          },
+          { text: "Facades", link: "/document/architecture-concepts/facades" },
+        ],
       },
     ],
 
