@@ -110,7 +110,16 @@ export default defineConfig({
           { text: "Eloquent", link: "/document/eloquent/get-started" },
           { text: "Relationships", link: "/document/eloquent/relationships" },
           { text: "Collection", link: "/document/eloquent/collection" },
+          { text: "Mutator", link: "/document/eloquent/mutator" },
+          { text: "API Resources", link: "/document/eloquent/api-resources" },
+          { text: "Serialization", link: "/document/eloquent/serialization" },
+          { text: "Factories", link: "/document/eloquent/factories" },
         ],
+      },
+      {
+        text: "Testing",
+        collapsed: true,
+        items: [],
       },
     ],
 
