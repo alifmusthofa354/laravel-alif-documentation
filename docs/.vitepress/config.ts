@@ -87,6 +87,31 @@ export default defineConfig({
           { text: "Task Schedule", link: "/document/deeper/taskSchedule" },
         ],
       },
+      {
+        text: "Databse",
+        collapsed: true,
+        items: [
+          {
+            text: "Getting Started",
+            link: "/document/database/getting-started",
+          },
+          { text: "Query Builder", link: "/document/database/query-builder" },
+          { text: "Pagination", link: "/document/database/pagination" },
+          { text: "Migration", link: "/document/database/migration" },
+          { text: "Seeder", link: "/document/database/seeding" },
+          { text: "Redis", link: "/document/database/redis" },
+          { text: "MongoDB", link: "/document/database/mongoDB" },
+        ],
+      },
+      {
+        text: "Eloquent",
+        collapsed: true,
+        items: [
+          { text: "Eloquent", link: "/document/eloquent/get-started" },
+          { text: "Relationships", link: "/document/eloquent/relationships" },
+          { text: "Collection", link: "/document/eloquent/collection" },
+        ],
+      },
     ],
 
     // Konfigurasi sidebar kanan (outline/daftar isi) yang diperbaiki
