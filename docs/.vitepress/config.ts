@@ -35,7 +35,11 @@ export default defineConfig({
             text: "Extention VScode",
             link: "/document/getstarted/ExtentionVScode",
           },
-          //{ text: "Installation", link: "/document/getstarted/Installation" },
+          { text: "Configuration", link: "/document/getstarted/Configuration" },
+          { text: "Directory Structure", link: "/document/getstarted/DirectoryStructure" },
+          { text: "Frontend", link: "/document/getstarted/Frontend" },
+          { text: "Starter Kits", link: "/document/getstarted/StarterKits" },
+          { text: "Deployment", link: "/document/getstarted/Deployment" },
         ],
       },
       {
