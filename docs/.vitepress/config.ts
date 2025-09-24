@@ -36,7 +36,10 @@ export default defineConfig({
             link: "/document/getstarted/ExtentionVScode",
           },
           { text: "Configuration", link: "/document/getstarted/Configuration" },
-          { text: "Directory Structure", link: "/document/getstarted/DirectoryStructure" },
+          {
+            text: "Directory Structure",
+            link: "/document/getstarted/DirectoryStructure",
+          },
           { text: "Frontend", link: "/document/getstarted/Frontend" },
           { text: "Starter Kits", link: "/document/getstarted/StarterKits" },
           { text: "Deployment", link: "/document/getstarted/Deployment" },
@@ -48,6 +51,7 @@ export default defineConfig({
         items: [
           { text: "Routing", link: "/document/basic/routing" },
           { text: "Controller", link: "/document/basic/controller" },
+          { text: "Controller5", link: "/document/basic/controller5" },
           { text: "View", link: "/document/basic/view" },
           { text: "Blade", link: "/document/basic/blade" },
           { text: "Request", link: "/document/basic/request" },
@@ -145,7 +149,10 @@ export default defineConfig({
         items: [
           { text: "Authentication", link: "/document/security/authentication" },
           { text: "Authorization", link: "/document/security/authorization" },
-          { text: "Email Verification", link: "/document/security/email-verification" },
+          {
+            text: "Email Verification",
+            link: "/document/security/email-verification",
+          },
           { text: "Encryption", link: "/document/security/encryption" },
           { text: "Hashing", link: "/document/security/hashing" },
           { text: "Password Reset", link: "/document/security/password-reset" },
@@ -155,7 +162,10 @@ export default defineConfig({
         text: "Packages",
         collapsed: true,
         items: [
-          { text: "Cashier (Paddle)", link: "/document/packages/cashier-paddle" },
+          {
+            text: "Cashier (Paddle)",
+            link: "/document/packages/cashier-paddle",
+          },
           { text: "Cashier (Stripe)", link: "/document/packages/cashier" },
           { text: "Dusk", link: "/document/packages/dusk" },
           { text: "Envoy", link: "/document/packages/envoy" },
