@@ -38,7 +38,7 @@ touch database/database.sqlite
 
 Kemudian konfigurasi `.env`:
 
-```env
+```bash
 DB_CONNECTION=sqlite
 DB_DATABASE=/absolute/path/to/database.sqlite
 DB_FOREIGN_KEYS=false  # optional, untuk menonaktifkan foreign key
