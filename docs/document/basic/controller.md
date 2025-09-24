@@ -1,14 +1,14 @@
-# **Controllers di Laravel**
+# 🎛️ **Controllers di Laravel**
 
 ---
 
-## **1. Introduction**
+## 📖 **1. Introduction**
 
 Daripada menuliskan seluruh logic request di file route menggunakan closure, kita bisa memindahkan logika tersebut ke dalam **Controller**.
 
-* Controller membantu mengelompokkan logic yang berhubungan dalam satu class.
-* Contoh: `UserController` untuk menangani aksi terkait pengguna (show, create, update, delete).
-* Secara default, controller disimpan di:
+* 🔄 Controller membantu mengelompokkan logic yang berhubungan dalam satu class.
+* 👤 Contoh: `UserController` untuk menangani aksi terkait pengguna (show, create, update, delete).
+* 📁 Secara default, controller disimpan di:
 
   ```
   app/Http/Controllers
@@ -16,9 +16,9 @@ Daripada menuliskan seluruh logic request di file route menggunakan closure, kit
 
 ---
 
-## **2. Writing Controllers**
+## ✍️ **2. Writing Controllers**
 
-### **2.1. Membuat Controller**
+### 🛠️ **2.1. Membuat Controller**
 
 Gunakan Artisan command:
 
@@ -28,7 +28,7 @@ php artisan make:controller UserController
 
 ---
 
-### **2.2. Basic Controller**
+### 🧱 **2.2. Basic Controller**
 
 Contoh:
 
@@ -59,7 +59,7 @@ Route::get('/user/{id}', [UserController::class, 'show']);
 
 ---
 
-### **2.3. Single Action Controller**
+### ⚡ **2.3. Single Action Controller**
 
 Controller hanya dengan satu method `__invoke`:
 
@@ -91,10 +91,10 @@ php artisan make:controller ProvisionServer --invokable
 
 ---
 
-### **2.3 Contoh Simple Controller**
+### 🧪 **2.3 Contoh Simple Controller**
 ---
 
-#### **1. Membuat Controller**
+#### 🛠️ **1. Membuat Controller**
 
 Gunakan perintah Artisan:
 
@@ -106,7 +106,7 @@ Ini akan membuat file `app/Http/Controllers/WelcomeController.php`.
 
 ---
 
-#### **2. Isi Controller**
+#### 📝 **2. Isi Controller**
 
 Edit file `WelcomeController.php` menjadi seperti ini:
 
@@ -132,7 +132,7 @@ class WelcomeController extends Controller
 
 ---
 
-#### **3. Definisikan Route**
+#### 🛣️ **3. Definisikan Route**
 
 Buka file `routes/web.php` lalu tambahkan:
 
@@ -144,7 +144,7 @@ Route::get('/', [WelcomeController::class, 'index']);
 
 ---
 
-#### **4. View Welcome**
+#### 👀 **4. View Welcome**
 
 Laravel secara default sudah punya view `resources/views/welcome.blade.php`.
 Jadi, route `/` akan otomatis menampilkan halaman **welcome** bawaan Laravel.
@@ -170,14 +170,14 @@ Kalau mau bikin versi custom, kamu bisa edit file tersebut, misalnya:
 
 ✅ Hasil akhirnya:
 
-* Akses `http://localhost:8000/`
-* Laravel akan memanggil `WelcomeController@index` → return `welcome.blade.php`.
+* 🌐 Akses `http://localhost:8000/`
+* 🔄 Laravel akan memanggil `WelcomeController@index` → return `welcome.blade.php`.
 
 ---
 
 
 
-## **3. Controller Middleware**
+## 🔐 **3. Controller Middleware**
 
 Middleware bisa ditambahkan di routes:
 
@@ -219,9 +219,9 @@ public static function middleware(): array
 
 ---
 
-## **4. Resource Controllers**
+## 📦 **4. Resource Controllers**
 
-### **4.1. Membuat Resource Controller**
+### 🛠️ **4.1. Membuat Resource Controller**
 
 ```bash
 php artisan make:controller PhotoController --resource
@@ -237,7 +237,7 @@ Akan menghasilkan route CRUD lengkap.
 
 ---
 
-### **4.2. Multiple Resource Controllers**
+### 📚 **4.2. Multiple Resource Controllers**
 
 ```php
 Route::resources([
@@ -246,7 +246,7 @@ Route::resources([
 ]);
 ```
 
-### **4.3. Soft Deletable Resources**
+### 🗑️ **4.3. Soft Deletable Resources**
 
 ```php
 Route::softDeletableResources([
@@ -257,9 +257,9 @@ Route::softDeletableResources([
 
 ---
 
-### **4.4. Actions dalam Resource**
+### 📋 **4.4. Actions dalam Resource**
 
-| Verb      | URI                  | Action  | Route Name     |
+| 🔄 Verb      | 🔗 URI                  | 🎯 Action  | 🏷️ Route Name     |
 | --------- | -------------------- | ------- | -------------- |
 | GET       | /photos              | index   | photos.index   |
 | GET       | /photos/create       | create  | photos.create  |
@@ -271,7 +271,7 @@ Route::softDeletableResources([
 
 ---
 
-### **4.5. Customizing Missing Model**
+### 🔧 **4.5. Customizing Missing Model**
 
 ```php
 Route::resource('photos', PhotoController::class)
@@ -280,7 +280,7 @@ Route::resource('photos', PhotoController::class)
     });
 ```
 
-### **4.6. Soft Deleted Models**
+### 🗑️ **4.6. Soft Deleted Models**
 
 ```php
 Route::resource('photos', PhotoController::class)->withTrashed();
@@ -289,13 +289,13 @@ Route::resource('photos', PhotoController::class)->withTrashed(['show']);
 
 ---
 
-### **4.7. Membuat Controller dengan Model**
+### 🧬 **4.7. Membuat Controller dengan Model**
 
 ```bash
 php artisan make:controller PhotoController --model=Photo --resource
 ```
 
-### **4.8. Membuat dengan Form Requests**
+### 📝 **4.8. Membuat dengan Form Requests**
 
 ```bash
 php artisan make:controller PhotoController --model=Photo --resource --requests
@@ -303,15 +303,15 @@ php artisan make:controller PhotoController --model=Photo --resource --requests
 
 ---
 
-## **5. Partial Resource Routes**
+## 🎯 **5. Partial Resource Routes**
 
-### **5.1. only()**
+### ✅ **5.1. only()**
 
 ```php
 Route::resource('photos', PhotoController::class)->only(['index', 'show']);
 ```
 
-### **5.2. except()**
+### ❌ **5.2. except()**
 
 ```php
 Route::resource('photos', PhotoController::class)->except(['create', 'store']);
@@ -319,9 +319,9 @@ Route::resource('photos', PhotoController::class)->except(['create', 'store']);
 
 ---
 
-## **6. API Resource Routes**
+## 🌐 **6. API Resource Routes**
 
-### **6.1. Dasar**
+### 🚀 **6.1. Dasar**
 
 ```php
 Route::apiResource('photos', PhotoController::class);
@@ -329,7 +329,7 @@ Route::apiResource('photos', PhotoController::class);
 
 Hanya membuat: index, store, show, update, destroy.
 
-### **6.2. Banyak API Resources**
+### 📚 **6.2. Banyak API Resources**
 
 ```php
 Route::apiResources([
@@ -338,7 +338,7 @@ Route::apiResources([
 ]);
 ```
 
-### **6.3. Generate API Controller**
+### ⚡ **6.3. Generate API Controller**
 
 ```bash
 php artisan make:controller PhotoController --api
@@ -346,21 +346,21 @@ php artisan make:controller PhotoController --api
 
 ---
 
-## **7. Nested Resources**
+## 🧩 **7. Nested Resources**
 
-### **7.1. Nested Resource**
+### 🔗 **7.1. Nested Resource**
 
 ```php
 Route::resource('photos.comments', PhotoCommentController::class);
 ```
 
-### **7.2. Shallow Nesting**
+### 🧭 **7.2. Shallow Nesting**
 
 ```php
 Route::resource('photos.comments', CommentController::class)->shallow();
 ```
 
-### **7.3. Scoped Nested Resources**
+### 🎯 **7.3. Scoped Nested Resources**
 
 ```php
 Route::resource('photos.comments', PhotoCommentController::class)->scoped([
@@ -370,9 +370,9 @@ Route::resource('photos.comments', PhotoCommentController::class)->scoped([
 
 ---
 
-## **8. Naming Resource Routes & Parameters**
+## 🏷️ **8. Naming Resource Routes & Parameters**
 
-### **8.1. Custom Route Names**
+### 🔧 **8.1. Custom Route Names**
 
 ```php
 Route::resource('photos', PhotoController::class)->names([
@@ -380,7 +380,7 @@ Route::resource('photos', PhotoController::class)->names([
 ]);
 ```
 
-### **8.2. Custom Route Parameters**
+### 🆔 **8.2. Custom Route Parameters**
 
 ```php
 Route::resource('users', AdminUserController::class)->parameters([
@@ -388,7 +388,7 @@ Route::resource('users', AdminUserController::class)->parameters([
 ]);
 ```
 
-### **8.3. Localizing Resource URIs**
+### 🌍 **8.3. Localizing Resource URIs**
 
 ```php
 Route::resourceVerbs([
@@ -399,7 +399,7 @@ Route::resourceVerbs([
 
 ---
 
-## **9. Supplementing Resource Controllers**
+## ➕ **9. Supplementing Resource Controllers**
 
 Tambahkan route tambahan **sebelum** resource:
 
@@ -410,9 +410,9 @@ Route::resource('photos', PhotoController::class);
 
 ---
 
-## **10. Singleton Resource Controllers**
+## 🎯 **10. Singleton Resource Controllers**
 
-### **10.1. Dasar**
+### 🔄 **10.1. Dasar**
 
 ```php
 Route::singleton('profile', ProfileController::class);
@@ -420,23 +420,23 @@ Route::singleton('profile', ProfileController::class);
 
 Hanya menghasilkan:
 
-* GET /profile (show)
-* GET /profile/edit (edit)
-* PUT/PATCH /profile (update)
+* 🔄 GET /profile (show)
+* ✏️ GET /profile/edit (edit)
+* ✅ PUT/PATCH /profile (update)
 
-### **10.2. Nested Singleton**
+### 🔗 **10.2. Nested Singleton**
 
 ```php
 Route::singleton('photos.thumbnail', ThumbnailController::class);
 ```
 
-### **10.3. Creatable Singleton**
+### ➕ **10.3. Creatable Singleton**
 
 ```php
 Route::singleton('photos.thumbnail', ThumbnailController::class)->creatable();
 ```
 
-### **10.4. API Singleton**
+### 🌐 **10.4. API Singleton**
 
 ```php
 Route::apiSingleton('profile', ProfileController::class);
@@ -444,23 +444,23 @@ Route::apiSingleton('profile', ProfileController::class);
 
 ---
 
-## **11. Middleware & Resource Controllers**
+## 🔐 **11. Middleware & Resource Controllers**
 
-### **11.1. Middleware untuk Semua Method**
+### 🌐 **11.1. Middleware untuk Semua Method**
 
 ```php
 Route::resource('users', UserController::class)
     ->middleware(['auth', 'verified']);
 ```
 
-### **11.2. Middleware untuk Aksi Tertentu**
+### 🎯 **11.2. Middleware untuk Aksi Tertentu**
 
 ```php
 Route::apiResource('users', UserController::class)
     ->middlewareFor(['show', 'update'], 'auth');
 ```
 
-### **11.3. Excluding Middleware**
+### 🔓 **11.3. Excluding Middleware**
 
 ```php
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -471,9 +471,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 ---
 
-## **12. Dependency Injection**
+## 💉 **12. Dependency Injection**
 
-### **12.1. Constructor Injection**
+### 🏗️ **12.1. Constructor Injection**
 
 ```php
 public function __construct(
@@ -481,7 +481,7 @@ public function __construct(
 ) {}
 ```
 
-### **12.2. Method Injection**
+### 🔧 **12.2. Method Injection**
 
 ```php
 public function update(Request $request, string $id): RedirectResponse
@@ -492,103 +492,103 @@ public function update(Request $request, string $id): RedirectResponse
 
 ---
 
-## **13. Cheat Sheet** 📌
+## 📋 **13. Cheat Sheet** 📌
 
 ---
 
-### **1. Resource Controllers**
+### 📦 **1. Resource Controllers**
 
-| Perintah                                             | Fungsi                                                                      |
+| ⚙️ Perintah                                             | 📋 Fungsi                                                                      |
 | ---------------------------------------------------- | --------------------------------------------------------------------------- |
-| `Route::resource('photos', PhotoController::class);` | Buat semua route CRUD (`index, create, store, show, edit, update, destroy`) |
-| `Route::resources([...])`                            | Daftar banyak resource sekaligus                                            |
-| `Route::softDeletableResources([...])`               | Resource dengan dukungan soft deletes                                       |
+| `Route::resource('photos', PhotoController::class);` | 🏗️ Buat semua route CRUD (`index, create, store, show, edit, update, destroy`) |
+| `Route::resources([...])`                            | 📚 Daftar banyak resource sekaligus                                            |
+| `Route::softDeletableResources([...])`               | 🗑️ Resource dengan dukungan soft deletes                                       |
 
 ---
 
-### **2. Partial Resource Routes**
+### 🎯 **2. Partial Resource Routes**
 
-| Perintah                        | Hasil                                 |
+| ⚙️ Perintah                        | 📋 Hasil                                 |
 | ------------------------------- | ------------------------------------- |
-| `->only(['index', 'show'])`     | Hanya buat `index` & `show`           |
-| `->except(['create', 'store'])` | Buat semua kecuali `create` & `store` |
+| `->only(['index', 'show'])`     | ✅ Hanya buat `index` & `show`           |
+| `->except(['create', 'store'])` | ✅ Buat semua kecuali `create` & `store` |
 
 ---
 
-### **3. API Resource Controllers**
+### 🌐 **3. API Resource Controllers**
 
-| Perintah                                                | Fungsi                                                  |
+| ⚙️ Perintah                                                | 📋 Fungsi                                                  |
 | ------------------------------------------------------- | ------------------------------------------------------- |
-| `Route::apiResource('photos', PhotoController::class);` | Hanya route API (`index, store, show, update, destroy`) |
-| `Route::apiResources([...])`                            | Banyak API resource sekaligus                           |
-| `php artisan make:controller PhotoController --api`     | Membuat API controller (tanpa `create` & `edit`)        |
+| `Route::apiResource('photos', PhotoController::class);` | 🌐 Hanya route API (`index, store, show, update, destroy`) |
+| `Route::apiResources([...])`                            | 📚 Banyak API resource sekaligus                           |
+| `php artisan make:controller PhotoController --api`     | 🛠️ Membuat API controller (tanpa `create` & `edit`)        |
 
 ---
 
-### **4. Nested & Scoped Resources**
+### 🔗 **4. Nested & Scoped Resources**
 
-| Perintah                                                             | Fungsi                                                        |
+| ⚙️ Perintah                                                             | 📋 Fungsi                                                        |
 | -------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `Route::resource('photos.comments', PhotoCommentController::class);` | Nested resource                                               |
-| `->shallow()`                                                        | Child routes tanpa parent ID untuk `show/edit/update/destroy` |
-| `->scoped(['comment' => 'slug'])`                                    | Gunakan field lain (misal slug) untuk binding                 |
+| `Route::resource('photos.comments', PhotoCommentController::class);` | 🔗 Nested resource                                               |
+| `->shallow()`                                                        | 🧭 Child routes tanpa parent ID untuk `show/edit/update/destroy` |
+| `->scoped(['comment' => 'slug'])`                                    | 🎯 Gunakan field lain (misal slug) untuk binding                 |
 
 ---
 
-### **5. Singleton Resources**
+### 🎯 **5. Singleton Resources**
 
-| Perintah                                                    | Hasil                                    |
+| ⚙️ Perintah                                                    | 📋 Hasil                                    |
 | ----------------------------------------------------------- | ---------------------------------------- |
-| `Route::singleton('profile', ProfileController::class);`    | `show`, `edit`, `update`                 |
-| `->creatable()`                                             | Tambah `create`, `store`, `destroy`      |
-| `->destroyable()`                                           | Tambah hanya `destroy`                   |
-| `Route::apiSingleton('profile', ProfileController::class);` | Versi API (`show`, `update`)             |
-| `->creatable()`                                             | API Singleton dengan `store` & `destroy` |
+| `Route::singleton('profile', ProfileController::class);`    | 🔄 `show`, `edit`, `update`                 |
+| `->creatable()`                                             | ➕ Tambah `create`, `store`, `destroy`      |
+| `->destroyable()`                                           | ➕ Tambah hanya `destroy`                   |
+| `Route::apiSingleton('profile', ProfileController::class);` | 🌐 Versi API (`show`, `update`)             |
+| `->creatable()`                                             | 🌐 API Singleton dengan `store` & `destroy` |
 
 ---
 
-### **6. Customizing Routes**
+### 🔧 **6. Customizing Routes**
 
-| Perintah                                      | Fungsi                                    |
+| ⚙️ Perintah                                      | 📋 Fungsi                                    |
 | --------------------------------------------- | ----------------------------------------- |
-| `->names([...])`                              | Ubah nama route default                   |
-| `->parameters([...])`                         | Ubah nama parameter di URI                |
-| `Route::resourceVerbs([...])`                 | Lokalisasi verb `create` & `edit`         |
-| `->missing(fn($req) => Redirect::route(...))` | Custom handler saat model tidak ditemukan |
-| `->withTrashed()`                             | Mengizinkan akses model soft deleted      |
+| `->names([...])`                              | 🏷️ Ubah nama route default                   |
+| `->parameters([...])`                         | 🔤 Ubah nama parameter di URI                |
+| `Route::resourceVerbs([...])`                 | 🌍 Lokalisasi verb `create` & `edit`         |
+| `->missing(fn($req) => Redirect::route(...))` | 🔧 Custom handler saat model tidak ditemukan |
+| `->withTrashed()`                             | 🗑️ Mengizinkan akses model soft deleted      |
 
 ---
 
-### **7. Middleware**
+### 🔐 **7. Middleware**
 
-| Perintah                                 | Fungsi                                  |
+| ⚙️ Perintah                                 | 📋 Fungsi                                  |
 | ---------------------------------------- | --------------------------------------- |
-| `->middleware([...])`                    | Tambah middleware ke semua aksi         |
-| `->middlewareFor(['show'], 'auth')`      | Tambah middleware ke aksi tertentu      |
-| `->withoutMiddlewareFor('index', [...])` | Hilangkan middleware dari aksi tertentu |
+| `->middleware([...])`                    | 🔐 Tambah middleware ke semua aksi         |
+| `->middlewareFor(['show'], 'auth')`      | 🔐 Tambah middleware ke aksi tertentu      |
+| `->withoutMiddlewareFor('index', [...])` | 🔓 Hilangkan middleware dari aksi tertentu |
 
 ---
 
-### **8. Artisan Commands**
+### 🛠️ **8. Artisan Commands**
 
-| Command                                                                           | Fungsi                                                   |
+| ⚙️ Command                                                                           | 📋 Fungsi                                                   |
 | --------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `php artisan make:controller UserController`                                      | Membuat controller biasa                                 |
-| `php artisan make:controller ServerController --invokable`                        | Membuat single-action controller                         |
-| `php artisan make:controller PhotoController --resource`                          | Membuat resource controller                              |
-| `php artisan make:controller PhotoController --api`                               | Membuat API controller                                   |
-| `php artisan make:controller PhotoController --model=Photo --resource`            | Resource controller dengan model binding                 |
-| `php artisan make:controller PhotoController --model=Photo --resource --requests` | Sekaligus generate Form Request untuk `store` & `update` |
+| `php artisan make:controller UserController`                                      | 🛠️ Membuat controller biasa                                 |
+| `php artisan make:controller ServerController --invokable`                        | ⚡ Membuat single-action controller                         |
+| `php artisan make:controller PhotoController --resource`                          | 📦 Membuat resource controller                              |
+| `php artisan make:controller PhotoController --api`                               | 🌐 Membuat API controller                                   |
+| `php artisan make:controller PhotoController --model=Photo --resource`            | 🧬 Resource controller dengan model binding                 |
+| `php artisan make:controller PhotoController --model=Photo --resource --requests` | 📝 Sekaligus generate Form Request untuk `store` & `update` |
 
 ---
 
-# **14. Kesimpulan** ✅ 
+# ✨ **14. Kesimpulan** ✅ 
 
-* **Controllers** membantu mengelola logic agar lebih rapi.
-* Gunakan **`Route::resource`** untuk CRUD standar.
-* Gunakan **`Route::apiResource`** untuk API (tanpa `create` & `edit`).
-* Gunakan **singleton** untuk resource yang hanya 1 instance.
-* Gunakan **partial, scoped, shallow** sesuai kebutuhan.
-* Semua bisa dikustomisasi: nama route, parameter, verbs, middleware, missing handler, hingga soft deletes.
+* 🎛️ **Controllers** membantu mengelola logic agar lebih rapi.
+* 📦 Gunakan **`Route::resource`** untuk CRUD standar.
+* 🌐 Gunakan **`Route::apiResource`** untuk API (tanpa `create` & `edit`).
+* 🎯 Gunakan **singleton** untuk resource yang hanya 1 instance.
+* 🧩 Gunakan **partial, scoped, shallow** sesuai kebutuhan.
+* 🔧 Semua bisa dikustomisasi: nama route, parameter, verbs, middleware, missing handler, hingga soft deletes.
 
 ---
