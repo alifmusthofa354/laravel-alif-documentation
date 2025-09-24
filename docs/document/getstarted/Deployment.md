@@ -127,7 +127,7 @@ chmod -R 775 bootstrap/cache/
 
 ### 📄 Environment Configuration
 File `.env` untuk produksi:
-```env
+```bash
 APP_ENV=production
 APP_DEBUG=false
 APP_KEY=base64:your-app-key
@@ -499,7 +499,7 @@ php artisan cache:clear
 
 #### 🐛 Debug Mode
 Sementara aktifkan debug mode untuk troubleshooting:
-```env
+```bash
 APP_DEBUG=true
 ```
 

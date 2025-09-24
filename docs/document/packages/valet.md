@@ -325,7 +325,7 @@ MailHog akan tersedia di `http://127.0.0.1:8025`.
 ### 📋 Mengkonfigurasi Mail dalam Laravel
 Untuk menggunakan MailHog dalam aplikasi Laravel:
 
-```env
+```bash
 MAIL_MAILER=smtp
 MAIL_HOST=127.0.0.1
 MAIL_PORT=1025

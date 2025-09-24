@@ -71,7 +71,7 @@ class User extends Authenticatable
 ### 🔑 Kredensial Paddle
 Setelah menginstal Cashier Paddle, Anda perlu mengkonfigurasi kredensial Paddle Anda. Kredensial ini dapat dikonfigurasi melalui file `.env` Anda:
 
-```env
+```bash
 PADDLE_VENDOR_ID=your-paddle-vendor-id
 PADDLE_VENDOR_AUTH_CODE=your-paddle-vendor-auth-code
 PADDLE_PUBLIC_KEY="your-paddle-public-key"
@@ -263,7 +263,7 @@ $payLink = $user->chargeProduct($productId, [
 ### 🎯 Mode Sandbox
 Aktifkan mode sandbox untuk pengujian:
 
-```env
+```bash
 PADDLE_SANDBOX=true
 ```
 

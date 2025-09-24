@@ -44,7 +44,7 @@ Perintah ini akan membuat:
 ### ⚙️ Konfigurasi Environment
 Setel variabel `APP_URL` di file `.env` aplikasi Anda. Nilai ini harus sesuai dengan URL yang Anda gunakan untuk mengakses aplikasi Anda di browser.
 
-```env
+```bash
 APP_URL=http://localhost:8000
 ```
 

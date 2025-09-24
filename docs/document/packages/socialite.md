@@ -62,7 +62,7 @@ Setelah menginstal Socialite, Anda perlu mengkonfigurasi kredensial untuk penyed
 ### 🔐 Konfigurasi Environment
 Tambahkan kredensial ke file `.env` Anda:
 
-```env
+```bash
 GITHUB_CLIENT_ID=your-github-app-id
 GITHUB_CLIENT_SECRET=your-github-app-secret
 GITHUB_REDIRECT=http://your-callback-url

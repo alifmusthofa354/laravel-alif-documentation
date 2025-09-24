@@ -25,7 +25,7 @@ Sebelum menggunakan layanan enkripsi di Laravel, kita harus memastikan bahwa kon
 
 📌 **Contoh hasil di file `.env`:**
 
-```env
+```bash
 APP_KEY=base64:J63qRTDLub5NuZvP+kb8YIorGS6qFYHKVo6u7179stY=
 ```
 
@@ -46,7 +46,7 @@ Dengan ini, Laravel akan mencoba mendekripsi data menggunakan key lama jika key 
 
 📌 **Contoh konfigurasi di `.env`:**
 
-```env
+```bash
 APP_KEY="base64:J63qRTDLub5NuZvP+kb8YIorGS6qFYHKVo6u7179stY="
 APP_PREVIOUS_KEYS="base64:2nLsGFGzyoae2ax3EF2Lyq/hH6QghBGLIq5uL+Gp8/w="
 ```

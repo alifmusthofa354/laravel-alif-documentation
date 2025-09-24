@@ -202,7 +202,7 @@ public function register()
 ### 📋 Session Configuration
 Ketika menggunakan Octane, session harus disimpan dalam cache:
 
-```env
+```bash
 SESSION_DRIVER=cache
 CACHE_DRIVER=redis
 ```
@@ -219,7 +219,7 @@ php artisan octane:start --task-workers=4
 ### 📋 Event Broadcasting
 Event broadcasting bekerja dengan baik dengan Octane ketika menggunakan Redis broadcaster:
 
-```env
+```bash
 BROADCAST_DRIVER=redis
 ```
 

@@ -148,7 +148,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1
 ```
 
@@ -285,7 +285,7 @@ fetch('http://localhost:8000/api/user', {
 ### 📋 Konfigurasi SPA Domains
 Pastikan domain SPA Anda dikonfigurasi dalam file `.env`:
 
-```env
+```bash
 SANCTUM_STATEFUL_DOMAINS=localhost,localhost:3000,your-spa-domain.com
 ```
 

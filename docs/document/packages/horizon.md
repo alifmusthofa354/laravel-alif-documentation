@@ -48,7 +48,7 @@ php artisan horizon:install
 ### 🛠️ Konfigurasi Environment
 Pastikan file `.env` Anda mengkonfigurasi driver queue ke `redis`:
 
-```env
+```bash
 QUEUE_CONNECTION=redis
 ```
 

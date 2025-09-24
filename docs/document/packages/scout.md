@@ -210,7 +210,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 SCOUT_DRIVER=algolia
 SCOUT_QUEUE=false
 SCOUT_PREFIX=
@@ -227,7 +227,7 @@ MEILISEARCH_KEY=masterKey
 ### 📋 Algolia Driver
 Driver default Scout adalah Algolia, layanan pencarian berbasis cloud yang cepat:
 
-```env
+```bash
 SCOUT_DRIVER=algolia
 ALGOLIA_APP_ID=your-algolia-app-id
 ALGOLIA_SECRET=your-algolia-secret
@@ -236,7 +236,7 @@ ALGOLIA_SECRET=your-algolia-secret
 ### 📋 Meilisearch Driver
 Meilisearch adalah mesin pencarian open-source yang kuat:
 
-```env
+```bash
 SCOUT_DRIVER=meilisearch
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_KEY=masterKey
@@ -245,7 +245,7 @@ MEILISEARCH_KEY=masterKey
 ### 📋 Database Driver
 Untuk penggunaan sederhana tanpa search engine eksternal:
 
-```env
+```bash
 SCOUT_DRIVER=database
 SCOUT_QUEUE=false
 ```
@@ -253,7 +253,7 @@ SCOUT_QUEUE=false
 ### 📋 Collection Driver
 Untuk pengujian dan pengembangan:
 
-```env
+```bash
 SCOUT_DRIVER=collection
 SCOUT_QUEUE=false
 ```
@@ -261,7 +261,7 @@ SCOUT_QUEUE=false
 ### 📋 Null Driver
 Untuk menonaktifkan pencarian:
 
-```env
+```bash
 SCOUT_DRIVER=null
 ```
 
@@ -344,7 +344,7 @@ php artisan scout:flush "App\Models\Post"
 ### 📋 Menggunakan Queue untuk Sinkronisasi
 Untuk meningkatkan performa, Anda dapat mengantrekan operasi sinkronisasi:
 
-```env
+```bash
 SCOUT_QUEUE=true
 ```
 
@@ -612,7 +612,7 @@ protected function transform($data): array
 ## 🔍 Searching Algolia
 
 ### 📋 Konfigurasi Algolia
-```env
+```bash
 SCOUT_DRIVER=algolia
 ALGOLIA_APP_ID=your-algolia-app-id
 ALGOLIA_SECRET=your-algolia-secret
@@ -665,7 +665,7 @@ $results = Post::search('laravel')
 ## 🔎 Searching Meilisearch
 
 ### 📋 Konfigurasi Meilisearch
-```env
+```bash
 SCOUT_DRIVER=meilisearch
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_KEY=masterKey
@@ -723,7 +723,7 @@ php artisan scout:index posts --key=posts_index_key
 ## 🗃️ Searching Database
 
 ### 📋 Konfigurasi Database Driver
-```env
+```bash
 SCOUT_DRIVER=database
 SCOUT_QUEUE=false
 ```

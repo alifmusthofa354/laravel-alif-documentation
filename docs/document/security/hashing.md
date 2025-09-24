@@ -25,7 +25,7 @@ Namun, tersedia juga driver lain seperti **argon** dan **argon2id**.
 
 🔧 Untuk mengatur driver hashing, gunakan variabel environment:
 
-```env
+```bash
 HASH_DRIVER=bcrypt
 ````
 
@@ -137,7 +137,7 @@ Jika berbeda, Laravel akan melempar `RuntimeException`.
 
 Namun, jika Anda perlu mendukung lebih dari satu algoritma hashing (misalnya saat migrasi algoritma), Anda bisa menonaktifkan verifikasi ini dengan menambahkan pada `.env`:
 
-```env
+```bash
 HASH_VERIFY=false
 ```
 

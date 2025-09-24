@@ -84,7 +84,7 @@ Jika Anda memerlukan nilai boolean `false`, Anda harus menetapkannya dalam file 
 
 Untuk menghindari kolisi dengan environment variables sistem lain, Anda dapat menambahkan prefix ke file `.env` Anda. Misalnya, jika nama aplikasi Anda "Acme", Anda dapat menambahkan prefix `ACME_` ke semua variabel:
 
-```env
+```bash
 ACME_APP_NAME=Acme
 ACME_DB_HOST=localhost
 ACME_DB_DATABASE=acme

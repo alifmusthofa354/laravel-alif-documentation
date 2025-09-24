@@ -68,7 +68,7 @@ class User extends Authenticatable
 ### 🔑 Kredensial Stripe
 Setelah menginstal Cashier, Anda perlu mengkonfigurasi kredensial Stripe Anda. Kredensial ini dapat dikonfigurasi melalui file `.env` Anda:
 
-```env
+```bash
 STRIPE_KEY=your-stripe-key
 STRIPE_SECRET=your-stripe-secret
 STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
@@ -77,7 +77,7 @@ STRIPE_WEBHOOK_SECRET=your-stripe-webhook-secret
 ### 🌐 Stripe Checkout
 Untuk menggunakan Stripe Checkout, Anda perlu mengkonfigurasi URL dalam file `.env` Anda:
 
-```env
+```bash
 CASHIER_CURRENCY=usd
 CASHIER_CURRENCY_LOCALE=en
 APP_URL=http://localhost:8000
@@ -277,7 +277,7 @@ stripe listen --forward-to localhost:8000/stripe/webhook
 ### 🧪 Mode Pengujian
 Pastikan Anda menggunakan kunci pengujian Stripe dalam lingkungan pengembangan:
 
-```env
+```bash
 STRIPE_KEY=pk_test_xxx
 STRIPE_SECRET=sk_test_xxx
 ```

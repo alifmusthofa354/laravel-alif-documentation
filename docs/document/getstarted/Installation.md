@@ -182,7 +182,7 @@ Perintah ini akan mengisi `APP_KEY` di file `.env`.
 
 Edit file `.env` untuk mengatur koneksi database:
 
-```env
+```bash
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -192,7 +192,7 @@ DB_PASSWORD=password
 ```
 
 Untuk SQLite:
-```env
+```bash
 DB_CONNECTION=sqlite
 # DB_HOST=127.0.0.1
 # DB_PORT=3306

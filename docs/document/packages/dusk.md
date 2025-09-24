@@ -48,7 +48,7 @@ Perintah ini akan membuat direktori `tests/Browser` dan contoh test Dusk.
 ### 🔧 Konfigurasi Environment
 Pastikan Anda mengatur variabel `APP_URL` dalam file `.env` Anda. Nilai ini harus cocok dengan URL yang Anda gunakan untuk mengakses aplikasi Anda di browser.
 
-```env
+```bash
 APP_URL=http://localhost:8000
 ```
 

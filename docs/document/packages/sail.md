@@ -121,7 +121,7 @@ services:
 ### 🔐 Konfigurasi Environment
 File `.env` Anda akan diperbarui dengan konfigurasi yang sesuai:
 
-```env
+```bash
 APP_PORT=80
 DB_PORT=3306
 REDIS_PORT=6379
@@ -482,7 +482,7 @@ CMD ["php-fpm"]
 ### 📋 Environment Variables
 Menambahkan environment variables kustom:
 
-```env
+```bash
 # File .env
 CUSTOM_VARIABLE=value
 API_KEY=your-api-key
@@ -531,7 +531,7 @@ valet share
 ### 📋 Konfigurasi Sharing
 Menambahkan konfigurasi untuk sharing:
 
-```env
+```bash
 # File .env
 APP_URL=http://localhost
 ASSET_URL=http://localhost
@@ -557,7 +557,7 @@ sail tail -f /var/log/php8.2-fpm.log
 ### 📋 Debugging dengan Xdebug
 Mengaktifkan Xdebug:
 
-```env
+```bash
 # File .env
 SAIL_XDEBUG_MODE=develop,debug
 SAIL_XDEBUG_CONFIG=client_host=host.docker.internal
@@ -614,7 +614,7 @@ Perbedaan antara development dan production:
 ### 📋 Production Configuration
 Konfigurasi untuk production:
 
-```env
+```bash
 # File .env.production
 APP_ENV=production
 APP_DEBUG=false

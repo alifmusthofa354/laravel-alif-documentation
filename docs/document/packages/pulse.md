@@ -133,7 +133,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 PULSE_DOMAIN=null
 PULSE_PATH=pulse
 PULSE_STORAGE_DRIVER=database
@@ -516,7 +516,7 @@ Kurangi sample rate dan optimalkan konfigurasi recorder:
 #### 📋 Mode Debug
 Aktifkan mode debug untuk informasi tambahan:
 
-```env
+```bash
 PULSE_DEBUG=true
 ```
 

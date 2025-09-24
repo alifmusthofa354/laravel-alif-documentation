@@ -99,7 +99,7 @@ return [
 ### 📋 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 PENNANT_STORE=database
 ```
 

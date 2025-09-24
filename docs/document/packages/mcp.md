@@ -102,7 +102,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 MCP_DOMAIN=null
 MCP_PATH=mcp
 ```

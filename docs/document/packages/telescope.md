@@ -223,7 +223,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 TELESCOPE_ENABLED=true
 TELESCOPE_PATH=telescope
 TELESCOPE_DRIVER=database

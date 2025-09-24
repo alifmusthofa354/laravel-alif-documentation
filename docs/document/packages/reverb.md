@@ -114,7 +114,7 @@ return [
 ### 🔐 Konfigurasi Environment
 Tambahkan konfigurasi berikut ke file `.env` Anda:
 
-```env
+```bash
 REVERB_APP_ID=your-app-id
 REVERB_APP_KEY=your-app-key
 REVERB_APP_SECRET=your-app-secret
@@ -487,7 +487,7 @@ Monitoring::record('custom_metric', 1);
 ### 📋 Horizontal Scaling
 Reverb mendukung scaling horizontal melalui Redis:
 
-```env
+```bash
 REVERB_SCALING_ENABLED=true
 REVERB_SCALING_CHANNEL=reverb
 ```
@@ -518,7 +518,7 @@ server {
 ```
 
 ### 📋 Redis Configuration
-```env
+```bash
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 REDIS_PASSWORD=null
@@ -534,7 +534,7 @@ REDIS_DB=0
 - Reverse proxy (Nginx/Apache) untuk TLS termination
 
 ### 📋 Environment Configuration
-```env
+```bash
 APP_ENV=production
 APP_DEBUG=false
 

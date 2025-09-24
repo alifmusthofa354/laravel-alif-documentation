@@ -36,14 +36,14 @@ MongoDB Community Server bisa diinstal di **Windows, macOS, Linux**, atau melalu
 
 Setelah instalasi, koneksi MongoDB dapat dikonfigurasi di file `.env`:
 
-```env
+```bash
 MONGODB_URI="mongodb://localhost:27017"
 MONGODB_DATABASE="laravel_app"
 ```
 
 Untuk **hosting cloud** menggunakan **MongoDB Atlas**, tambahkan IP Anda di **IP Access List**. Koneksi Atlas di `.env`:
 
-```env
+```bash
 MONGODB_URI="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>?retryWrites=true&w=majority"
 MONGODB_DATABASE="laravel_app"
 ```
