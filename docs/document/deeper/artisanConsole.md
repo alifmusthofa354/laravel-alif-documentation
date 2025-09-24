@@ -1,298 +1,375 @@
-# 🚀 Laravel Artisan Console
+# 🪄 Artisan Console: Tongkat Sihir Developer Laravel
 
+Hai para penyihir kode! Selamat datang di kelas lanjutan kita. Hari ini, kita akan mempelajari salah satu alat paling kuat di gudang senjata seorang developer Laravel: **Artisan Console**.
 
-## 📑 Table of Contents
+**Analogi:** Bayangkan kamu adalah seorang penyihir, dan Artisan adalah **tongkat sihirmu**. Dengan mantra yang tepat, kamu bisa melakukan hal-hal luar biasa—membangun bagian-bagian aplikasi, menjalankan tugas-tugas rumit, dan bahkan memperbaiki masalah—semua hanya dengan beberapa ketukan di terminal.
 
-1. [⚡ Artisan Console](#-artisan-console)  
-2. [🧪 Tinker (REPL)](#-tinker-repl)  
-3. [📝 Writing Commands](#-writing-commands)  
-4. [🔒 Isolatable Commands](#-isolatable-commands)  
-5. [🛠 Defining Input Expectations](#-defining-input-expectations)  
-6. [💻 Command I/O](#-command-io)  
-7. [🗂 Registering Commands](#-registering-commands)  
-8. [🔄 Programmatically Executing Commands](#-programmatically-executing-commands)  
-9. [📡 Signal Handling](#-signal-handling)  
-10. [🛠 Stub Customization](#-stub-customization)  
-11. [🎉 Events](#-events)  
+Di panduan ini, kita akan kupas tuntas setiap mantra yang perlu kamu ketahui, dari yang paling dasar hingga yang paling canggih. Siap ayunkan tongkat sihirmu? Ayo mulai!
 
+---
 
+## Bagian 1: Kenalan Dengan Tongkat Sihirmu 🧙
 
-## ⚡ Artisan Console
+### 1. 📖 Apa Itu Artisan?
 
-### 📖 Introduction
-Artisan adalah command line interface yang disertakan dengan Laravel. File Artisan berada di root aplikasi Anda dan menyediakan banyak perintah yang membantu saat membangun aplikasi.
+Artisan adalah *command-line interface* (CLI) atau antarmuka baris perintah yang datang bersama Laravel. Ia menyediakan puluhan perintah siap pakai yang akan menghemat **banyak sekali** waktumu.
 
-🔹 Untuk melihat daftar perintah Artisan:
+**Mengapa ini penting?** Tanpa Artisan, kamu harus membuat file, folder, dan kode-kode boilerplate (kode yang itu-itu saja) secara manual. Dengan Artisan, semua itu bisa dilakukan dengan satu baris perintah. Efisien, cepat, dan bebas dari kesalahan ketik!
 
+#### Mantra Dasar yang Wajib Tahu:
+
+🔹 **Melihat Semua Mantra (Perintah)**
+Untuk melihat semua perintah yang tersedia, gunakan mantra `list`:
 ```bash
 php artisan list
-````
-
-🔹 Untuk melihat bantuan perintah tertentu:
-
-```bash
-php artisan help migrate
 ```
 
-### 🐳 Laravel Sail
+🔹 **Membaca Buku Mantra (Bantuan)**
+Jika kamu lupa cara menggunakan sebuah perintah, panggil saja bantuannya:
+```bash
+php artisan help make:controller
+```
 
-Jika menggunakan Laravel Sail sebagai lingkungan pengembangan lokal, gunakan perintah `sail` untuk memanggil Artisan:
-
+#### 🐳 Khusus Pengguna Laravel Sail
+Jika kamu menggunakan Sail, jangan lupa untuk mengawali setiap perintah Artisan dengan `sail`:
 ```bash
 ./vendor/bin/sail artisan list
 ```
 
+### 2. 🧪 Tinker: Arena Bermain Ajaib (REPL)
 
+**Analogi:** Jika Artisan adalah tongkat sihir, maka **Tinker** adalah **laboratorium atau arena latihan pribadimu**. Di sini, kamu bisa mencoba kode Laravel, berinteraksi dengan database, dan menjalankan fungsi apa pun secara *real-time* tanpa perlu membuat route atau controller.
 
-## 🧪 Tinker (REPL)
-
-Laravel Tinker adalah REPL yang kuat untuk Laravel, menggunakan package PsySH.
-
-### 💾 Installation
-
-Tinker sudah termasuk secara default. Jika perlu:
-
-```bash
-composer require laravel/tinker
-```
-
-### 🏃 Usage
-
-Masuk ke lingkungan Tinker:
-
+**Bagaimana cara masuk?**
 ```bash
 php artisan tinker
 ```
+Setelah masuk, kamu bisa langsung menjalankan kode PHP dan Laravel:
+```php
+// Langsung akses model dari database
+App\Models\User::find(1);
 
-Publikasikan konfigurasi Tinker:
+// Membuat user baru
+App\Models\User::create(['name' => 'Murid Teladan', 'email' => 'murid@laravel.com', 'password' => bcrypt('rahasia')]);
 
+// Mencoba helper Laravel
+str('halo dunia')->upper();
+```
+Tinker sangat berguna untuk debugging cepat, mencoba query Eloquent, atau sekadar bereksperimen.
+
+---
+
+## Bagian 2: Membuat Mantra Sendiri (Menulis Perintah) ✍️
+
+Inilah bagian paling seru: membuat perintah Artisan versimu sendiri!
+
+### 3. ✨ Resep Membuat Perintah Baru
+
+Mari kita buat sebuah perintah untuk mengirim email pengingat kepada pengguna yang sudah lama tidak aktif.
+
+#### Langkah 1️⃣: Siapkan Kerangka Mantra (Generate Command)
+Gunakan mantra `make:command` untuk membuat file perintah baru:
 ```bash
-php artisan vendor:publish --provider="Laravel\Tinker\TinkerServiceProvider"
+php artisan make:command SendReminderEmails
 ```
+Laravel akan membuatkan file baru di `app/Console/Commands/SendReminderEmails.php`.
 
-Tinker menggunakan **command allow list** dan **dont\_alias** untuk mengatur perintah dan class yang bisa digunakan.
-
-
-
-## 📝 Writing Commands
-
-### ✨ Generating Commands
-
-Buat command baru:
-
-```bash
-php artisan make:command SendEmails
-```
-
-### 🏗️ Command Structure
+#### Langkah 2️⃣: Tentukan Nama & Deskripsi Mantra
+Buka file tersebut dan isi properti `$signature` dan `$description`.
+- `$signature`: Ini adalah nama unik dari perintahmu.
+- `$description`: Penjelasan singkat tentang apa yang dilakukan perintah ini.
 
 ```php
-<?php
-namespace App\Console\Commands;
-
-use App\Models\User;
-use App\Support\DripEmailer;
-use Illuminate\Console\Command;
-
-class SendEmails extends Command
+// app/Console/Commands/SendReminderEmails.php
+class SendReminderEmails extends Command
 {
-    protected $signature = 'mail:send {user}';
-    protected $description = 'Send a marketing email to a user';
+    /**
+     * Nama dan signature dari perintah console.
+     * 'user:remind' adalah nama perintahnya.
+     */
+    protected $signature = 'user:remind';
 
-    public function handle(DripEmailer $drip): void
-    {
-        $drip->send(User::find($this->argument('user')));
-    }
-}
-```
+    /**
+     * Deskripsi dari perintah console.
+     */
+    protected $description = 'Kirim email pengingat ke pengguna yang tidak aktif';
 
-#### ❌ Exit Codes
-
-```php
-$this->error('Something went wrong.');
-return 1;
-
-// Atau langsung
-$this->fail('Something went wrong.');
-```
-
-### 🧩 Closure Commands
-
-```php
-Artisan::command('mail:send {user}', function (string $user) {
-    $this->info("Sending email to: {$user}!");
-})->purpose('Send a marketing email to a user');
-```
-
-
-
-## 🔒 Isolatable Commands
-
-Pastikan hanya satu instance command berjalan:
-
-```php
-use Illuminate\Contracts\Console\Isolatable;
-
-class SendEmails extends Command implements Isolatable
-{
     // ...
 }
 ```
 
-Custom Lock ID dan expiration:
+#### Langkah 3️⃣: Tulis Logika Mantra di `handle()`
+Method `handle()` adalah tempat semua keajaiban terjadi. Di sinilah kamu menulis logika utama dari perintahmu.
 
 ```php
-public function isolatableId(): string
+// app/Console/Commands/SendReminderEmails.php
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReminderEmail; // Anggap kita sudah punya Mailable ini
+
+public function handle(): void
 {
-    return $this->argument('user');
-}
+    // 1. Tampilkan pesan informasi di console
+    $this->info('Mencari pengguna tidak aktif...');
 
-public function isolationLockExpiresAt(): DateTimeInterface|DateInterval
-{
-    return now()->addMinutes(5);
-}
-```
+    // 2. Ambil pengguna yang tidak login lebih dari 30 hari
+    $inactiveUsers = User::where('last_login_at', '<', now()->subDays(30))->get();
 
+    if ($inactiveUsers->isEmpty()) {
+        $this->info('Tidak ada pengguna tidak aktif yang ditemukan. Kerja bagus!');
+        return;
+    }
 
+    // 3. Buat progress bar agar terlihat keren!
+    $this->withProgressBar($inactiveUsers, function ($user) {
+        // 4. Kirim email ke setiap pengguna
+        Mail::to($user)->send(new ReminderEmail($user));
+    });
 
-## 🛠 Defining Input Expectations
-
-### 📌 Arguments
-
-```php
-protected $signature = 'mail:send {user}';
-protected $signature = 'mail:send {user?}';
-protected $signature = 'mail:send {user=foo}';
-```
-
-### ⚙️ Options
-
-```php
-protected $signature = 'mail:send {user} {--queue}';
-protected $signature = 'mail:send {user} {--queue=}';
-protected $signature = 'mail:send {user} {--Q|queue}';
-```
-
-### 📚 Arrays
-
-```php
-'mail:send {user*}'
-'mail:send {user?*}'
-'mail:send {--id=*}'
-```
-
-### 📝 Input Descriptions
-
-```php
-protected $signature = 'mail:send
-                        {user : The ID of the user}
-                        {--queue : Whether the job should be queued}';
-```
-
-### 🤔 Prompting for Missing Input
-
-```php
-class SendEmails extends Command implements PromptsForMissingInput
-{
-    protected $signature = 'mail:send {user}';
+    // 5. Tampilkan pesan sukses setelah selesai
+    $this->newLine(); // Beri baris baru
+    $this->info('Email pengingat berhasil dikirim ke ' . $inactiveUsers->count() . ' pengguna.');
 }
 ```
 
-Custom questions:
+#### Langkah 4️⃣: Daftarkan Mantra Baru
+Perintah berbasis kelas secara otomatis terdeteksi oleh Laravel. Kamu tidak perlu mendaftarkannya secara manual!
+
+#### Langkah 5️⃣: Jalankan Mantra!
+Sekarang, kamu bisa menjalankan perintah barumu dari terminal:
+```bash
+php artisan user:remind
+```
+Keren, kan? Kamu baru saja membuat alat otomatisasi versimu sendiri!
+
+### 4. 🧩 Perintah Simpel (Closure Commands)
+
+Untuk tugas-tugas yang sangat sederhana, kamu bisa mendefinisikan perintah langsung di file `routes/console.php` tanpa harus membuat file kelas.
 
 ```php
-protected function promptForMissingArgumentsUsing(): array
+// routes/console.php
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('hello', function () {
+    $this->comment('Halo, Murid Kesayanganku!');
+})->purpose('Menampilkan pesan sapaan dari Guru.');
+```
+Jalankan dengan: `php artisan hello`.
+
+---
+
+## Bagian 3: Mengatur Input & Output Perintah 🛠️
+
+Perintahmu bisa menjadi lebih interaktif dan fleksibel dengan menerima input.
+
+### 5. 📌 Argumen: Input Wajib
+
+Argumen adalah input yang posisinya penting.
+```php
+// {user} adalah argumen wajib
+// {--s|silent} adalah opsi (lihat di bawah)
+protected $signature = 'mail:send {user} {--s|silent}';
+
+public function handle()
 {
-    return [
-        'user' => 'Which user ID should receive the mail?',
-    ];
+    // Mengambil nilai argumen 'user'
+    $userId = $this->argument('user');
+    $user = User::find($userId);
+
+    // ... logika mengirim email
+}
+```
+**Cara menjalankan:** `php artisan mail:send 1` (angka `1` adalah nilai untuk `user`).
+
+**Jenis-jenis Argumen:**
+- `{user}`: Wajib diisi.
+- `{user?}`: Opsional (tidak wajib).
+- `{user=1}`: Opsional dengan nilai default `1`.
+- `{user*}`: Bisa menerima banyak nilai (array).
+
+### 6. ⚙️ Opsi: Input Fleksibel
+
+Opsi diawali dengan `--` dan tidak bergantung pada posisi. Mereka seperti *setting* tambahan.
+```php
+// --queue adalah opsi boolean (ada atau tidak)
+// --channel= adalah opsi yang butuh nilai
+protected $signature = 'report:generate {--queue} {--channel=}';
+
+public function handle()
+{
+    if ($this->option('queue')) {
+        $this->info('Laporan akan dijalankan di background (queued).');
+    }
+
+    if ($channel = $this->option('channel')) {
+        $this->info("Laporan akan dikirim ke channel: {$channel}.");
+    }
+}
+```
+**Cara menjalankan:**
+- `php artisan report:generate --queue`
+- `php artisan report:generate --channel=slack`
+- `php artisan report:generate --queue --channel=email`
+
+### 7. 💻 Interaksi dengan Pengguna (Command I/O)
+
+Kamu bisa membuat perintahmu "berbicara" dengan pengguna.
+
+- **Meminta Input:**
+  ```php
+  $name = $this->ask('Siapa namamu?');
+  $this->info("Halo, {$name}!");
+  ```
+- **Meminta Informasi Rahasia:**
+  ```php
+  $password = $this->secret('Masukkan password API:');
+  ```
+- **Meminta Konfirmasi:**
+  ```php
+  if ($this->confirm('Apakah kamu yakin ingin melanjutkan proses ini?')) {
+      // Lanjutkan proses...
+  }
+  ```
+- **Memberi Pilihan:**
+  ```php
+  $framework = $this->choice(
+      'Apa framework PHP favoritmu?',
+      ['Laravel', 'Symfony', 'Lainnya'],
+      0 // Pilihan default
+  );
+  ```
+
+- **Menampilkan Output:**
+  ```php
+  $this->line('Sebuah baris teks biasa.');
+  $this->info('Pesan informasi (biasanya hijau).');
+  $this->comment('Pesan komentar (biasanya kuning).');
+  $this->question('Ini adalah pertanyaan.');
+  $this->error('Ups, terjadi kesalahan (biasanya merah).');
+  $this->warn('Sebuah pesan peringatan.');
+  ```
+
+- **Menampilkan Data dalam Tabel:**
+  ```php
+  $headers = ['Nama', 'Email'];
+  $users = App\Models\User::all(['name', 'email'])->toArray();
+  $this->table($headers, $users);
+  ```
+
+---
+
+## Bagian 4: Jurus Tingkat Lanjut 🚀
+
+### 8. 🔄 Menjalankan Perintah dari Kode Lain
+
+Kamu bisa memanggil perintah Artisan dari dalam Controller, Service, atau bahkan dari perintah lain.
+
+```php
+use Illuminate\Support\Facades\Artisan;
+
+// Dari mana saja di aplikasimu
+Artisan::call('user:remind');
+
+// Dengan argumen dan opsi
+Artisan::call('mail:send', [
+    'user' => 1,
+    '--queue' => 'default'
+]);
+
+// Menjalankannya di background
+Artisan::queue('mail:send', ['user' => 1]);
+
+// Dari dalam file command lain
+$this->call('mail:send', ['user' => 1]);
+```
+
+### 9. 🔒 Perintah yang Tidak Bisa Tumpang Tindih (Isolatable)
+
+Untuk tugas-tugas kritis (misal: memproses pembayaran), kamu pasti tidak mau ada dua proses yang sama berjalan bersamaan. Gunakan `Isolatable`.
+
+```php
+use Illuminate\Contracts\Console\Isolatable;
+
+class ProcessPayments extends Command implements Isolatable
+{
+    protected $signature = 'payment:process';
+    // ...
+}
+```
+Dengan ini, Laravel akan memastikan hanya ada satu instans `payment:process` yang berjalan pada satu waktu.
+
+### 10. 📡 Menangani Sinyal (Signal Handling)
+
+Untuk perintah yang berjalan lama (long-running process), kamu bisa "mendengarkan" sinyal dari sistem operasi (misalnya saat pengguna menekan `Ctrl+C`) untuk menghentikan proses dengan aman.
+
+```php
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+#[AsCommand(name: 'server:start')]
+class StartServer extends Command
+{
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->trap([SIGINT, SIGTERM], function ($signal) {
+            $this->info('Proses dihentikan dengan aman...');
+            // Lakukan cleanup di sini...
+            exit(0);
+        });
+
+        // Logika server yang berjalan terus-menerus...
+        while (true) {
+            // ...
+        }
+    }
 }
 ```
 
+### 11. 🛠️ Kustomisasi Stub
 
+Saat kamu menjalankan `php artisan make:controller`, Laravel menggunakan sebuah file "template" yang disebut **stub**. Kamu bisa mengubah template ini sesuai seleramu!
 
-## 💻 Command I/O
-
-### 🔹 Retrieving Input
-
-```php
-$userId = $this->argument('user');
-$arguments = $this->arguments();
-$queueName = $this->option('queue');
-$options = $this->options();
-```
-
-### 🗣 Prompting for Input
-
-```php
-$name = $this->ask('What is your name?', 'Taylor');
-$password = $this->secret('What is the password?');
-if ($this->confirm('Do you wish to continue?', true)) { /* ... */ }
-$name = $this->anticipate('What is your address?', ['Option1','Option2']);
-$name = $this->choice('What is your name?', ['Taylor', 'Dayle'], $defaultIndex);
-```
-
-### 📣 Writing Output
-
-```php
-$this->info('Success!');
-$this->error('Error!');
-$this->line('Plain text');
-$this->newLine(3);
-$this->table(['Name','Email'], User::all(['name','email'])->toArray());
-$users = $this->withProgressBar(User::all(), fn($user) => $this->performTask($user));
-```
-
-
-
-## 🗂 Registering Commands
-
-```php
-->withCommands([
-    __DIR__.'/../app/Domain/Orders/Commands',
-    SendEmails::class,
-])
-```
-
-
-
-## 🔄 Programmatically Executing Commands
-
-```php
-$exitCode = Artisan::call('mail:send', ['user'=>$user,'--queue'=>'default']);
-Artisan::call('mail:send 1 --queue=default');
-Artisan::queue('mail:send', ['user'=>1,'--queue'=>'default'])->onConnection('redis')->onQueue('commands');
-$this->call('mail:send', ['user'=>1,'--queue'=>'default']);
-$this->callSilently('mail:send', ['user'=>1,'--queue'=>'default']);
-```
-
-
-
-## 📡 Signal Handling
-
-```php
-$this->trap(SIGTERM, fn()=> $this->shouldKeepRunning = false);
-$this->trap([SIGTERM, SIGQUIT], function(int $signal){ $this->shouldKeepRunning=false; dump($signal); });
-```
-
-
-
-## 🛠 Stub Customization
-
+**Caranya:**
 ```bash
 php artisan stub:publish
 ```
+Perintah ini akan membuat folder `stubs` di root proyekmu. Sekarang, kamu bisa mengedit file-file di dalamnya. Misalnya, kamu bisa mengubah `stubs/controller.plain.stub` agar setiap controller baru yang kamu buat sudah memiliki method atau komentar default versimu.
 
-📂 Stubs akan berada di folder `stubs` pada root aplikasi.
+---
 
+## Bagian 5: Referensi Cepat & Cheat Sheet 📋
 
+| Kategori | Perintah / Konsep | Contoh |
+|---|---|---|
+| **Dasar** | Melihat semua perintah | `php artisan list` |
+| | Melihat bantuan | `php artisan help <nama-perintah>` |
+| | Masuk ke Tinker | `php artisan tinker` |
+| **Membuat Perintah** | Generate file command | `php artisan make:command NamaPerintah` |
+| | Signature (nama perintah) | `protected $signature = 'kirim:email {user}';` |
+| | Deskripsi | `protected $description = 'Deskripsi perintah.';` |
+| | Logika Utama | Method `handle()` |
+| **Input Argumen** | Wajib | `{user}` |
+| | Opsional | `{user?}` |
+| | Default | `{user=1}` |
+| | Array | `{user*}` |
+| **Input Opsi** | Boolean | `{--force}` |
+| | Dengan Nilai | `{--queue=}` |
+| | Singkatan | `{--Q|queue=}` |
+| **Output** | Info | `$this->info('Pesan...');` |
+| | Error | `$this->error('Pesan...');` |
+| | Tabel | `$this->table($headers, $data);` |
+| | Progress Bar | `$this->withProgressBar($collection, fn() => ...);` |
+| **Eksekusi** | Dari kode | `Artisan::call('perintah');` |
+| | Di background | `Artisan::queue('perintah');` |
+| **Fitur Lanjut** | Isolasi Perintah | `implements Isolatable` |
+| | Kustomisasi Stub | `php artisan stub:publish` |
 
-## 🎉 Events
+---
 
-Artisan memicu tiga event saat menjalankan perintah:
+### 🎯 Kesimpulan
 
-* `ArtisanStarting`
-* `CommandStarting`
-* `CommandFinished`
+Kamu berhasil! Kamu telah mempelajari cara menggunakan dan membuat "mantra" Artisan sendiri. Ini adalah skill fundamental yang akan membuatmu menjadi developer Laravel yang jauh lebih produktif dan efisien.
 
-```
+Teruslah berlatih, coba buat perintah-perintah custom untuk mengotomatiskan tugas-tugas di proyekmu. Selamat mengayunkan tongkat sihirmu!
