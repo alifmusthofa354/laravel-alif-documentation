@@ -1,1752 +1,1176 @@
-# Templates Laravel
+# 🎨 Blade Templates di Laravel - Panduan Lengkap untuk Pemula
 
-## 📘Pendahuluan
+Hai muridku yang hebat! Hari ini kita akan belajar tentang **Blade Templates** di Laravel - sebuah sistem templating yang sangat kuat dan fleksibel. Seperti biasa, aku akan menjelaskan semuanya dengan bahasa yang mudah dan contoh kode yang bisa kamu coba sendiri.
 
-Blade adalah **templating engine** yang sederhana namun sangat kuat yang sudah tersedia secara bawaan pada **Laravel**.
-Berbeda dengan beberapa templating engine PHP lainnya, Blade tidak membatasi penggunaan kode PHP biasa di dalam template.
+---
 
-Semua template Blade akan dikompilasi menjadi kode PHP biasa dan disimpan (cached) hingga ada perubahan.
-Artinya, Blade menambahkan **nyaris nol overhead** ke aplikasi Anda.
+## Bagian 1: Memahami Konsep Dasar Blade 🎯
 
-File template Blade memiliki ekstensi:
+### 1. 📖 Apa Itu Blade dan Kenapa Penting?
 
-```
-.blade.php
-```
+**Analogi Sederhana:** Bayangkan kamu seorang arsitek dan kamu punya template rumah yang bisa kamu gunakan berulang-ulang. Setiap rumah mungkin memiliki dinding, atap, dan jendela yang sama, tapi warnanya atau perabotannya bisa berbeda-beda. **Blade adalah template rumahmu**, dan data yang kamu kirim adalah perabotannya.
 
-dan biasanya disimpan di direktori:
+**Blade** adalah templating engine bawaan Laravel yang sangat kuat karena:
 
-```
-resources/views
-```
+- **Sederhana tapi lengkap** - Mudah dipelajari tapi menawarkan fitur kompleks
+- **Aman dari XSS** - Secara otomatis melindungi dari serangan cross-site scripting
+- **Cepat & efisien** - Tidak menambah overhead karena dikompilasi ke PHP murni
+- **Dapat digunakan ulang** - Dengan components dan layouts
 
-Untuk menampilkan sebuah view menggunakan Blade, kita bisa memanggil helper global `view` baik di **route** maupun di **controller**.
+**Struktur Dasar:**
+- File Blade memiliki ekstensi `.blade.php`
+- Disimpan di direktori `resources/views/`
 
-**Contoh**
+### 2. 💡 Contoh Sederhana untuk Pemula
 
-```php
-// routes/web.php
-Route::get('/', function () {
-    return view('greeting', ['name' => 'Finn']);
-});
-```
+Mari kita mulai dengan contoh sederhana untuk memahami konsep dasar:
 
-File `resources/views/greeting.blade.php`:
-
+**Langkah 1:** Buat file view di `resources/views/welcome.blade.php`
 ```blade
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Greeting</title>
+    <title>Selamat Datang</title>
 </head>
 <body>
-    <h1>Hello, {{ $name }}!</h1>
+    <h1>Halo, {{ $name }}!</h1>
+    <p>Ini adalah tampilan pertamamu di Laravel dengan Blade!</p>
 </body>
 </html>
 ```
 
----
-
-#### Blade + Livewire: Level Berikutnya
-
-Jika ingin membuat **UI dinamis** tanpa ribet dengan framework frontend seperti React atau Vue, Anda bisa menggunakan **Laravel Livewire**.
-
-Livewire memungkinkan kita menulis **komponen Blade** yang memiliki interaktivitas tinggi, tanpa perlu build step JavaScript yang rumit.
-Dengan cara ini, Anda bisa membangun frontend modern yang **reaktif** hanya dengan PHP dan Blade.
-
----
-
-## 📘Menampilkan Data
-
-Data yang diterima dari route atau controller dapat ditampilkan pada Blade dengan cara membungkus variabel menggunakan kurung kurawal ganda `{{ }}`.
-
-**Contoh**
-
+**Langkah 2:** Buat route di `routes/web.php`
 ```php
-// routes/web.php
 Route::get('/', function () {
-    return view('welcome', ['name' => 'Samantha']);
+    return view('welcome', ['name' => 'Andi']);
 });
 ```
 
-File `resources/views/welcome.blade.php`:
+**Apa yang terjadi:**
+- User mengakses `/`
+- Route mengembalikan view `welcome`
+- View menerima data `['name' => 'Andi']`
+- Blade merender `{{ $name }}` menjadi `Andi`
+- Hasil HTML ditampilkan ke browser
+
+---
+
+## Bagian 2: Menampilkan Data dengan Aman dalam Blade 📤
+
+### 3. 🌍 Menampilkan Data dengan Escaping (Aman)
+
+Blade secara otomatis melindungi dari serangan XSS dengan meng-escape output:
 
 ```blade
-<h1>Hello, {{ $name }}.</h1>
+<!-- resources/views/user.blade.php -->
+<h1>Nama: {{ $user->name }}</h1>
+<p>Email: {{ $user->email }}</p>
+<p>Deskripsi: {{ $user->description }}</p>
 ```
 
-> Blade secara otomatis akan melindungi output menggunakan fungsi `htmlspecialchars` PHP untuk mencegah serangan **XSS**.
+**Kelebihan:**
+- Otomatis menggunakan `htmlspecialchars()`
+- Mencegah XSS attack
+- Tidak perlu manual escaping
 
-Selain variabel, Anda juga bisa menampilkan hasil dari fungsi PHP.
+### 4. ❗ Menampilkan Data Tanpa Escaping (Perlu Hati-hati)
+
+Jika kamu yakin konten aman dan ingin menampilkan HTML mentah:
 
 ```blade
-<p>Waktu UNIX sekarang adalah {{ time() }}.</p>
+<!-- Hanya untuk konten yang sudah difilter -->
+<div>{!! $trustedHtml !!}</div>
+
+<!-- Lebih aman: filter dulu -->
+<div>{!! e($untrustedHtml) !!}</div>
+```
+
+**peringatan:** Hanya gunakan ini untuk konten yang kamu yakini aman!
+
+### 5. 📊 Menampilkan Data Kompleks
+
+```blade
+<!-- Array dan objek -->
+<p>Total pengguna: {{ count($users) }}</p>
+<p>Terakhir login: {{ $user->last_login->format('d M Y') }}</p>
+
+<!-- Conditional dengan ternary -->
+<p>Status: {{ $user->isActive() ? 'Aktif' : 'Tidak Aktif' }}</p>
+
+<!-- Null coalescing untuk menghindari error -->
+<p>Nama: {{ $user->name ?? 'Tidak Diketahui' }}</p>
 ```
 
 ---
 
-#### HTML Entity Encoding
+## Bagian 3: Blade Directives - Struktur Kendali yang Kuat 🔁
 
-Secara bawaan, Blade akan melakukan **double encoding** pada HTML entities.
-Jika ingin menonaktifkannya, panggil metode `Blade::withoutDoubleEncoding()` pada `AppServiceProvider`.
+### 6. 🧠 Directives Percabangan
 
-**Contoh**
-
-```php
-<?php
-
-namespace App\Providers;
-
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\ServiceProvider;
-
-class AppServiceProvider extends ServiceProvider
-{
-    public function boot(): void
-    {
-        Blade::withoutDoubleEncoding();
-    }
-}
-```
-
----
-
-#### Menampilkan Data Tanpa Escape
-
-Jika Anda ingin menampilkan data **apa adanya** (tanpa htmlspecialchars), gunakan sintaks `{!! !!}`.
-
-**Contoh**
+Blade menyediakan direktif untuk kontrol alur program:
 
 ```blade
-Hello, {!! $name !!}.
-```
-
-⚠️ **Peringatan**: Jangan gunakan ini untuk data yang berasal dari input pengguna, karena rentan terhadap **XSS attack**.
-
----
-
-#### Blade dan Framework JavaScript
-
-Banyak framework JavaScript (misalnya Vue.js) juga menggunakan kurung kurawal `{{ }}`.
-Untuk mencegah Blade mengeksekusi ekspresi ini, gunakan simbol `@`.
-
-**Contoh**
-
-```blade
-<h1>Laravel</h1>
-Hello, @{{ name }}.
-```
-
-Hasil keluaran:
-
-```html
-<h1>Laravel</h1>
-Hello, {{ name }}.
-```
-
-Selain itu, simbol `@` juga dapat digunakan untuk **escape directive Blade**:
-
-```blade
-{{-- Blade template --}}
-@@if()
-
-<!-- HTML output -->
-@if()
-```
-
----
-
-#### Rendering JSON
-
-Seringkali kita ingin mengoper array dari PHP ke JavaScript.
-Alih-alih menggunakan `json_encode` secara manual, kita dapat memanfaatkan `Js::from()`.
-
-**Contoh**
-
-```blade
-<script>
-    //var app = {{ Js::from($array) }};
-</script>
-```
-
-Metode ini lebih aman karena memastikan JSON sudah di-escape dengan benar agar tidak rusak saat dimasukkan ke dalam HTML.
-
----
-
-#### Direktif @verbatim
-
-Jika Anda menulis blok kode besar dengan JavaScript yang menggunakan kurung kurawal `{{ }}`, Anda bisa membungkusnya dengan direktif `@verbatim`.
-
-Dengan begitu, Blade tidak akan mencoba untuk memproses isinya.
-
-**Contoh**
-
-```blade
-@verbatim
-    <div id="app">
-        Hello, {{ name }}.
-    </div>
-@endverbatim
-```
-
----
-
-
-## 📘Blade Directives
-
-Selain untuk **pewarisan template** dan **menampilkan data**, Blade juga menyediakan **direktif** (directives) yang merupakan shortcut untuk berbagai struktur kontrol PHP.
-
-Direktif ini membuat sintaks menjadi lebih bersih, ringkas, dan tetap mudah dipahami karena mirip dengan PHP aslinya.
-
----
-
-### If Statements (Percabangan)
-
-Blade menyediakan direktif untuk percabangan seperti `@if`, `@elseif`, `@else`, dan `@endif`.
-
-**Contoh**
-
-```blade
-@if (count($records) === 1)
-    Saya hanya punya satu data!
-@elseif (count($records) > 1)
-    Saya punya banyak data!
+<!-- If-Else statement -->
+@if ($user->isAdmin())
+    <p>Anda adalah administrator</p>
+@elseif ($user->isEditor())
+    <p>Anda adalah editor</p>
 @else
-    Saya tidak punya data sama sekali!
+    <p>Anda adalah pengguna biasa</p>
 @endif
-```
 
-Selain itu, ada juga `@unless` yang merupakan kebalikan dari `@if`.
-
-```blade
-@unless (Auth::check())
-    Anda belum login.
+<!-- Unless - kebalikan dari if -->
+@unless ($user->isVerified())
+    <p>Silakan verifikasi email Anda</p>
 @endunless
-```
 
-Blade juga menyediakan `@isset` dan `@empty`:
-
-```blade
-@isset($records)
-    // $records terdefinisi dan tidak null
+<!-- Isset dan empty -->
+@isset($user->phone)
+    <p>Telepon: {{ $user->phone }}</p>
 @endisset
 
-@empty($records)
-    // $records kosong
+@empty($posts)
+    <p>Belum ada postingan.</p>
 @endempty
 ```
 
----
+### 7. 🔐 Authentication Directives
 
-### Authentication Directives
-
-Untuk memeriksa apakah user sedang login atau guest, Blade menyediakan `@auth` dan `@guest`.
+Memeriksa status otentikasi pengguna:
 
 ```blade
+<!-- Cek apakah user login -->
 @auth
-    // User sedang login
+    <p>Halo, {{ Auth::user()->name }}!</p>
+    <a href="/logout">Logout</a>
 @endauth
 
 @guest
-    // User adalah guest
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
 @endguest
-```
 
-Anda juga bisa menentukan guard:
-
-```blade
+<!-- Cek dengan guard tertentu -->
 @auth('admin')
-    // User login dengan guard admin
+    <p>Anda adalah admin</p>
 @endauth
 
 @guest('admin')
-    // User guest di guard admin
+    <p>Halaman ini hanya untuk admin</p>
 @endguest
 ```
 
----
+### 8. 🌍 Environment Directives
 
-### Environment Directives
-
-Blade bisa mendeteksi environment aplikasi (production, staging, local, dll).
+Menampilkan konten berdasarkan environment:
 
 ```blade
+<!-- Hanya tampil di production -->
 @production
-    // Kode ini hanya tampil di production
+    <script src="https://analytics.example.com/script.js"></script>
 @endproduction
-```
 
-Atau dengan `@env`:
-
-```blade
-@env('staging')
-    // Hanya untuk staging
+<!-- Hanya tampil di local -->
+@env('local')
+    <div class="debug-panel">Debug mode aktif</div>
 @endenv
 
+<!-- Multiple environment -->
 @env(['staging', 'production'])
-    // Untuk staging atau production
+    <p>Fitur ini aktif di staging dan production</p>
 @endenv
 ```
 
----
-
-### Section Directives
-
-Untuk memeriksa apakah sebuah section memiliki konten:
+### 9. 🔄 Directives Perulangan
 
 ```blade
-@hasSection('navigation')
-    <div>
-        @yield('navigation')
-    </div>
-@endif
-```
-
-Atau sebaliknya, jika section kosong:
-
-```blade
-@sectionMissing('navigation')
-    @include('default-navigation')
-@endif
-```
-
----
-
-### Session Directives
-
-Blade menyediakan `@session` untuk memeriksa apakah ada nilai di session.
-
-```blade
-@session('status')
-    <div class="p-4 bg-green-100">
-        {{ $value }}
-    </div>
-@endsession
-```
-
----
-
-### Context Directives
-
-Sama seperti session, tetapi digunakan untuk memeriksa **context**.
-
-```blade
-@context('canonical')
-    <link href="{{ $value }}" rel="canonical">
-@endcontext
-```
-
----
-
-### Switch Statements
-
-Blade mendukung struktur `switch case` dengan sintaks sederhana:
-
-```blade
-@switch($i)
-    @case(1)
-        Kasus pertama
-        @break
-
-    @case(2)
-        Kasus kedua
-        @break
-
-    @default
-        Default case
-@endswitch
-```
-
----
-
-### Loops (Perulangan)
-
-Blade mendukung semua loop PHP (`for`, `foreach`, `forelse`, `while`).
-
-**Contoh**
-
-```blade
-@for ($i = 0; $i < 10; $i++)
-    Nilai sekarang: {{ $i }}
-@endfor
-
+<!-- Foreach loop -->
+<ul>
 @foreach ($users as $user)
-    <p>Ini user {{ $user->id }}</p>
-@endforeach
-
-@forelse ($users as $user)
     <li>{{ $user->name }}</li>
+@endforeach
+</ul>
+
+<!-- Foreach dengan empty state -->
+@forelse ($posts as $post)
+    <article>
+        <h3>{{ $post->title }}</h3>
+        <p>{{ $post->content }}</p>
+    </article>
 @empty
-    <p>Tidak ada user.</p>
+    <p>Belum ada postingan.</p>
 @endforelse
 
-@while (false)
-    <p>Looping selamanya (tidak jalan)</p>
+<!-- For loop -->
+@for ($i = 0; $i < 5; $i++)
+    <p>Angka: {{ $i }}</p>
+@endfor
+
+<!-- While loop -->
+@php $counter = 0; @endphp
+@while ($counter < 3)
+    <p>Perulangan ke-{{ ++$counter }}</p>
 @endwhile
 ```
 
-Anda juga bisa skip atau break loop:
+### 10. 🎲 Switch Statement
 
 ```blade
-@foreach ($users as $user)
-    @continue($user->type == 1)
-    <li>{{ $user->name }}</li>
-    @break($user->number == 5)
-@endforeach
+@switch($status)
+    @case('pending')
+        <span class="badge badge-warning">Menunggu</span>
+        @break
+    @case('approved')
+        <span class="badge badge-success">Disetujui</span>
+        @break
+    @case('rejected')
+        <span class="badge badge-danger">Ditolak</span>
+        @break
+    @default
+        <span class="badge badge-secondary">Status tidak diketahui</span>
+@endswitch
 ```
 
----
+### 11. 🔁 Menggunakan Variabel $loop
 
-### Variabel \$loop
-
-Di dalam `@foreach`, tersedia variabel khusus `$loop` untuk mendapatkan informasi tentang iterasi.
+Di dalam foreach, kamu bisa mengakses informasi iterasi:
 
 ```blade
 @foreach ($users as $user)
+    <!-- Iterasi pertama atau terakhir -->
     @if ($loop->first)
-        Iterasi pertama
+        <div class="first-user">
     @endif
-
+    
+    <div class="user-item">
+        <span>{{ $loop->iteration }}. {{ $user->name }}</span>
+        <span>Sisa: {{ $loop->remaining }} item</span>
+    </div>
+    
     @if ($loop->last)
-        Iterasi terakhir
+        </div> <!-- tutup first-user -->
     @endif
+@endforeach
 
-    <p>User: {{ $user->id }}</p>
+<!-- Nested loop -->
+@foreach ($categories as $category)
+    <h3>{{ $category->name }}</h3>
+    @foreach ($category->products as $product)
+        <!-- Akses loop parent -->
+        <p>Product dalam kategori {{ $loop->parent->iteration }}: {{ $product->name }}</p>
+    @endforeach
 @endforeach
 ```
 
-#### Properti `$loop`:
-
-| Properti           | Deskripsi           |
-| ------------------ | ------------------- |
-| `$loop->index`     | Index (mulai 0)     |
-| `$loop->iteration` | Iterasi (mulai 1)   |
-| `$loop->remaining` | Sisa iterasi        |
-| `$loop->count`     | Jumlah total item   |
-| `$loop->first`     | Iterasi pertama     |
-| `$loop->last`      | Iterasi terakhir    |
-| `$loop->even`      | Iterasi genap       |
-| `$loop->odd`       | Iterasi ganjil      |
-| `$loop->depth`     | Level nesting loop  |
-| `$loop->parent`    | Akses ke loop induk |
-
 ---
 
-### Conditional Classes & Styles
+## Bagian 4: Conditional Classes & Attributes - Styling Dinamis 🎨
 
-Blade memudahkan pembuatan class CSS dan inline style secara kondisional.
+### 12. 🎨 Conditional CSS Classes
 
-```blade
-@php
-    $isActive = false;
-    $hasError = true;
-@endphp
-
-<span @class([
-    'p-4',
-    'font-bold' => $isActive,
-    'text-gray-500' => ! $isActive,
-    'bg-red' => $hasError,
-])></span>
-```
-
-Hasil HTML:
-
-```html
-<span class="p-4 text-gray-500 bg-red"></span>
-```
-
-Untuk style:
+Blade menyediakan direktif `@class` untuk mengelola kelas CSS secara kondisional:
 
 ```blade
 @php
     $isActive = true;
+    $hasError = false;
+    $theme = 'dark';
 @endphp
 
-<span @style([
-    'background-color: red',
-    'font-weight: bold' => $isActive,
-])></span>
+<div @class([
+    'p-4',
+    'bg-blue-500' => $isActive,
+    'text-white' => $isActive,
+    'border-red-500' => $hasError,
+    'bg-gray-800' => $theme === 'dark',
+    'rounded-lg' => true, // selalu aktif
+])>
+    Konten dengan kelas dinamis
+</div>
+
+<!-- Contoh dengan data model -->
+<button @class([
+    'btn',
+    'btn-primary' => $user->isActive(),
+    'btn-warning' => $user->isPending(),
+    'btn-danger' => $user->isSuspended(),
+    'disabled' => !$user->canEdit()
+])>
+    Edit User
+</button>
 ```
 
-Hasil:
-
-```html
-<span style="background-color: red; font-weight: bold;"></span>
-```
-
----
-
-### Additional Attributes
-
-Blade menyediakan shortcut untuk atribut HTML:
-
-```blade
-<input type="checkbox" @checked($user->active)>
-<select>
-    <option @selected($version == '1.0')>1.0</option>
-</select>
-<button @disabled($errors->isNotEmpty())>Submit</button>
-<input type="text" @readonly($user->isNotAdmin())>
-<input type="text" @required($user->isAdmin())>
-```
-
----
-
-### Including Subviews
-
-Untuk menyertakan view lain:
-
-```blade
-@include('shared.errors')
-@include('view.name', ['status' => 'complete'])
-@includeIf('view.optional')
-@includeWhen($user->isAdmin(), 'view.admin')
-@includeUnless($user->isGuest(), 'view.member')
-@includeFirst(['custom.admin', 'admin'])
-```
-
----
-
-### Rendering Views for Collections
-
-Menggabungkan loop dan include dengan `@each`.
-
-```blade
-@each('partials.job', $jobs, 'job', 'partials.empty')
-```
-
----
-
-### The @once Directive
-
-Digunakan untuk memastikan bagian template hanya dieksekusi sekali.
-
-```blade
-@once
-    @push('scripts')
-        <script>alert("Hello");</script>
-    @endpush
-@endonce
-```
-
----
-
-### Raw PHP
-
-Jika perlu menjalankan kode PHP langsung:
+### 13. 🎨 Conditional Inline Styles
 
 ```blade
 @php
-    $counter = 1;
+    $isHighlighted = true;
+    $fontSize = '16px';
 @endphp
+
+<span @style([
+    'color: red',
+    'font-weight: bold' => $isHighlighted,
+    'font-size: ' . $fontSize,
+    'background-color: yellow' => $isHighlighted,
+])>
+    Teks dengan style kondisional
+</span>
 ```
 
-Import class dengan `@use`:
+### 14. 📋 HTML Attribute Directives
+
+Blade menyediakan shortcut untuk atribut HTML umum:
 
 ```blade
-@use('App\Models\Flight')
-@use('App\Models\Flight', 'FlightModel')
-@use('App\Models\{Flight, Airport}')
-```
+<!-- Checked attribute -->
+<input type="checkbox" @checked($user->isSubscribed())>
 
-Import function atau constant:
+<!-- Selected attribute -->
+<select>
+    <option value="1" @selected(old('category') == 1)>Kategori 1</option>
+    <option value="2" @selected(old('category') == 2)>Kategori 2</option>
+</select>
 
-```blade
-@use(function App\Helpers\format_currency, 'formatMoney')
-@use(const App\Constants\MAX_ATTEMPTS, 'MAX_TRIES')
+<!-- Disabled attribute -->
+<button @disabled($form->isLocked())>Submit</button>
+
+<!-- Required attribute -->
+<input type="email" @required($user->needsEmail())>
+
+<!-- Readonly attribute -->
+<input type="text" @readonly($user->isReadOnly())>
 ```
 
 ---
 
-### Komentar
+## Bagian 5: Template Inheritance - Membangun Layout yang Kuat 🏗️
 
-Blade mendukung komentar yang tidak akan muncul di HTML output.
+### 15. 🏛️ Dasar Template Inheritance
+
+Template inheritance memungkinkan kamu membuat layout dasar dan mengisinya dengan konten dari halaman lain:
+
+**Layout Dasar (`resources/views/layouts/app.blade.php`):**
+```blade
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@yield('title', 'Aplikasi Laravel')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @yield('styles')
+</head>
+<body>
+    <nav class="navbar">
+        <h1>{{ config('app.name') }}</h1>
+        <ul>
+            <li><a href="/">Beranda</a></li>
+            <li><a href="/about">Tentang</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        @yield('content')
+    </main>
+
+    <footer>
+        <p>&copy; {{ date('Y') }} {{ config('app.name') }}</p>
+    </footer>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    @yield('scripts')
+</body>
+</html>
+```
+
+**Halaman Anak (`resources/views/home.blade.php`):**
+```blade
+@extends('layouts.app')
+
+@section('title', 'Beranda')
+
+@section('styles')
+    <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+@endsection
+
+@section('content')
+    <div class="hero">
+        <h1>Selamat Datang di {{ config('app.name') }}</h1>
+        <p>Ini adalah halaman beranda.</p>
+    </div>
+    
+    <div class="features">
+        @foreach ($features as $feature)
+            <div class="feature-item">
+                <h3>{{ $feature->title }}</h3>
+                <p>{{ $feature->description }}</p>
+            </div>
+        @endforeach
+    </div>
+@endsection
+
+@section('scripts')
+    <script>
+        console.log('Halaman beranda dimuat');
+    </script>
+@endsection
+```
+
+### 16. 🔁 Menggunakan @parent dan @show
 
 ```blade
-{{-- Ini adalah komentar dan tidak akan tampil di browser --}}
+{{-- resources/views/layouts/master.blade.php --}}
+@section('sidebar')
+    <div class="master-sidebar">
+        <p>Menu utama</p>
+    </div>
+@show
+
+{{-- resources/views/page.blade.php --}}
+@extends('layouts.master')
+
+@section('sidebar')
+    @parent {{-- Menyertakan konten sidebar dari layout --}}
+    <div class="page-sidebar">
+        <p>Menu tambahan untuk halaman ini</p>
+    </div>
+@endsection
 ```
 
 ---
 
+## Bagian 6: Components - Membangun UI yang Dapat Digunakan Ulang 🔧
 
-## 📘Components
+### 17. 🏗️ Membuat Components
 
-### 1. Pendahuluan
-
-**Blade Components** adalah fitur Laravel yang memungkinkan kita untuk membangun UI yang lebih terstruktur, dapat digunakan ulang, dan mudah dikelola.
-Konsep ini mirip dengan *layouts*, *sections*, dan *includes*, tetapi lebih fleksibel dan modern.
-Ada dua jenis utama **components** di Blade:
-
-* **Class-based Component** → memiliki class PHP dan view.
-* **Anonymous Component** → hanya berupa view tanpa class.
-
----
-
-### 2. Membuat Component
-
-#### 2.1 Class-Based Component
-
-Gunakan perintah artisan berikut:
+Components adalah elemen UI modular yang bisa digunakan berulang:
 
 ```bash
+# Membuat component sederhana
 php artisan make:component Alert
-```
 
-📂 Laravel akan membuat:
-
-* Class di `app/View/Components/Alert.php`
-* View di `resources/views/components/alert.blade.php`
-
-Contoh struktur:
-
-```
-app/
- └── View/
-     └── Components/
-         └── Alert.php
-resources/
- └── views/
-     └── components/
-         └── alert.blade.php
-```
-
----
-
-#### 2.2 Subdirektori Component
-
-Kita bisa menaruh component dalam folder:
-
-```bash
+# Membuat component dengan subfolder
 php artisan make:component Forms/Input
+
+# Membuat component inline (tanpa file PHP terpisah)
+php artisan make:component Card --inline
 ```
 
-📂 Hasil:
+### 18. 📦 Class-Based Components
 
-* `app/View/Components/Forms/Input.php`
-* `resources/views/components/forms/input.blade.php`
-
-Render di Blade:
-
-```blade
-<x-forms.input />
-```
-
----
-
-#### 2.3 Anonymous Component
-
-Untuk membuat component tanpa class:
-
-```bash
-php artisan make:component forms.input --view
-```
-
-📂 Hasil:
-`resources/views/components/forms/input.blade.php`
-
-Render di Blade:
-
-```blade
-<x-forms.input />
-```
-
----
-
-### 3. Registrasi Manual Komponen Package
-
-Jika Anda membangun **package**, component harus diregistrasikan secara manual.
-
+**File PHP (`app/View/Components/Alert.php`):**
 ```php
-use Illuminate\Support\Facades\Blade;
-use VendorPackage\View\Components\AlertComponent;
+<?php
 
-public function boot(): void
-{
-    Blade::component('package-alert', AlertComponent::class);
-}
-```
+namespace App\View\Components;
 
-Pemakaian:
+use Illuminate\View\Component;
 
-```blade
-<x-package-alert />
-```
-
-Atau gunakan **namespace** agar otomatis:
-
-```php
-Blade::componentNamespace('Nightshade\\Views\\Components', 'nightshade');
-```
-
-Render di Blade:
-
-```blade
-<x-nightshade::calendar />
-<x-nightshade::color-picker />
-```
-
----
-
-### 4. Rendering Component
-
-#### 4.1 Pemanggilan Sederhana
-
-```blade
-<x-alert />
-<x-user-profile />
-```
-
-#### 4.2 Component dalam Subdirektori
-
-Jika file ada di `app/View/Components/Inputs/Button.php`:
-
-```blade
-<x-inputs.button />
-```
-
-#### 4.3 Conditional Rendering
-
-Gunakan method `shouldRender()` pada class component:
-
-```php
-public function shouldRender(): bool
-{
-    return strlen($this->message) > 0;
-}
-```
-
-Jika `false`, component tidak akan ditampilkan.
-
----
-
-### 5. Passing Data ke Component
-
-#### 5.1 Melalui Attribute
-
-```blade
-<x-alert type="error" :message="$message" />
-```
-
-#### 5.2 Definisi di Constructor
-
-```php
 class Alert extends Component
 {
-    public function __construct(
-        public string $type,
-        public string $message,
-    ) {}
+    public $type;
+    public $message;
 
-    public function render(): View
+    public function __construct($type = 'info', $message = '')
+    {
+        $this->type = $type;
+        $this->message = $message;
+    }
+
+    public function render()
     {
         return view('components.alert');
     }
 }
 ```
 
-#### 5.3 Pemakaian di View
-
+**File Template (`resources/views/components/alert.blade.php`):**
 ```blade
-<div class="alert alert-{{ $type }}">
+<div {{ $attributes->merge(['class' => "alert alert-{$type}"]) }}>
     {{ $message }}
+    {{ $slot }}
 </div>
 ```
 
----
-
-### 6. Slots
-
-#### 6.1 Default Slot
+### 19. 🎨 Menggunakan Components
 
 ```blade
-<x-alert>
-    <strong>Whoops!</strong> Something went wrong!
+<!-- Basic usage -->
+<x-alert type="success" message="Operasi berhasil!" />
+
+<!-- Dengan slot -->
+<x-alert type="warning" class="mb-4">
+    <strong>Peringatan!</strong> Harap perhatikan hal ini.
 </x-alert>
+
+<!-- Component dengan subfolder -->
+<x-forms.input type="email" name="email" placeholder="Email" />
+
+<!-- Component dengan kondisi -->
+@auth
+    <x-user-menu />
+@endauth
 ```
 
-Component `alert.blade.php`:
+### 20. 🎭 Anonymous Components
 
+Component tanpa file PHP - hanya file Blade:
+
+**File component (`resources/views/components/button.blade.php`):**
 ```blade
-<div class="alert alert-danger">
+@props(['type' => 'button', 'variant' => 'primary'])
+
+<button {{ $attributes->merge(['type' => $type, 'class' => "btn btn-{$variant}"]) }}>
     {{ $slot }}
-</div>
+</button>
 ```
 
----
+**Menggunakannya:**
+```blade
+<x-button variant="success">Simpan</x-button>
+<x-button variant="danger" class="ml-2">Hapus</x-button>
+```
 
-#### 6.2 Named Slot
+### 21. 🧩 Slots - Konten Fleksibel
 
 ```blade
-<x-alert>
+<!-- Component dengan slot default -->
+<x-card>
+    <h3>Ini adalah header</h3>
+    <p>Ini adalah konten dari slot default</p>
+</x-card>
+
+<!-- Component dengan named slot -->
+<x-modal>
     <x-slot:title>
-        Server Error
+        Konfirmasi Hapus
     </x-slot>
-    <strong>Whoops!</strong> Something went wrong!
-</x-alert>
-```
-
-`alert.blade.php`:
-
-```blade
-<span class="alert-title">{{ $title }}</span>
-<div class="alert alert-danger">
-    {{ $slot }}
-</div>
-```
-
----
-
-#### 6.3 Scoped Slot
-
-Mengakses method dari component class melalui `$component`:
-
-```blade
-<x-alert>
-    <x-slot:title>
-        {{ $component->formatAlert('Server Error') }}
+    
+    <x-slot:body>
+        <p>Apakah Anda yakin ingin menghapus item ini?</p>
     </x-slot>
-    <strong>Whoops!</strong> Something went wrong!
-</x-alert>
-```
-
----
-
-### 7. Component Attributes
-
-#### 7.1 Atribut Default & Merge
-
-```blade
-<div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
-    {{ $message }}
-</div>
-```
-
-Pemanggilan:
-
-```blade
-<x-alert type="error" :message="$message" class="mb-4" />
-```
-
-Hasil HTML:
-
-```html
-<div class="alert alert-error mb-4">
-    <!-- isi $message -->
-</div>
-```
-
----
-
-### 8. Inline Components
-
-Kadang kita tidak butuh file view terpisah. Bisa langsung return string:
-
-```php
-public function render(): string
-{
-    return <<<'blade'
-        <div class="alert alert-danger">
-            {{ $slot }}
-        </div>
-    blade;
-}
-```
-
-Atau buat langsung dengan artisan:
-
-```bash
-php artisan make:component Alert --inline
-```
-
----
-
-### 9. Dynamic Components
-
-Jika component ditentukan saat runtime:
-
-```php
-$componentName = "secondary-button";
-```
-
-Render:
-
-```blade
-<x-dynamic-component :component="$componentName" class="mt-4" />
-```
-
----
-
-
-## 📘Anonymous Components
-
-### 1. Pendahuluan
-
-**Anonymous Components** adalah cara sederhana untuk membuat komponen Blade tanpa harus menuliskan class PHP.
-Mirip dengan **inline components**, tetapi anonymous components hanya berupa **satu file Blade** di dalam folder `resources/views/components`.
-
-Contoh: jika kita membuat file berikut:
-
-```
-resources/views/components/alert.blade.php
-```
-
-Maka kita bisa langsung memanggilnya di template:
-
-```blade
-<x-alert />
-```
-
-Jika komponen berada di dalam subdirektori:
-
-```
-resources/views/components/inputs/button.blade.php
-```
-
-Maka cara pemanggilannya:
-
-```blade
-<x-inputs.button />
-```
-
----
-
-### 2. Anonymous Index Components
-
-Terkadang sebuah komponen memiliki beberapa file terkait.
-Misalnya komponen **accordion**:
-
-```
-/resources/views/components/accordion.blade.php
-/resources/views/components/accordion/item.blade.php
-```
-
-Pemanggilan:
-
-```blade
-<x-accordion>
-    <x-accordion.item>
-        ...
-    </x-accordion.item>
-</x-accordion>
-```
-
-👉 Tetapi pendekatan di atas mengharuskan file utama `accordion.blade.php` berada langsung di folder `components/`.
-
-Laravel menyediakan solusi: gunakan **index component**.
-Ubah struktur folder:
-
-```
-/resources/views/components/accordion/accordion.blade.php
-/resources/views/components/accordion/item.blade.php
-```
-
-Dan tetap bisa dipanggil dengan cara yang sama:
-
-```blade
-<x-accordion>
-    <x-accordion.item>...</x-accordion.item>
-</x-accordion>
-```
-
----
-
-### 3. Data Properties & Attributes
-
-Karena anonymous component tidak punya class, kita perlu mendefinisikan properti datanya.
-Gunakan direktif `@props` di bagian atas file Blade.
-
-Contoh:
-
-```blade
-{{-- /resources/views/components/alert.blade.php --}}
-@props(['type' => 'info', 'message'])
-
-<div {{ $attributes->merge(['class' => 'alert alert-'.$type]) }}>
-    {{ $message }}
-</div>
-```
-
-Pemanggilan:
-
-```blade
-<x-alert type="error" :message="$message" class="mb-4" />
-```
-
-📌
-
-* `type` → punya default value `"info"`.
-* `message` → wajib diisi.
-* `class="mb-4"` → masuk ke `$attributes`.
-
----
-
-### 4. Accessing Parent Data (Mengakses Data dari Parent Component)
-
-Kadang kita ingin **child component** bisa mewarisi data dari parent.
-Gunakan direktif `@aware`.
-
-Contoh penggunaan:
-
-```blade
-{{-- Pemanggilan --}}
-<x-menu color="purple">
-    <x-menu.item>Menu 1</x-menu.item>
-    <x-menu.item>Menu 2</x-menu.item>
-</x-menu>
-```
-
-#### Parent (`menu/index.blade.php`):
-
-```blade
-@props(['color' => 'gray'])
-
-<ul {{ $attributes->merge(['class' => 'bg-'.$color.'-200']) }}>
-    {{ $slot }}
-</ul>
-```
-
-#### Child (`menu/item.blade.php`):
-
-```blade
-@aware(['color' => 'gray'])
-
-<li {{ $attributes->merge(['class' => 'text-'.$color.'-800']) }}>
-    {{ $slot }}
-</li>
-```
-
-👉 Dengan `@aware`, child component `<x-menu.item>` bisa menggunakan atribut `color` yang awalnya hanya diberikan ke parent `<x-menu>`.
-
-⚠️ Catatan: `@aware` hanya bisa membaca **atribut yang dikirim via HTML**, bukan nilai default `@props`.
-
----
-
-### 5. Anonymous Component Paths
-
-Secara default, Laravel mencari anonymous components di:
-
-```
-resources/views/components
-```
-
-Tetapi kita bisa menambahkan **custom path** menggunakan `anonymousComponentPath()` di `AppServiceProvider`:
-
-```php
-public function boot(): void
-{
-    Blade::anonymousComponentPath(__DIR__.'/../components');
-}
-```
-
-Jika ada file `panel.blade.php` di folder tersebut, maka kita bisa langsung memanggilnya:
-
-```blade
-<x-panel />
-```
-
-#### Dengan Prefix Namespace
-
-Kita juga bisa menambahkan **prefix namespace**:
-
-```php
-Blade::anonymousComponentPath(__DIR__.'/../components', 'dashboard');
-```
-
-Maka, pemanggilannya:
-
-```blade
-<x-dashboard::panel />
-```
-
----
-
-## 📘Building Layouts
-
-### 1. Layouts Menggunakan Components
-
-#### Definisi Layout Component
-
-Laravel memungkinkan kita membuat layout utama sebagai **komponen Blade** sehingga tidak perlu menuliskan ulang struktur HTML di setiap view.
-
-Contoh layout sederhana untuk aplikasi Todo List:
-
-```blade
-{{-- resources/views/components/layout.blade.php --}}
-<html>
-    <head>
-        <title>{{ $title ?? 'Todo Manager' }}</title>
-    </head>
-    <body>
-        <h1>Todos</h1>
-        <hr/>
-        {{ $slot }}
-    </body>
-</html>
-```
-
-📌
-
-* `$slot` → tempat konten view anak akan ditampilkan.
-* `$title` → slot opsional yang bisa di-override.
-
----
-
-#### Menggunakan Layout di View
-
-```blade
-{{-- resources/views/tasks.blade.php --}}
-<x-layout>
-    @foreach ($tasks as $task)
-        <div>{{ $task }}</div>
-    @endforeach
-</x-layout>
-```
-
-Jika ingin mengganti **title**, gunakan **named slot**:
-
-```blade
-{{-- resources/views/tasks.blade.php --}}
-<x-layout>
-    <x-slot:title>
-        Custom Title
+    
+    <x-slot:footer>
+        <button class="btn btn-danger">Hapus</button>
+        <button class="btn btn-secondary">Batal</button>
     </x-slot>
-
-    @foreach ($tasks as $task)
-        <div>{{ $task }}</div>
-    @endforeach
-</x-layout>
+</x-modal>
 ```
 
-#### Routing
+### 22. 🧬 Component Attributes
 
-```php
-use App\Models\Task;
+Menggabungkan atribut dari component dan parent:
 
-Route::get('/tasks', function () {
-    return view('tasks', ['tasks' => Task::all()]);
-});
+```blade
+<!-- resources/views/components/input.blade.php -->
+@props(['type' => 'text', 'name', 'label'])
+
+<div class="form-group">
+    <label for="{{ $name }}">{{ $label }}</label>
+    <input 
+        type="{{ $type }}" 
+        name="{{ $name }}" 
+        id="{{ $name }}"
+        {{ $attributes->merge(['class' => 'form-control']) }}
+    >
+</div>
+
+<!-- Penggunaan -->
+<x-input 
+    name="email" 
+    label="Email" 
+    type="email" 
+    class="custom-class" 
+    placeholder="masukkan email"
+/>
 ```
 
 ---
 
-### 2. Layouts Menggunakan Template Inheritance
+## Bagian 7: Form Handling - Keamanan dan Validasi 📝
 
-Sebelum ada Blade Components, Laravel menyediakan **template inheritance** yang masih banyak dipakai.
+### 23. 🔐 CSRF Protection
 
-#### Definisi Layout
-
-```blade
-{{-- resources/views/layouts/app.blade.php --}}
-<html>
-    <head>
-        <title>App Name - @yield('title')</title>
-    </head>
-    <body>
-        @section('sidebar')
-            This is the master sidebar.
-        @show
-
-        <div class="container">
-            @yield('content')
-        </div>
-    </body>
-</html>
-```
-
-📌
-
-* `@section` → mendefinisikan sebuah section.
-* `@yield` → menampilkan isi dari section yang didefinisikan di child view.
-
----
-
-#### Membuat Child View
+CSRF (Cross-Site Request Forgery) protection adalah penting untuk keamanan:
 
 ```blade
-{{-- resources/views/child.blade.php --}}
-@extends('layouts.app')
-
-@section('title', 'Page Title')
-
-@section('sidebar')
-    @@parent
-    <p>This is appended to the master sidebar.</p>
-@endsection
-
-@section('content')
-    <p>This is my body content.</p>
-@endsection
-```
-
-📌
-
-* `@extends` → menentukan layout yang diwarisi.
-* `@@parent` → menambahkan isi baru di section tanpa menimpa isi bawaan layout.
-* `@endsection` → hanya mendefinisikan section.
-* `@show` → mendefinisikan **dan langsung menampilkan** section.
-
----
-
-#### Default Value untuk `@yield`
-
-`@yield` bisa diberi default value jika section tidak didefinisikan:
-
-```blade
-@yield('content', 'Default content')
-```
-
----
-
-## 📘Forms
-
-### 1. CSRF Field
-
-Laravel melindungi aplikasi dari serangan **Cross-Site Request Forgery (CSRF)**.
-Setiap form **POST**, **PUT**, **PATCH**, atau **DELETE** harus menyertakan **token CSRF** agar request dianggap valid oleh middleware Laravel.
-
-Blade menyediakan direktif `@csrf` untuk menghasilkan input hidden secara otomatis:
-
-```blade
+<!-- Form dengan CSRF token -->
 <form method="POST" action="/profile">
     @csrf
-    <!-- isi form -->
+    <!-- atau -->
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    
+    <input type="text" name="name">
+    <button type="submit">Simpan</button>
 </form>
-```
 
-📌 Tanpa token ini, Laravel akan menolak request dengan status **419 Page Expired**.
-
----
-
-### 2. Method Field
-
-Karena HTML standar hanya mendukung **GET** dan **POST**, maka untuk **PUT**, **PATCH**, atau **DELETE** kita perlu menggunakan hidden field `_method`.
-
-Blade menyediakan direktif `@method`:
-
-```blade
-<form action="/foo/bar" method="POST">
-    @method('PUT')
+<!-- Method override untuk PUT/PATCH/DELETE -->
+<form method="POST" action="/user/1" class="d-inline">
     @csrf
-    <!-- isi form -->
+    @method('PUT')
+    <button type="submit" class="btn btn-sm btn-primary">Update</button>
 </form>
 ```
 
-📌 Laravel akan membaca `_method` dan mengenalinya sebagai HTTP verb yang sesuai.
+### 24. 🚨 Validation Errors Display
 
----
-
-### 3. Validation Errors
-
-Validasi input adalah bagian penting dari form. Laravel menyediakan cara mudah untuk menampilkan error validasi melalui direktif `@error`.
-
-#### Contoh dasar
+Menampilkan error validasi dengan mudah:
 
 ```blade
-<!-- resources/views/post/create.blade.php -->
-<label for="title">Post Title</label>
-
-<input
-    id="title"
-    type="text"
-    class="@error('title') is-invalid @enderror"
-/>
-
-@error('title')
-    <div class="alert alert-danger">{{ $message }}</div>
-@enderror
+<form method="POST" action="/register">
+    @csrf
+    
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+            type="email" 
+            id="email"
+            name="email"
+            value="{{ old('email') }}"
+            class="@error('email') is-invalid @enderror"
+        >
+        @error('email')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
+    
+    <div class="form-group">
+        <label for="name">Nama</label>
+        <input 
+            type="text" 
+            id="name"
+            name="name"
+            value="{{ old('name') }}"
+            class="@error('name') is-invalid @enderror"
+        >
+        @error('name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+    
+    <button type="submit">Daftar</button>
+</form>
 ```
 
-📌
+### 25. 🧪 Multiple Form Validation
 
-* `@error('title')` → akan aktif jika ada error untuk field `title`.
-* Variabel `$message` otomatis berisi pesan error validasi.
-
----
-
-#### Menggunakan `@else`
-
-Karena `@error` dikompilasi menjadi `if`, kita bisa memakai `@else` untuk kondisi sebaliknya:
-
-```blade
-<!-- resources/views/auth.blade.php -->
-<label for="email">Email address</label>
-
-<input
-    id="email"
-    type="email"
-    class="@error('email') is-invalid @else is-valid @enderror"
-/>
-```
-
-📌 Jika ada error → input diberi class `is-invalid`.
-Jika tidak ada error → input diberi class `is-valid`.
-
----
-
-#### Menggunakan Error Bag
-
-Laravel mendukung banyak form pada satu halaman. Kadang tiap form punya **error bag** sendiri. Kita bisa menentukan error bag kedua pada `@error`.
+Menggunakan error bag untuk form berbeda di halaman yang sama:
 
 ```blade
 <!-- resources/views/auth.blade.php -->
-<label for="email">Email address</label>
-
-<input
-    id="email"
-    type="email"
-    class="@error('email', 'login') is-invalid @enderror"
-/>
-
-@error('email', 'login')
-    <div class="alert alert-danger">{{ $message }}</div>
-@enderror
+<div class="row">
+    <div class="col-md-6">
+        <!-- Form Login -->
+        <form method="POST" action="/login">
+            @csrf
+            <input type="email" name="email" @error('email', 'login') class="is-invalid" @enderror>
+            @error('email', 'login')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+    <div class="col-md-6">
+        <!-- Form Register -->
+        <form method="POST" action="/register">
+            @csrf
+            <input type="email" name="email" @error('email', 'register') class="is-invalid" @enderror>
+            @error('email', 'register')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</div>
 ```
 
-📌
-
-* `'login'` adalah nama error bag.
-* Berguna ketika ada lebih dari satu form di satu halaman, misalnya form **register** dan **login**.
-
 ---
 
+## Bagian 8: Blade Stacks - Menyisipkan Konten Dinamis 📚
 
+### 26. 🗂️ Mengelola CSS/JS Tambahan
 
----
+Blade stacks sangat berguna untuk menyisipkan script atau CSS spesifik halaman:
 
-## 📘Blade Stacks
-
-### 🔹 Konsep
-
-`Stacks` di Blade memungkinkan kita **menambahkan konten ke area tertentu dari layout**.
-Biasanya dipakai untuk:
-
-* Menyertakan **JavaScript library** tambahan.
-* Menyisipkan **CSS khusus** hanya pada halaman tertentu.
-
-Dengan stacks, child view bisa "menyuntikkan" script atau markup tambahan ke layout tanpa perlu mengedit layout langsung.
-
----
-
-### 🔹 Menambahkan ke Stack
-
-Gunakan `@push` untuk menambahkan konten ke stack bernama:
-
+**Layout (`resources/views/layouts/app.blade.php`):**
 ```blade
-@push('scripts')
-    <script src="/example.js"></script>
-@endpush
-```
-
----
-
-### 🔹 Kondisional Push
-
-Jika ingin menambahkan hanya ketika kondisi bernilai **true**, gunakan `@pushIf`:
-
-```blade
-@pushIf($shouldPush, 'scripts')
-    <script src="/example.js"></script>
-@endPushIf
-```
-
----
-
-### 🔹 Menampilkan Stack
-
-Di layout utama (misalnya `layouts/app.blade.php`), gunakan `@stack` untuk menampilkan semua konten stack:
-
-```blade
-<head>
-    <!-- Head Contents -->
-
-    @stack('scripts')
-</head>
-```
-
-📌 Semua `@push('scripts')` dari child view akan terkumpul di sini.
-
----
-
-### 🔹 Prepend ke Stack
-
-Jika ingin konten tampil **lebih dulu** sebelum konten stack lain, gunakan `@prepend`:
-
-```blade
-@push('scripts')
-    This will be second...
-@endpush
-
-@prepend('scripts')
-    This will be first...
-@endprepend
-```
-
-Hasil akhirnya:
-
-```
-This will be first...
-This will be second...
-```
-
----
-
-### ✅ Contoh Praktis
-
-#### Layout (`layouts/app.blade.php`)
-
-```blade
+<!DOCTYPE html>
 <html>
 <head>
-    <title>My App</title>
-    @stack('scripts')
+    <title>@yield('title')</title>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
-    <h1>Welcome</h1>
     @yield('content')
+    
+    <script src="{{ asset('js/app.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>
 ```
 
-#### Child View (`home.blade.php`)
-
+**Halaman dengan konten tambahan (`resources/views/dashboard.blade.php`):**
 ```blade
 @extends('layouts.app')
 
-@section('content')
-    <p>Homepage Content</p>
-@endsection
+@section('title', 'Dashboard')
+
+@push('styles')
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+@endpush
 
 @push('scripts')
-    <script src="/homepage.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+    </script>
 @endpush
+
+@section('content')
+    <h1>Dashboard</h1>
+    <table id="dataTable" class="table">
+        <thead>
+            <tr><th>Nama</th><th>Email</th></tr>
+        </thead>
+        <tbody>
+            @foreach($users as $user)
+                <tr>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+@endsection
 ```
 
-#### Output Rendered
+### 27. 🔁 Prepend vs Push
 
-```html
-<html>
+```blade
+<!-- Di layout -->
 <head>
-    <title>My App</title>
-    <script src="/homepage.js"></script>
+    @stack('head')
 </head>
-<body>
-    <h1>Welcome</h1>
-    <p>Homepage Content</p>
-</body>
-</html>
+
+<!-- Di halaman A -->
+@push('head')
+    <!-- Akan muncul terakhir -->
+    <script src="script-a.js"></script>
+@endpush
+
+<!-- Di halaman B -->
+@prepend('head')
+    <!-- Akan muncul pertama -->
+    <script src="script-b.js"></script>
+@endprepend
+
+<!-- Hasil akhir: -->
+<!-- <script src="script-b.js"></script> -->
+<!-- <script src="script-a.js"></script> -->
 ```
 
 ---
 
----
+## Bagian 9: Advanced Features - Fitur-fitur Kuat Lainnya ⚡
 
-## 📘Service Injection di Blade
+### 28. 🔧 Service Injection
 
-### 🔹 Konsep
-
-Kadang kita butuh **mengakses service atau class** langsung di dalam Blade template tanpa harus mengoper datanya dari controller.
-Laravel menyediakan direktif `@inject` untuk **mengambil service dari service container** dan menjadikannya variabel di view.
-
----
-
-### 🔹 Sintaks
+Mengakses service langsung dari template:
 
 ```blade
-@inject('variableName', 'Full\Namespace\To\Service')
-```
-
-* **parameter pertama** → nama variabel yang akan dipakai di Blade.
-* **parameter kedua** → nama class / interface yang ingin di-resolve dari service container.
-
----
-
-### 🔹 Contoh
-
-Misalnya kita punya service `MetricsService`:
-
-```php
-namespace App\Services;
-
-class MetricsService
-{
-    public function monthlyRevenue(): string
-    {
-        return '$12,345';
-    }
-}
-```
-
-Kemudian di Blade:
-
-```blade
+<!-- resources/views/dashboard.blade.php -->
 @inject('metrics', 'App\Services\MetricsService')
 
-<div>
-    Monthly Revenue: {{ $metrics->monthlyRevenue() }}.
+<div class="dashboard-stats">
+    <h3>Statistik Bulan Ini</h3>
+    <p>Pendapatan: {{ $metrics->monthlyRevenue() }}</p>
+    <p>Pengguna Baru: {{ $metrics->newUsersCount() }}</p>
 </div>
 ```
 
-📌 Hasil yang ditampilkan di browser:
+### 29. 🧪 Conditional Directives
 
-```html
-<div>
-    Monthly Revenue: $12,345.
-</div>
+```blade
+<!-- Cek apakah section ada -->
+@hasSection('sidebar')
+    <aside class="sidebar">
+        @yield('sidebar')
+    </aside>
+@endif
+
+<!-- Cek apakah section tidak ada -->
+@sectionMissing('header')
+    @include('partials.default-header')
+@endif
+
+<!-- Session check -->
+@session('success')
+    <div class="alert alert-success">
+        {{ $value }}
+    </div>
+@endsession
 ```
 
----
+### 30. 🔀 JavaScript Integration
 
-### 🔹 Kapan Digunakan?
+Mengintegrasikan dengan framework JavaScript:
 
-* Jika hanya butuh **sekali akses service** langsung dari Blade.
-* Cocok untuk **utility services** (misalnya format tanggal, statistik, konfigurasi global).
+```blade
+<!-- Escape untuk Vue/Angular -->
+<div id="app">
+    Halo, @{{ name }}!
+</div>
 
----
+<!-- Atau gunakan verbatim untuk blok besar -->
+@verbatim
+<div id="vue-app">
+    <p>Nama: {{ user.name }}</p>
+    <p>Email: {{ user.email }}</p>
+</div>
+@endverbatim
 
-### ⚠️ Catatan
+<!-- Mengirim data PHP ke JavaScript -->
+<script>
+    window.Laravel = {
+        csrfToken: '{{ csrf_token() }}',
+        user: @json($user),
+        notifications: @json($notifications)
+    };
+</script>
 
-* Jika service dipakai **sering atau kompleks**, sebaiknya inject di **controller** lalu oper ke view dengan `view()->with()` → ini menjaga **separation of concerns**.
-* `@inject` lebih cocok untuk **quick access** di view, bukan logic utama aplikasi.
+<!-- Atau dengan Js helper -->
+<script>
+    const app = {{ Js::from($data) }};
+</script>
+```
 
----
+### 31. 🧠 Raw PHP dan Fungsi Lainnya
 
----
+```blade
+<!-- Kode PHP langsung -->
+@php
+    $isActive = true;
+    $count = $posts->count();
+@endphp
 
-## 📘Rendering Inline Blade Templates & Fragments
+@if($count > 0)
+    <p>Ada {{ $count }} postingan</p>
+@endif
 
-### 🔹 1. Rendering Inline Blade Templates
+<!-- Import kelas -->
+@use('App\Models\User')
+@use('App\Models\{Post, Comment}')
 
-Kadang kita butuh **langsung render string Blade** menjadi HTML tanpa harus membuat file view `.blade.php`.
-Laravel menyediakan `Blade::render()` untuk hal ini.
+<!-- Import fungsi -->
+@use(function App\Helpers\formatCurrency, 'formatMoney')
+@use(const App\Constants\MAX_ATTEMPTS, 'MAX_TRIES')
 
-#### 📌 Contoh dasar
+<!-- Komentar (tidak muncul di HTML) -->
+{{-- Ini adalah komentar dan tidak akan tampil di browser --}}
+```
+
+### 32. 🔄 Inline Blade Rendering
 
 ```php
+// Di controller
 use Illuminate\Support\Facades\Blade;
 
-return Blade::render('Hello, {{ $name }}', ['name' => 'Julian Bashir']);
-```
+// Render template langsung dari string
+$html = Blade::render('Halo, {{ $name }}!', ['name' => $user->name]);
 
-📍 Output:
-
-```html
-Hello, Julian Bashir
-```
-
-#### 📌 Hapus cache setelah render
-
-Secara default, Blade akan menyimpan file cache di `storage/framework/views`.
-Kalau hanya butuh sekali render, bisa pakai `deleteCachedView: true` agar file cache langsung dihapus:
-
-```php
-return Blade::render(
-    'Hello, {{ $name }}',
-    ['name' => 'Julian Bashir'],
+// Dengan penghapusan cache otomatis
+$html = Blade::render(
+    'Template: {{ $value }}',
+    ['value' => $data],
     deleteCachedView: true
 );
 ```
 
-✅ Cocok untuk:
-
-* Template yang **dinamis**
-* Email content rendering
-* Quick test / string-based view
-
 ---
 
-### 🔹 2. Rendering Blade Fragments
+## Bagian 10: Best Practices & Tips ✅
 
-Kadang kita butuh **hanya sebagian view** dikembalikan (misalnya saat pakai frontend framework: Turbo, htmx).
-Laravel mendukung ini dengan **@fragment**.
+### 33. 📋 Praktik Terbaik untuk Blade
 
-#### 📌 Definisi fragment di Blade
+1. **Gunakan Components untuk UI yang Dapat Digunakan Ulang**:
+   ```blade
+   <!-- Jangan -->
+   <div class="alert alert-success">{{ $message }}</div>
+   
+   <!-- Lebih baik -->
+   <x-alert type="success">{{ $message }}</x-alert>
+   ```
+
+2. **Gunakan Layout dan Template Inheritance**:
+   - Pisahkan struktur dasar dari konten
+   - Gunakan sections untuk bagian yang bisa diubah
+
+3. **Hindari Logika Kompleks di View**:
+   - Pindahkan logika ke controller atau model
+   - Gunakan accessor/mutator untuk transformasi sederhana
+
+4. **Gunakan Escaping Secara Default**:
+   - Gunakan `{!! !!}` hanya ketika benar-benar yakin aman
+
+### 34. 💡 Tips dan Trik Berguna
 
 ```blade
-@fragment('user-list')
-    <ul>
-        @foreach ($users as $user)
-            <li>{{ $user->name }}</li>
-        @endforeach
-    </ul>
-@endfragment
+<!-- Conditional rendering yang elegan -->
+{{ $user->name ?? 'Pengguna Baru' }}
+
+<!-- Gunakan @includeWhen dan @includeUnless -->
+@includeWhen($user->isAdmin(), 'partials.admin-tools')
+@includeUnless($user->isSubscribed(), 'partials.upgrade-notice')
+
+<!-- Gunakan @includeFirst -->
+@includeFirst(['custom.alert', 'default.alert'], ['message' => $message])
+
+<!-- Gunakan @once untuk mencegah duplikasi -->
+@once
+    @push('scripts')
+        <script src="unique-script.js"></script>
+    @endpush
+@endonce
 ```
-
-#### 📌 Return hanya fragment
-
-```php
-return view('dashboard', ['users' => $users])->fragment('user-list');
-```
-
-👉 Hanya `<ul>...</ul>` yang dikembalikan, bukan keseluruhan `dashboard.blade.php`.
 
 ---
 
-### 🔹 3. Conditional Fragment
+## Bagian 11: Contoh Implementasi Lengkap 👨‍💻
 
-Jika ingin render fragment **hanya jika kondisi tertentu terpenuhi**:
+Mari kita buat contoh aplikasi sederhana dengan berbagai fitur Blade:
 
-```php
-return view('dashboard', ['users' => $users])
-    ->fragmentIf($request->hasHeader('HX-Request'), 'user-list');
-```
-
-* Kalau request dari **htmx/Turbo** → hanya fragment `user-list`.
-* Kalau request biasa → render full view.
-
----
-
-### 🔹 4. Multiple Fragments
-
-Bisa juga render **lebih dari satu fragment**:
-
-```php
-view('dashboard', ['users' => $users])
-    ->fragments(['user-list', 'comment-list']);
-```
-
-Atau conditional multiple fragments:
-
-```php
-view('dashboard', ['users' => $users])
-    ->fragmentsIf(
-        $request->hasHeader('HX-Request'),
-        ['user-list', 'comment-list']
-    );
-```
-
-📌 Hasil akhirnya: semua fragment yang disebutkan akan digabungkan.
-
----
-
-### ⚖️ Perbandingan
-
-* **Blade::render()** → untuk **inline string template** (tanpa file Blade).
-* **Fragments** → untuk **partial view rendering** (hanya sebagian konten view).
-
----
-
----
-
-## 📘Extending Blade
-
-### 🔹 1. Custom Directives
-
-Laravel memungkinkan kamu bikin **directive baru** dengan `Blade::directive()`.
-
-#### 📌 Contoh
-
-Buat `@datetime($var)` untuk format tanggal:
-
-```php
-// App\Providers\AppServiceProvider.php
-use Illuminate\Support\Facades\Blade;
-
-public function boot(): void
-{
-    Blade::directive('datetime', function (string $expression) {
-        return "<?php echo ($expression)->format('m/d/Y H:i'); ?>";
-    });
-}
-```
-
-👉 Blade:
-
+**Layout Dasar (`resources/views/layouts/app.blade.php`):**
 ```blade
-@datetime($user->created_at)
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $title ?? 'Aplikasi Laravel' }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    @stack('styles')
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">{{ config('app.name') }}</a>
+            
+            <div class="navbar-nav ms-auto">
+                @auth
+                    <span class="navbar-text me-3">Halo, {{ Auth::user()->name }}</span>
+                    <a class="nav-link" href="/logout">Logout</a>
+                @else
+                    <a class="nav-link" href="/login">Login</a>
+                @endauth
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @yield('content')
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+</body>
+</html>
 ```
 
-👉 Output:
-
-```html
-09/20/2025 14:35
-```
-
-📌 Jangan lupa jalankan:
-
-```bash
-php artisan view:clear
-```
-
-setelah update directive.
-
----
-
-### 🔹 2. Custom Echo Handlers
-
-Biasanya `{{ $obj }}` akan memanggil `__toString()`.
-Kalau library pihak ketiga tidak punya `__toString()`, kita bisa atur handler pakai `Blade::stringable()`.
-
-#### 📌 Contoh
-
-```php
-use Illuminate\Support\Facades\Blade;
-use Money\Money;
-
-public function boot(): void
-{
-    Blade::stringable(function (Money $money) {
-        return $money->formatTo('en_GB');
-    });
-}
-```
-
-👉 Blade:
-
+**Component Alert (`resources/views/components/alert.blade.php`):**
 ```blade
-Cost: {{ $money }}
+@props(['type' => 'info', 'dismissible' => false])
+
+<div {{ $attributes->merge(['class' => "alert alert-{$type}"]) }} role="alert">
+    @if ($dismissible)
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    @endif
+    
+    {{ $slot }}
+</div>
 ```
 
-👉 Output:
-
-```html
-Cost: £1,234.56
-```
-
----
-
-### 🔹 3. Custom If Statements
-
-Kalau butuh kondisi custom tanpa directive panjang, gunakan `Blade::if()`.
-
-#### 📌 Contoh
-
-Cek **default filesystem disk**:
-
-```php
-use Illuminate\Support\Facades\Blade;
-
-public function boot(): void
-{
-    Blade::if('disk', function (string $value) {
-        return config('filesystems.default') === $value;
-    });
-}
-```
-
-👉 Blade:
-
+**Halaman Dashboard (`resources/views/dashboard.blade.php`):**
 ```blade
-@disk('local')
-    Using local disk...
-@elsedisk('s3')
-    Using s3 disk...
-@else
-    Using another disk...
-@enddisk
+@extends('layouts.app')
 
-@unlessdisk('local')
-    Not using local disk...
-@enddisk
+@section('title', 'Dashboard')
+
+@push('styles')
+    <style>
+        .stats-card {
+            border-left: 4px solid #0d6efd;
+        }
+    </style>
+@endpush
+
+@section('content')
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Dashboard</h1>
+            
+            <x-alert type="success" dismissible class="mb-4">
+                Selamat datang di dashboard!
+            </x-alert>
+            
+            <div class="row">
+                @php
+                    $stats = [
+                        ['title' => 'Pengguna', 'value' => $userCount, 'icon' => 'users', 'color' => 'primary'],
+                        ['title' => 'Postingan', 'value' => $postCount, 'icon' => 'file-text', 'color' => 'success'],
+                        ['title' => 'Komentar', 'value' => $commentCount, 'icon' => 'message-square', 'color' => 'info'],
+                    ];
+                @endphp
+                
+                @foreach ($stats as $stat)
+                    <div class="col-md-4 mb-3">
+                        <div class="card stats-card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $stat['title'] }}</h5>
+                                <h2 class="text-{{ $stat['color'] }}">{{ $stat['value'] }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            
+            @if ($recentPosts->count() > 0)
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5>Postingan Terbaru</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            @foreach ($recentPosts->take(5) as $post)
+                                <li class="list-group-item">
+                                    <a href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
+                                    <small class="text-muted">oleh {{ $post->user->name }} - {{ $post->created_at->diffForHumans() }}</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @else
+                <x-alert type="secondary" class="mt-4">
+                    Belum ada postingan.
+                </x-alert>
+            @endif
+        </div>
+    </div>
+@endsection
+```
+
+**Route:**
+```php
+// routes/web.php
+Route::get('/dashboard', function () {
+    $userCount = \App\Models\User::count();
+    $postCount = \App\Models\Post::count();
+    $commentCount = \App\Models\Comment::count();
+    $recentPosts = \App\Models\Post::with('user')->latest()->take(10)->get();
+    
+    return view('dashboard', compact('userCount', 'postCount', 'commentCount', 'recentPosts'));
+})->middleware('auth');
 ```
 
 ---
 
-### ⚖️ Kapan Dipakai?
+## 12. 📚 Cheat Sheet & Referensi Cepat
 
-* **Custom Directive** → kalau sering butuh transformasi data di view (misalnya `@currency`, `@uppercase`).
-* **Custom Echo Handler** → kalau ingin Blade otomatis tahu cara menampilkan objek tertentu.
-* **Custom If** → kalau butuh kondisi reusable (misalnya `@admin`, `@featureEnabled('x')`).
+### 🧩 Sintaks Blade Umum
+```
+{{ $data }}                → Tampilkan data (dengan escaping)
+{!! $html !!}              → Tampilkan HTML tanpa escaping  
+@{{ raw_data }}            → Tampilkan literal {{ }}
+@php /* PHP code */ @endphp → Jalankan PHP
+@verbatim ... @endverbatim → Tidak proses isi
+```
+
+### 🔁 Struktur Kendali
+```
+@if / @endif              → Kondisi
+@unless / @endunless      → Kebalikan dari if
+@isset / @endisset        → Cek apakah variabel ada
+@empty / @endempty        → Cek apakah kosong
+@foreach / @endforeach     → Perulangan
+@forelse / @empty / @endforelse → Perulangan dengan empty state
+```
+
+### 🏛️ Template Inheritance
+```
+@extends('layout')        → Gunakan layout
+@section / @endsection     → Definisikan bagian
+@yield('section')         → Tampilkan bagian di layout
+@parent                   → Sertakan konten dari layout
+@hasSection('name')       → Cek apakah section ada
+```
+
+### 🔧 Components
+```
+<x-component-name />       → Gunakan component
+<x-component :prop="$value" /> → Kirim data ke component
+<x-slot:name>...@endslot   → Named slot
+{{ $slot }}               → Default slot
+{{ $attributes }}          → Atribut komponen
+```
+
+### 🧮 Conditional Classes/Attributes
+```
+@class([...])             → Kelas CSS kondisional
+@style([...])             → Style kondisional
+@checked($condition)       → Atribut checked
+@selected($condition)      → Atribut selected
+@disabled($condition)      → Atribut disabled
+```
+
+### 📚 Stacks
+```
+@push('name') ... @endpush     → Tambahkan ke stack
+@prepend('name') ... @endprepend → Tambahkan ke awal stack
+@stack('name')                 → Tampilkan stack
+```
+
+### 🔐 Forms
+```
+@csrf                        → CSRF token
+@method('PUT')              → Method override
+@error('field') ... @enderror → Tampilkan error validasi
+```
+
+### 🔧 CLI Commands
+```
+php artisan make:component Name          → Buat component
+php artisan view:clear                   → Hapus cache view
+php artisan view:cache                   → Cache semua view
+```
 
 ---
 
+## 13. 🎯 Kesimpulan
+
+Blade adalah templating engine yang sangat kuat dan fleksibel yang memungkinkan kamu membuat tampilan web yang indah dan dinamis. Dengan memahami konsep berikut:
+
+- **Template inheritance** untuk menyusun layout dengan terstruktur
+- **Components** untuk membuat UI yang dapat digunakan ulang
+- **Directives** untuk kontrol alur program
+- **Security features** untuk perlindungan XSS
+- **Stacks** untuk mengelola asset dinamis
+- **Conditional attributes** untuk styling fleksibel
+
+Kamu sekarang siap membuat tampilan web profesional dengan Laravel. Ingat selalu untuk menjaga perpisahan antara logika tampilan dan logika aplikasi, serta selalu perhatikan aspek keamanan saat menampilkan data pengguna.
+
+Selamat mengembangkan aplikasi kamu, muridku! Dengan kuasai Blade, kamu sudah melangkah jauh dalam membangun aplikasi web yang indah dan fungsional.

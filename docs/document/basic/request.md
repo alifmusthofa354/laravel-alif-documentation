@@ -1,754 +1,508 @@
-# HTTP Requests di Laravel
+# 📨 HTTP Requests di Laravel - Panduan Lengkap untuk Pemula
 
-Dalam pengembangan aplikasi web, **HTTP Request** adalah fondasi utama komunikasi antara client (seperti browser atau aplikasi mobile) dan server. Laravel menyediakan class `Illuminate\Http\Request` yang memberikan cara berorientasi objek untuk berinteraksi dengan request yang sedang diproses.
-Dengan class ini, kita dapat dengan mudah mengambil input, cookie, file, serta memeriksa informasi lain yang terkait dengan request.
+Hai muridku yang hebat! Hari ini kita akan belajar tentang **HTTP Requests** di Laravel - bagian penting dari setiap aplikasi web yang bertanggung jawab untuk menangani data yang dikirim dari client (seperti browser, mobile app, atau API lain) ke server. Seperti biasa, aku akan menjelaskan semuanya dengan bahasa yang mudah dan contoh kode yang bisa kamu coba sendiri.
 
 ---
 
-## 📘Berinteraksi dengan Request
+## Bagian 1: Memahami Dasar-dasar HTTP Request 🎯
 
-#### Mengakses Request
+### 1. 📖 Apa Itu HTTP Request?
 
-Untuk mendapatkan instance dari request yang sedang berjalan, kita dapat menggunakan **Dependency Injection** dengan menambahkan type-hint `Illuminate\Http\Request` pada method controller atau route closure. Laravel akan otomatis menyuntikkan (inject) request tersebut.
+**Analogi Sederhana:** Bayangkan kamu datang ke sebuah restoran dan memberikan pesananmu ke pelayan. Pesananmu (apa yang kamu minta makanan dan minuman) adalah **request**, dan pelayan yang mengantar pesananmu ke dapur adalah **Laravel** yang menangani request-mu.
 
-**Contoh pada Controller:**
+Dalam dunia web:
+
+- **Client** (browser, mobile app) mengirim request ke server
+- **HTTP Request** berisi informasi seperti URL, method (GET, POST, PUT, dll), headers, dan data yang dikirim
+- **Laravel** menerima request dan memberikan response yang sesuai
+
+**Jenis HTTP Methods Umum:**
+- `GET`: Mengambil data
+- `POST`: Mengirim data baru
+- `PUT/PATCH`: Mengupdate data
+- `DELETE`: Menghapus data
+
+### 2. 💡 Konsep Dasar Request di Laravel
+
+Laravel menyediakan class `Illuminate\Http\Request` yang memudahkan kita untuk:
+
+- Mengakses semua data dari request (input, file, headers, dll)
+- Memvalidasi data dengan mudah
+- Menangani file upload
+- Mengetahui informasi tentang request (path, method, IP, dll)
+
+---
+
+## Bagian 2: Mengakses Request dalam Controller 🔧
+
+### 3. 🧰 Dependency Injection untuk Request
+
+Cara paling umum dan direkomendasikan untuk mengakses request adalah menggunakan **Dependency Injection**:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
 {
-    /**
-     * Store a new user.
-     */
     public function store(Request $request): RedirectResponse
     {
+        // Mengambil data dari request
         $name = $request->input('name');
-
-        // Simpan user...
-
+        $email = $request->input('email');
+        
+        // Proses data
+        // ...
+        
         return redirect('/users');
+    }
+    
+    public function update(Request $request, int $id): RedirectResponse
+    {
+        // Bisa juga digabung dengan parameter route
+        $data = $request->only(['name', 'email']);
+        
+        // Update user
+        // ...
+        
+        return redirect()->route('users.show', $id);
     }
 }
 ```
 
-**Contoh pada Route Closure:**
+### 4. 🔄 Mengakses Request di Route Closure
+
+Jika kamu tidak menggunakan controller, kamu bisa mengakses request langsung di route closure:
 
 ```php
 use Illuminate\Http\Request;
 
-Route::get('/', function (Request $request) {
-    // Akses request di sini...
+Route::post('/users', function (Request $request) {
+    $name = $request->input('name');
+    $email = $request->input('email');
+    
+    // Proses data
+    return response()->json(['message' => 'User created successfully']);
 });
 ```
 
 ---
 
-#### Dependency Injection dan Parameter Route
+## Bagian 3: Mendapatkan Informasi Request 📊
 
-Kadang kita perlu mengakses parameter dari route sekaligus instance `Request`. Laravel mengizinkan keduanya dengan menuliskan parameter route setelah dependency lainnya.
+### 5. 📍 Path dan URL Request
 
-**Contoh Route:**
+Mendapatkan informasi tentang URL dan path yang diakses:
 
 ```php
-use App\Http\Controllers\UserController;
+// Mendapatkan path (tanpa query string)
+$path = $request->path(); // contoh: "users/123"
 
-Route::put('/user/{id}', [UserController::class, 'update']);
+// Mengecek apakah path cocok dengan pola tertentu
+if ($request->is('admin/*')) {
+    // URL dimulai dengan 'admin/'
+}
+
+if ($request->is('users/*')) {
+    // URL dimulai dengan 'users/'
+}
+
+if ($request->routeIs('admin.*')) {
+    // Route menggunakan nama yang dimulai dengan 'admin.'
+}
+
+// Mendapatkan URL lengkap (dengan query string)
+$url = $request->url(); // contoh: "http://example.com/users"
+$fullUrl = $request->fullUrl(); // contoh: "http://example.com/users?active=1"
+
+// Menambahkan query string ke URL
+$newUrl = $request->fullUrlWithQuery(['sort' => 'name', 'order' => 'desc']);
 ```
 
-**Contoh Controller:**
+### 6. 🌐 Host dan Method Request
 
 ```php
-<?php
+// Mendapatkan host
+$host = $request->host(); // "example.com"
+$httpHost = $request->httpHost(); // "example.com:80"
+$schemeAndHost = $request->schemeAndHttpHost(); // "https://example.com"
 
-namespace App\Http\Controllers;
+// Mendapatkan HTTP method
+$method = $request->method(); // "GET", "POST", dll
+if ($request->isMethod('post')) {
+    // Ini adalah request POST
+}
+```
 
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+### 7. 🏷️ Headers Request
 
-class UserController extends Controller
+Mengambil header dari request:
+
+```php
+// Mendapatkan header tertentu
+$accept = $request->header('Accept');
+$userAgent = $request->header('User-Agent');
+
+// Dengan nilai default jika header tidak ada
+$contentType = $request->header('Content-Type', 'text/html');
+
+// Mengecek keberadaan header
+if ($request->hasHeader('X-Requested-With')) {
+    // Header ada
+}
+
+// Mendapatkan Bearer token (untuk API authentication)
+$token = $request->bearerToken();
+```
+
+### 8. 🌍 Content Negotiation
+
+Laravel mendukung content negotiation untuk menentukan format respons yang diinginkan client:
+
+```php
+// Mendapatkan daftar content types yang diterima
+$accepts = $request->getAcceptableContentTypes();
+
+// Mengecek apakah client menerima format tertentu
+if ($request->accepts(['application/json', 'text/html'])) {
+    // Client bisa menerima JSON atau HTML
+}
+
+// Mendapatkan format yang paling disukai
+$preferred = $request->prefers(['text/html', 'application/json']);
+
+// Mengecek apakah client mengharapkan JSON (biasanya digunakan dalam API)
+if ($request->expectsJson()) {
+    // Respons sebaiknya dalam format JSON
+}
+
+// Mengecek apakah request adalah AJAX
+if ($request->ajax()) {
+    // Request menggunakan AJAX
+}
+```
+
+---
+
+## Bagian 4: Mengambil Data Input dari Request 📥
+
+### 9. 📝 Mengambil Input Sederhana
+
+```php
+// Mengambil input dengan nama tertentu
+$name = $request->input('name');
+$email = $request->input('email', 'default@example.com'); // dengan default value
+
+// Mengambil semua input sebagai array
+$allInput = $request->all();
+
+// Menggunakan dynamic property (sama seperti input())
+$phone = $request->phone;
+```
+
+### 10. 📋 Input dari Array dan Nested Data
+
+```php
+// Jika form mengirimkan array
+$skills = $request->input('skills'); // ['php', 'laravel', 'javascript']
+
+// Jika form memiliki nested structure
+$address = $request->input('user.address.street');
+$firstSkill = $request->input('skills.0');
+
+// Menggunakan dot notation untuk mengambil semua dari nested array
+$allSkills = $request->input('skills.*');
+```
+
+### 11. 🧮 Helper untuk Tipe Data Tertentu
+
+Laravel menyediakan helper untuk mengambil input dengan tipe data tertentu:
+
+```php
+// String dengan trim otomatis
+$name = $request->string('name')->trim();
+
+// Integer
+$age = $request->integer('age');
+
+// Boolean (berguna untuk checkbox)
+$isActive = $request->boolean('is_active');
+
+// Array
+$tags = $request->array('tags');
+
+// Date (mengembalikan Carbon instance)
+$birthday = $request->date('birthday');
+
+// Enum (jika menggunakan PHP Enum)
+use App\Enums\UserStatus;
+$status = $request->enum('status', UserStatus::class);
+```
+
+### 12. 🔍 Mengecek Keberadaan dan Status Input
+
+```php
+// Mengecek apakah input ada
+if ($request->has('name')) {
+    // Input 'name' ada
+}
+
+// Mengecek beberapa input sekaligus
+if ($request->has(['name', 'email'])) {
+    // Input 'name' dan 'email' ada
+}
+
+// Mengecek apakah salah satu dari beberapa input ada
+if ($request->hasAny(['name', 'email', 'phone'])) {
+    // Salah satu dari input tersebut ada
+}
+
+// Mengecek apakah input terisi (tidak kosong)
+if ($request->filled('name')) {
+    // Input 'name' terisi (tidak null, tidak string kosong, dll)
+}
+
+// Mengecek apakah salah satu input terisi
+if ($request->anyFilled(['name', 'email'])) {
+    // Salah satu dari input tersebut terisi
+}
+
+// Mengecek apakah input tidak terisi
+if ($request->isNotFilled('phone')) {
+    // Input 'phone' kosong atau tidak ada
+}
+```
+
+### 13. 📦 Mengambil Sebagian Input
+
+```php
+// Mengambil hanya input tertentu
+$credentials = $request->only(['email', 'password']);
+
+// Mengambil semua kecuali input tertentu
+$filtered = $request->except(['password', 'credit_card']);
+
+// Menggunakan conditional
+$whenHas = $request->whenHas('name', function ($request) {
+    return $request->input('name');
+}, function ($request) {
+    return 'Anonymous';
+});
+```
+
+### 14. 📝 Old Input (Input Lama) - Repopulasi Form
+
+Fitur ini sangat berguna untuk mengisi ulang form saat validasi gagal:
+
+```php
+// Menyimpan input ke session
+$request->flash();
+
+// Menyimpan hanya input tertentu
+$request->flashOnly(['name', 'email']);
+
+// Menyimpan semua kecuali input tertentu
+$request->flashExcept(['password']);
+
+// Cara yang lebih umum: flash input dan redirect
+return redirect('/form')->withInput();
+return redirect()->back()->withInput();
+return redirect()->route('user.create')->withInput(['name' => 'John']);
+```
+
+**Di Blade template:**
+```blade
+<input type="text" name="name" value="{{ old('name') }}">
+<input type="email" name="email" value="{{ old('email', 'default@example.com') }}">
+```
+
+---
+
+## Bagian 5: Menangani File Upload 📁
+
+### 15. 🏷️ Mendapatkan File dari Request
+
+```php
+// Mengambil file dengan method
+$file = $request->file('photo');
+
+// Menggunakan dynamic property
+$file = $request->photo;
+
+// Mengecek apakah file ada
+if ($request->hasFile('photo')) {
+    // File ada
+}
+
+// Mengecek apakah upload berhasil (tidak ada error)
+if ($request->file('photo')->isValid()) {
+    // File berhasil diupload
+}
+```
+
+### 16. 📊 Informasi Tentang File Upload
+
+```php
+$file = $request->file('photo');
+
+// Nama file asli
+$originalName = $file->getClientOriginalName();
+
+// Ekstensi file (dideteksi dari isi file)
+$extension = $file->extension();
+
+// Ekstensi asli dari client
+$clientExtension = $file->getClientOriginalExtension();
+
+// Ukuran file dalam bytes
+$size = $file->getSize();
+
+// MIME type
+$mimeType = $file->getMimeType();
+
+// Path sementara file
+$path = $file->path();
+
+// Cek file type
+if ($file->isValid() && $file->isImage()) {
+    // Ini adalah gambar
+}
+```
+
+### 17. 💾 Menyimpan File Upload
+
+Laravel menyediakan berbagai cara untuk menyimpan file:
+
+```php
+// Menyimpan ke storage/app/public/images (menghasilkan nama unik)
+$path = $request->file('photo')->store('images');
+
+// Menyimpan dengan nama tertentu
+$path = $request->file('photo')->storeAs('images', 'my-photo.jpg');
+
+// Menyimpan ke disk tertentu (misalnya s3)
+$path = $request->file('photo')->store('images', 's3');
+
+// Menyimpan dengan nama tertentu ke disk tertentu
+$path = $request->file('photo')->storeAs('images', 'my-photo.jpg', 's3');
+```
+
+### 18. 🔒 Validasi File Upload
+
+```php
+public function store(Request $request)
 {
-    /**
-     * Update the specified user.
-     */
-    public function update(Request $request, string $id): RedirectResponse
-    {
-        // Update user berdasarkan $id...
-
-        return redirect('/users');
+    $request->validate([
+        'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'documents.*' => 'file|mimes:pdf,doc,docx|max:10240' // validasi untuk array file
+    ]);
+    
+    // Proses upload
+    if ($request->hasFile('photo')) {
+        $path = $request->file('photo')->store('user-photos');
     }
 }
 ```
 
 ---
 
-### Path, Host, dan Method dari Request
+## Bagian 6: Menangani Cookies 🍪
 
-#### Mengambil Path Request
-
-Method `path()` digunakan untuk mendapatkan informasi path dari request.
+### 19. 📤 Mengambil Cookie
 
 ```php
-$uri = $request->path(); 
-// contoh hasil: "foo/bar"
+// Mengambil cookie
+$sessionId = $request->cookie('session_id');
+
+// Dengan default value
+$theme = $request->cookie('theme', 'light');
+
+// Semua cookies
+$allCookies = $request->cookies->all();
 ```
 
-#### Mengecek Path / Route
-
-Laravel menyediakan method `is()` untuk memeriksa apakah path cocok dengan pola tertentu.
-
-```php
-if ($request->is('admin/*')) {
-    // request menuju ke path "admin/..."
-}
-```
-
-Sedangkan `routeIs()` digunakan untuk memeriksa nama route:
-
-```php
-if ($request->routeIs('admin.*')) {
-    // request menggunakan route dengan prefix admin
-}
-```
+**Catatan:** Cookie yang dibuat oleh Laravel otomatis dienkripsi dan ditandatangani.
 
 ---
 
-#### Mengambil URL Request
+## Bagian 7: PSR-7 Support 💠
 
-* **URL tanpa query string**
+### 20. 🔄 Menggunakan PSR-7 Requests
 
-  ```php
-  $url = $request->url();
-  ```
+Laravel mendukung standar PSR-7 untuk HTTP messages:
 
-* **URL dengan query string**
-
-  ```php
-  $urlWithQueryString = $request->fullUrl();
-  ```
-
-* **Menambahkan query string ke URL**
-
-  ```php
-  $newUrl = $request->fullUrlWithQuery(['type' => 'phone']);
-  ```
-
-* **Menghapus query string tertentu**
-
-  ```php
-  $cleanUrl = $request->fullUrlWithoutQuery(['type']);
-  ```
-
----
-
-#### Mengambil Host Request
-
-Laravel menyediakan beberapa method:
-
-```php
-$request->host();              // contoh: "example.com"
-$request->httpHost();          // contoh: "example.com:80"
-$request->schemeAndHttpHost(); // contoh: "http://example.com"
-```
-
----
-
-#### Mengambil Method Request
-
-Untuk mengetahui HTTP verb dari request, gunakan:
-
-```php
-$method = $request->method();
-
-if ($request->isMethod('post')) {
-    // Request menggunakan POST
-}
-```
-
----
-
-### Headers pada Request
-
-Kita dapat mengambil header tertentu dengan method `header()`.
-
-```php
-$value = $request->header('X-Header-Name');
-$valueWithDefault = $request->header('X-Header-Name', 'default');
-```
-
-Untuk mengecek apakah header tersedia:
-
-```php
-if ($request->hasHeader('X-Header-Name')) {
-    // Header tersedia
-}
-```
-
-Mengambil **Bearer Token** dari header Authorization:
-
-```php
-$token = $request->bearerToken();
-```
-
----
-
-### Alamat IP Request
-
-Laravel menyediakan method untuk mengambil alamat IP client:
-
-```php
-$ipAddress = $request->ip();
-```
-
-Jika ingin mendapatkan semua alamat IP (termasuk forwarded proxies):
-
-```php
-$ipAddresses = $request->ips();
-```
-
-> ⚠️ Catatan: Alamat IP dianggap sebagai input yang tidak sepenuhnya terpercaya, sehingga hanya digunakan untuk informasi tambahan.
-
----
-
-### Content Negotiation
-
-Laravel mendukung pemeriksaan tipe konten yang diminta client berdasarkan header `Accept`.
-
-* **Mendapatkan semua tipe konten yang diterima:**
-
-  ```php
-  $contentTypes = $request->getAcceptableContentTypes();
-  ```
-
-* **Memeriksa apakah request menerima tipe tertentu:**
-
-  ```php
-  if ($request->accepts(['text/html', 'application/json'])) {
-      // ...
-  }
-  ```
-
-* **Menentukan konten yang lebih disukai:**
-
-  ```php
-  $preferred = $request->prefers(['text/html', 'application/json']);
-  ```
-
-* **Mengecek apakah request mengharapkan JSON:**
-
-  ```php
-  if ($request->expectsJson()) {
-      // ...
-  }
-  ```
-
----
-
-### PSR-7 Requests
-
-Laravel mendukung standar **PSR-7** untuk HTTP messages. Dengan ini, request dan response dapat menggunakan interface standar industri.
-
-#### Instalasi Library
-
-Jalankan perintah berikut:
-
+**Instalasi:**
 ```bash
 composer require symfony/psr-http-message-bridge
 composer require nyholm/psr7
 ```
 
-#### Contoh Penggunaan
-
+**Penggunaan:**
 ```php
 use Psr\Http\Message\ServerRequestInterface;
 
-Route::get('/', function (ServerRequestInterface $request) {
-    // Menggunakan PSR-7 request
-});
-```
-
-Jika kita mengembalikan response PSR-7, Laravel akan otomatis mengonversinya kembali ke instance response Laravel.
-
-
----
-
-## 📘Input pada HTTP Request di Laravel
-
-### Pendahuluan
-
-Selain menyediakan informasi tentang path, method, dan headers dari sebuah request, Laravel juga mempermudah kita untuk **mengambil data input** yang dikirimkan melalui form HTML, query string, JSON, maupun metode lainnya.
-Class `Illuminate\Http\Request` menyediakan berbagai method untuk mengakses input ini dengan cara yang aman, konsisten, dan fleksibel.
-
----
-
-### Mengambil Seluruh Data Input
-
-Untuk mendapatkan semua data input dari request dalam bentuk array, gunakan method `all()`.
-
-```php
-$input = $request->all();
-```
-
-Jika ingin mengubahnya menjadi collection (agar lebih mudah diolah menggunakan method koleksi Laravel), gunakan `collect()`:
-
-```php
-$input = $request->collect();
-```
-
-Bahkan kita bisa mengambil subset data input sebagai collection:
-
-```php
-$request->collect('users')->each(function (string $user) {
-    // Proses setiap user...
+Route::get('/psr7', function (ServerRequestInterface $request) {
+    $uri = $request->getUri();
+    $method = $request->getMethod();
+    
+    return response("Method: {$method}, URI: {$uri}");
 });
 ```
 
 ---
 
-### Mengambil Nilai Input Tertentu
+## Bagian 8: Normalisasi Input Otomatis ⚙️
 
-#### Menggunakan `input()`
+### 21. 🧹 Trim Strings dan Convert Empty to Null
 
-Method `input()` memungkinkan kita mengambil nilai dari request tanpa peduli apakah datanya dikirim via GET, POST, atau JSON.
+Laravel otomatis menerapkan middleware berikut:
 
+- `TrimStrings`: Menghapus spasi di awal/akhir string
+- `ConvertEmptyStringsToNull`: Mengubah string kosong menjadi `null`
+
+**Contoh efek:**
 ```php
-$name = $request->input('name');
+// Input: "  John Doe  " → Output: "John Doe" (telah ditrim)
+// Input: "" → Output: null
 ```
 
-Kita juga bisa memberikan nilai default jika data tidak tersedia:
-
+**Menonaktifkan normalisasi untuk route tertentu:**
 ```php
-$name = $request->input('name', 'Sally');
-```
-
-Jika input berupa array (misalnya pada form dengan multiple field), kita bisa menggunakan **dot notation**:
-
-```php
-$name = $request->input('products.0.name'); 
-$names = $request->input('products.*.name');
-```
-
-Memanggil `input()` tanpa parameter akan mengembalikan semua input sebagai array:
-
-```php
-$input = $request->input();
-```
-
----
-
-#### Input dari Query String
-
-Gunakan `query()` jika ingin mengambil data **hanya dari query string**:
-
-```php
-$name = $request->query('name', 'Helen');
-```
-
-Atau mengambil semua query string sekaligus:
-
-```php
-$query = $request->query();
-```
-
----
-
-#### Input dari JSON
-
-Jika request berupa JSON dengan header `Content-Type: application/json`, kita tetap bisa menggunakan `input()`:
-
-```php
-$name = $request->input('user.name');
-```
-
----
-
-### Mengambil Input dengan Tipe Tertentu
-
-Laravel menyediakan berbagai helper untuk memastikan tipe data yang diambil sesuai kebutuhan.
-
-* **Stringable Input**
-
-  ```php
-  $name = $request->string('name')->trim();
-  ```
-
-* **Integer Input**
-
-  ```php
-  $perPage = $request->integer('per_page');
-  ```
-
-* **Boolean Input**
-  (berguna untuk checkbox / switch form)
-
-  ```php
-  $archived = $request->boolean('archived');
-  ```
-
-* **Array Input**
-
-  ```php
-  $versions = $request->array('versions');
-  ```
-
-* **Date Input**
-  Mengambil data tanggal sebagai instance Carbon:
-
-  ```php
-  $birthday = $request->date('birthday');
-  $elapsed  = $request->date('elapsed', '!H:i', 'Europe/Madrid');
-  ```
-
-* **Enum Input**
-  Mendukung PHP Enum:
-
-  ```php
-  use App\Enums\Status;
-
-  $status = $request->enum('status', Status::class);
-  ```
-
----
-
-### Dynamic Properties
-
-Selain method, kita bisa langsung mengakses input seolah-olah itu adalah properti dari request:
-
-```php
-$name = $request->name;
-```
-
-Laravel akan mencari input dari payload terlebih dahulu, jika tidak ada baru dari parameter route.
-
----
-
-### Mengambil Sebagian Data Input
-
-* Mengambil subset tertentu:
-
-  ```php
-  $input = $request->only(['username', 'password']);
-  ```
-* Mengabaikan field tertentu:
-
-  ```php
-  $input = $request->except('credit_card');
-  ```
-
----
-
-### Mengecek Keberadaan Input
-
-Laravel menyediakan berbagai method untuk mengecek apakah input ada, kosong, atau bernilai.
-
-* **Cek apakah ada:**
-
-  ```php
-  if ($request->has('name')) { ... }
-  ```
-* **Cek apakah semua ada:**
-
-  ```php
-  if ($request->has(['name', 'email'])) { ... }
-  ```
-* **Cek apakah salah satu ada:**
-
-  ```php
-  if ($request->hasAny(['name', 'email'])) { ... }
-  ```
-* **Cek jika tidak kosong (filled):**
-
-  ```php
-  if ($request->filled('name')) { ... }
-  ```
-* **Cek jika kosong (isNotFilled):**
-
-  ```php
-  if ($request->isNotFilled('name')) { ... }
-  ```
-* **Cek jika salah satu terisi (anyFilled):**
-
-  ```php
-  if ($request->anyFilled(['name', 'email'])) { ... }
-  ```
-
-Kita juga bisa menggunakan `whenHas`, `whenFilled`, dan `whenMissing` untuk menjalankan closure secara kondisional.
-
----
-
-### Menambahkan / Menggabungkan Input
-
-Kadang kita ingin menambahkan data tambahan ke dalam request.
-
-* **Merge (menimpa jika sudah ada):**
-
-  ```php
-  $request->merge(['votes' => 0]);
-  ```
-* **Merge jika tidak ada:**
-
-  ```php
-  $request->mergeIfMissing(['votes' => 0]);
-  ```
-
----
-
-### Old Input (Input Lama)
-
-Laravel memungkinkan kita menyimpan input lama ke session agar bisa digunakan di request berikutnya, biasanya untuk mengisi kembali form setelah validasi gagal.
-
-#### Flashing Input ke Session
-
-```php
-$request->flash();
-$request->flashOnly(['username', 'email']);
-$request->flashExcept('password');
-```
-
-#### Flashing Input + Redirect
-
-```php
-return redirect('/form')->withInput();
-return redirect()->route('user.create')->withInput();
-```
-
-#### Mengambil Old Input
-
-```php
-$username = $request->old('username');
-```
-
-Di Blade:
-
-```blade
-<input type="text" name="username" value="{{ old('username') }}">
-```
-
----
-
-### Cookies
-
-Semua cookies yang dibuat Laravel akan **terenkripsi dan ditandatangani**. Untuk mengambil cookies:
-
-```php
-$value = $request->cookie('name');
-```
-
----
-
-### Normalisasi Input
-
-Secara default, Laravel menambahkan middleware:
-
-* `TrimStrings` → menghapus spasi pada string input.
-* `ConvertEmptyStringsToNull` → mengubah string kosong menjadi `null`.
-
-Hal ini dilakukan agar data input lebih konsisten.
-
-#### Menonaktifkan Normalisasi
-
-Jika ingin menonaktifkan global:
-
-```php
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Foundation\Http\Middleware\TrimStrings;
-
+// bootstrap/app.php
 ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->remove([
-        ConvertEmptyStringsToNull::class,
-        TrimStrings::class,
-    ]);
-})
-```
-
-Atau menonaktifkan hanya untuk route tertentu:
-
-```php
-->withMiddleware(function (Middleware $middleware): void {
-    $middleware->convertEmptyStringsToNull(except: [
-        fn (Request $request) => $request->is('admin/*'),
-    ]);
-
     $middleware->trimStrings(except: [
-        fn (Request $request) => $request->is('admin/*'),
+        '/admin/*', // tidak akan ditrim untuk route admin
     ]);
-})
+    
+    $middleware->convertEmptyStringsToNull(except: [
+        '/admin/*', // string kosong tidak akan diubah menjadi null
+    ]);
+});
 ```
 
 ---
 
-### Kesimpulan
+## Bagian 9: Trusted Proxies dan Hosts 🔐
 
-Dengan fitur input handling Laravel, kita dapat:
+### 22. 🛡️ Mengonfigurasi Trusted Proxies
 
-* Mengambil data dari berbagai sumber (form, query string, JSON).
-* Mengubah data input menjadi tipe tertentu (string, integer, boolean, array, date, enum).
-* Menyimpan input lama untuk repopulasi form.
-* Mengontrol normalisasi input secara otomatis.
-
-Semua ini membuat proses pengelolaan data dari request menjadi jauh lebih aman, konsisten, dan efisien.
-
----
-
-
-
-## 📘Files pada HTTP Request di Laravel
-
-### Pendahuluan
-
-Laravel tidak hanya memudahkan kita dalam mengelola input teks atau query string, tetapi juga menyediakan API yang powerful untuk menangani **file upload**.
-Semua file yang diunggah melalui form akan tersedia dalam instance `Illuminate\Http\Request`, dan dapat diakses menggunakan method atau dynamic property.
-
----
-
-### Mengambil File yang Diunggah
-
-Untuk mengambil file, gunakan method `file()` atau akses langsung dengan dynamic property. File yang diambil akan berupa instance dari `Illuminate\Http\UploadedFile`, yang memperluas class PHP `SplFileInfo`.
+Sangat penting ketika aplikasi berada di belakang load balancer:
 
 ```php
-$file = $request->file('photo');
-
-// atau dengan dynamic property
-$file = $request->photo;
-```
-
-#### Mengecek Apakah File Ada
-
-Sebelum mengakses file, pastikan file memang ada pada request:
-
-```php
-if ($request->hasFile('photo')) {
-    // File tersedia
-}
-```
-
----
-
-### Validasi Upload Berhasil
-
-Selain mengecek keberadaan file, kita juga bisa memastikan bahwa file diunggah tanpa error dengan `isValid()`:
-
-```php
-if ($request->file('photo')->isValid()) {
-    // File berhasil diunggah
-}
-```
-
----
-
-### Path dan Ekstensi File
-
-Class `UploadedFile` menyediakan method untuk mengakses path file yang diunggah serta menebak ekstensi berdasarkan isi file.
-
-```php
-$path = $request->photo->path();
-$extension = $request->photo->extension();
-```
-
-⚠️ Perlu dicatat: ekstensi yang ditebak bisa berbeda dengan ekstensi asli dari client, karena Laravel mencoba mendeteksi berdasarkan isi file.
-
----
-
-### Method Lain pada UploadedFile
-
-Selain `path()` dan `extension()`, masih banyak method lain pada class `UploadedFile`, seperti `getSize()`, `getMimeType()`, dan sebagainya. Dokumentasi API Laravel dapat dirujuk untuk detail lebih lengkap.
-
----
-
-### Menyimpan File yang Diunggah
-
-Untuk menyimpan file, Laravel memanfaatkan sistem **filesystem** yang bisa berupa:
-
-* Local storage (misalnya `storage/app`).
-* Cloud storage (seperti **Amazon S3**, **Google Cloud Storage**, atau **Azure**).
-
-#### Menggunakan `store()`
-
-Method `store()` akan menyimpan file di lokasi yang ditentukan dan secara otomatis memberikan nama file unik.
-
-```php
-$path = $request->photo->store('images'); // disimpan di storage/app/images
-
-$path = $request->photo->store('images', 's3'); // disimpan di disk S3
-```
-
-Method ini mengembalikan **path relatif** dari file terhadap root direktori disk yang digunakan.
-
----
-
-#### Menggunakan `storeAs()`
-
-Jika ingin menentukan nama file sendiri, gunakan `storeAs()`:
-
-```php
-$path = $request->photo->storeAs('images', 'filename.jpg');
-
-$path = $request->photo->storeAs('images', 'filename.jpg', 's3');
-```
-
-Dengan cara ini, nama file tidak akan diubah oleh Laravel.
-
----
-
-### Kesimpulan
-
-Laravel menyediakan cara sederhana dan aman untuk menangani file upload:
-
-* Mengambil file dengan `file()` atau dynamic property.
-* Memastikan file ada dengan `hasFile()` dan valid dengan `isValid()`.
-* Mendapatkan informasi file seperti path dan ekstensi.
-* Menyimpan file dengan fleksibilitas tinggi menggunakan `store()` atau `storeAs()`, baik di local storage maupun layanan cloud.
-
-Hal ini membuat pengelolaan file menjadi lebih konsisten dan terintegrasi dengan baik di dalam ekosistem Laravel.
-
----
-
-## 📘Mengonfigurasi Trusted Proxies & Hosts di Laravel
-
-### Pendahuluan
-
-Dalam beberapa kasus, aplikasi Laravel dijalankan di belakang **load balancer** atau **reverse proxy** (misalnya AWS ELB, Nginx proxy, Cloudflare, dll).
-Kondisi ini dapat menyebabkan aplikasi salah mendeteksi protokol atau host yang digunakan, contohnya ketika aplikasi menghasilkan link HTTP padahal seharusnya HTTPS.
-
-Untuk mengatasi hal ini, Laravel menyediakan middleware bawaan:
-
-* `TrustProxies` → mengatur proxy yang dipercaya dan header yang digunakan.
-* `TrustHosts` → membatasi aplikasi agar hanya menerima request dengan host tertentu.
-
----
-
-### Mengonfigurasi Trusted Proxies
-
-#### Masalah Umum
-
-Ketika load balancer mengarahkan trafik ke aplikasi Laravel di port **80**, aplikasi mengira request menggunakan HTTP biasa, padahal aslinya client menggunakan **HTTPS**. Hal ini menyebabkan helper seperti `url()` atau `route()` menghasilkan link HTTP, bukan HTTPS.
-
-#### Solusi dengan TrustProxies
-
-Aktifkan middleware `Illuminate\Http\Middleware\TrustProxies` di file `bootstrap/app.php`. Kita dapat menentukan daftar proxy atau balancer yang dipercaya.
-
-**Contoh konfigurasi:**
-
-```php
+// bootstrap/app.php
 ->withMiddleware(function (Middleware $middleware): void {
     $middleware->trustProxies(at: [
         '192.168.1.1',
         '10.0.0.0/8',
+        // Jika di cloud dan IP bisa berubah:
+        // '*' untuk mempercayai semua (berisiko jika tidak dalam lingkungan terkontrol)
     ]);
-})
-```
-
-#### Mengonfigurasi Proxy Headers
-
-Selain IP proxy, kita juga dapat menentukan **header** mana yang harus dipercaya.
-
-```php
-->withMiddleware(function (Middleware $middleware): void {
+    
+    // Atur header yang bisa dipercaya
     $middleware->trustProxies(headers: 
         Request::HEADER_X_FORWARDED_FOR |
         Request::HEADER_X_FORWARDED_HOST |
@@ -756,82 +510,320 @@ Selain IP proxy, kita juga dapat menentukan **header** mana yang harus dipercaya
         Request::HEADER_X_FORWARDED_PROTO |
         Request::HEADER_X_FORWARDED_AWS_ELB
     );
-})
+});
 ```
 
-* Jika menggunakan **AWS Elastic Load Balancing**, gunakan `Request::HEADER_X_FORWARDED_AWS_ELB`.
-* Jika proxy mendukung standar **RFC 7239 Forwarded header**, gunakan `Request::HEADER_FORWARDED`.
+### 23. 🏠 Mengonfigurasi Trusted Hosts
 
-ℹ️ Dokumentasi Symfony menjelaskan lebih detail konstanta header yang dapat digunakan.
-
----
-
-#### Mempercayai Semua Proxies
-
-Jika kita menggunakan cloud provider (misalnya AWS, GCP, Azure) di mana IP load balancer bisa berubah-ubah, kita bisa mempercayai semua proxy dengan simbol `*`.
+Untuk mencegah host header injection:
 
 ```php
+// bootstrap/app.php
 ->withMiddleware(function (Middleware $middleware): void {
-    $middleware->trustProxies(at: '*');
-})
+    $middleware->trustHosts(at: [
+        'laravel.test',
+        'myapp.com',
+        '*.myapp.com', // untuk subdomain
+    ]);
+});
 ```
 
-⚠️ Hati-hati, opsi ini bisa berisiko jika aplikasi tidak berada di lingkungan terkontrol, karena mempercayai semua proxy dapat membuka potensi spoofing.
-
 ---
 
-### Mengonfigurasi Trusted Hosts
+## Bagian 10: Best Practices & Tips ✅
 
-#### Perilaku Default
+### 24. 📋 Praktik Terbaik untuk Request
 
-Secara default, Laravel akan merespons **semua request** yang masuk, tanpa peduli apa isi header `Host`. Header ini juga digunakan saat Laravel membuat **absolute URL**.
+1. **Gunakan Validasi:** Selalu validasi input sebelum diproses
+```php
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+    ]);
+    
+    // Lanjutkan dengan data yang sudah divalidasi
+}
+```
 
-Namun, demi keamanan, kita biasanya ingin membatasi aplikasi agar hanya menerima request untuk host tertentu.
+2. **Gunakan Input Sanitization:** Bersihkan data sebelum digunakan
+```php
+$cleanName = strip_tags($request->input('name'));
+```
 
----
+3. **Hindari Accessing Raw Input:** Gunakan method bawaan Laravel
+```php
+// Jangan
+$input = $_POST['name'];
 
-#### Mengaktifkan TrustHosts
+// Gunakan
+$input = $request->input('name');
+```
 
-Aktifkan middleware `Illuminate\Http\Middleware\TrustHosts` di `bootstrap/app.php` dan tentukan host yang valid:
+4. **Gunakan Filling Protection:** Ketika membuat model dari input
+```php
+// Di model
+protected $fillable = ['name', 'email'];
+
+// Di controller
+User::create($request->only(['name', 'email']));
+```
+
+### 25. 💡 Tips Berguna
 
 ```php
-->withMiddleware(function (Middleware $middleware): void {
-    $middleware->trustHosts(at: ['laravel.test']);
-})
-```
+// Gunakan when() untuk conditional logic
+$users = User::when($request->filled('status'), function ($query) use ($request) {
+    $query->where('status', $request->input('status'));
+})->get();
 
-Request dengan `Host` yang tidak ada di daftar ini akan **ditolak**.
+// Gunakan collect() untuk mengubah input menjadi collection
+$inputs = $request->collect()->filter(function ($value) {
+    return !empty($value);
+});
+
+// Gunakan except() untuk membersihkan input sensitif
+$createData = $request->except(['password_confirmation']);
+```
 
 ---
 
-#### Subdomain
+## Bagian 11: Contoh Implementasi Lengkap 👨‍💻
 
-Secara default, Laravel juga mempercayai request yang berasal dari subdomain. Jika ingin menonaktifkan perilaku ini:
+Mari kita buat contoh form penggunaan request yang lengkap:
 
 ```php
-->withMiddleware(function (Middleware $middleware): void {
-    $middleware->trustHosts(at: ['laravel.test'], subdomains: false);
-})
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class UserController extends Controller
+{
+    public function showForm(): View
+    {
+        return view('users.create');
+    }
+    
+    public function store(Request $request): RedirectResponse
+    {
+        // Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'age' => 'required|integer|min:18|max:100',
+            'bio' => 'nullable|string|max:1000',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'interests' => 'array',
+            'interests.*' => 'string|in:programming,gaming,music,reading',
+        ]);
+        
+        // Proses file upload jika ada
+        $photoPath = null;
+        if ($request->hasFile('profile_photo')) {
+            $photoPath = $request->file('profile_photo')->store('profile-photos');
+        }
+        
+        // Tambahkan photo_path ke data yang divalidasi
+        $validated['photo_path'] = $photoPath;
+        
+        // Buat user baru
+        $user = User::create($validated);
+        
+        // Redirect dengan pesan sukses
+        return redirect()->route('users.show', $user)
+            ->with('success', 'User created successfully!');
+    }
+    
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        // Validasi dengan kondisi update
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'age' => 'required|integer|min:18|max:100',
+            'bio' => 'nullable|string|max:1000',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        
+        // Handle file upload
+        if ($request->hasFile('profile_photo')) {
+            // Hapus foto lama jika ada
+            if ($user->photo_path) {
+                Storage::delete($user->photo_path);
+            }
+            
+            // Simpan foto baru
+            $validated['photo_path'] = $request->file('profile_photo')->store('profile-photos');
+        }
+        
+        // Update user
+        $user->update($validated);
+        
+        return redirect()->route('users.show', $user)
+            ->with('success', 'User updated successfully!');
+    }
+    
+    public function search(Request $request): View
+    {
+        // Ambil parameter pencarian
+        $query = $request->input('q', '');
+        $status = $request->input('status', '');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+        
+        // Bangun query secara kondisional
+        $users = User::query();
+        
+        if (!empty($query)) {
+            $users->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+        }
+        
+        if (!empty($status)) {
+            $users->where('status', $status);
+        }
+        
+        $users->orderBy($sort, $order);
+        
+        $users = $users->paginate(15);
+        
+        return view('users.search', compact('users', 'query', 'status', 'sort', 'order'));
+    }
+}
 ```
 
----
-
-#### Menggunakan Closure untuk Host Dinamis
-
-Jika host perlu ditentukan dari konfigurasi atau database, gunakan closure:
-
+**Contoh route:**
 ```php
-->withMiddleware(function (Middleware $middleware): void {
-    $middleware->trustHosts(at: fn () => config('app.trusted_hosts'));
-})
+// routes/web.php
+Route::get('/users/create', [UserController::class, 'showForm'])->name('users.create');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+```
+
+**Contoh view (resources/views/users/create.blade.php):**
+```blade
+@extends('layouts.app')
+
+@section('title', 'Create User')
+
+@section('content')
+<div class="container">
+    <h1>Create User</h1>
+    
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
+    <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
+        @csrf
+        
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="age" class="form-label">Age</label>
+            <input type="number" class="form-control" id="age" name="age" value="{{ old('age') }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3">{{ old('bio') }}</textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="profile_photo" class="form-label">Profile Photo</label>
+            <input type="file" class="form-control" id="profile_photo" name="profile_photo">
+        </div>
+        
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Create User</button>
+            <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+@endsection
 ```
 
 ---
 
-### Kesimpulan
+## 12. 📚 Cheat Sheet & Referensi Cepat
 
-* Gunakan `TrustProxies` untuk mengatur **proxy/load balancer** yang dipercaya, serta header yang digunakan.
-* Gunakan `TrustHosts` untuk membatasi aplikasi hanya menerima request dengan **host tertentu**.
-* Konfigurasi ini penting untuk memastikan aplikasi menghasilkan URL yang benar (HTTPS/HTTP) serta menolak request berbahaya dari host yang tidak sah.
+### 🧩 Mengambil Input
+```
+$request->input('name')           → Ambil input dengan nama
+$request->input('name', 'default') → Ambil input dengan default
+$request->all()                   → Ambil semua input
+$request->only(['name', 'email']) → Ambil beberapa input
+$request->except('password')       → Ambil semua kecuali beberapa
+```
+
+### 🔍 Validasi Input
+```
+$request->has('name')            → Cek apakah input ada
+$request->filled('name')         → Cek apakah input terisi
+$request->boolean('active')      → Ambil sebagai boolean
+$request->integer('age')         → Ambil sebagai integer
+```
+
+### 📁 File Upload
+```
+$request->hasFile('photo')       → Cek apakah file ada
+$request->file('photo')          → Ambil file
+$file->store('images')          → Simpan file
+$file->isValid()                → Cek apakah upload berhasil
+```
+
+### 🍪 Cookies
+```
+$request->cookie('name')         → Ambil cookie
+$cookie = $request->cookies->all() → Ambil semua cookies
+```
+
+### 🔐 Proxies dan Hosts
+```
+TrustProxies: Untuk load balancer
+TrustHosts: Untuk mencegah host header injection
+```
+
+### 💡 Tips Umum
+```
+Use $request->validate() for validation
+Use $request->only() for mass assignment protection
+Use $request->flash() for form repopulation on error
+```
 
 ---
+
+## 13. 🎯 Kesimpulan
+
+HTTP Request adalah komponen penting dalam aplikasi Laravel yang bertanggung jawab untuk menangani semua data yang masuk ke aplikasi kamu. Dengan memahami konsep berikut:
+
+- **Mengakses request** melalui dependency injection
+- **Mengambil input** dari berbagai sumber (form, JSON, query string)
+- **Menangani file upload** dengan aman
+- **Menggunakan validasi** untuk keamanan
+- **Memahami konfigurasi trusted proxies** untuk lingkungan production
+
+Kamu sekarang siap membuat aplikasi web yang aman dan efisien dalam menangani berbagai jenis request dari client. Ingat selalu untuk memvalidasi semua input dari user untuk mencegah potensi serangan keamanan.
+
+Selamat mengembangkan aplikasi kamu, muridku! Dengan kuasai request handling, kamu sudah melangkah jauh dalam membangun aplikasi web yang robust dan aman.
