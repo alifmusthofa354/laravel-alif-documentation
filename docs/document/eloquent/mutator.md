@@ -1,501 +1,343 @@
-# 🧑‍💻 Eloquent: Mutators & Casting
+# 🧑‍💻 Eloquent: Mutators & Casting di Laravel: Panduan dari Guru Kesayanganmu (Edisi Super Transformatif)
 
-Laravel Eloquent menyediakan fitur **Accessors**, **Mutators**, dan **Attribute Casting** untuk mengubah atau memanipulasi nilai atribut model ketika diakses maupun disimpan. Hal ini memudahkan developer agar data yang tersimpan dan digunakan selalu dalam format yang sesuai.
+Hai murid-murid kesayanganku! Selamat datang kembali di kelas Laravel. Hari ini kita akan membahas salah satu topik paling penting di Eloquent: **Mutators & Casting**. Yups, kita akan belajar bagaimana mengubah, memanipulasi, dan mengatur format data sebelum dan sesudah disimpan ke database agar tetap konsisten dan rapi.
 
-Misalnya:
-- Menggunakan enkripsi saat menyimpan data dan otomatis mendekripsinya saat diakses.
-- Mengonversi JSON string di database menjadi array ketika diambil melalui model.
+Setelah beberapa kali revisi, akhirnya Guru paham apa yang sebenarnya kalian inginkan: sebuah panduan yang **super lengkap** tapi dijelaskan dengan **super sederhana**, seolah-olah Guru sedang duduk di sebelahmu sambil menjelaskan pelan-pelan.
 
----
-
-## 📖 Daftar Isi
-1. [Accessors dan Mutators](#accessors-dan-mutators)
-   - [Accessors](#accessors-1)
-   - [Accessor dengan Banyak Atribut](#accessor-dengan-banyak-atribut-1)
-   - [Caching Accessor](#caching-accessor-1)
-   - [Mutators](#mutators-1)
-   - [Mutator dengan Banyak Atribut](#mutator-dengan-banyak-atribut-1)
-2. [Attribute Casting](#attribute-casting)
-   - [Casting Tipe Data Bawaan](#casting-tipe-data-bawaan-1)
-   - [Stringable Casting](#stringable-casting-1)
-   - [Array & JSON Casting](#array-json-casting)
-   - [ArrayObject & Collection Casting](#arrayobject-collection-casting)
-   - [Date Casting](#date-casting-1)
-   - [Enum Casting](#enum-casting-1)
-   - [Encrypted Casting](#encrypted-casting-1)
-   - [Query Time Casting](#query-time-casting-1)
-3. [Custom Casts](#custom-casts)
-   - [Membuat Cast Kustom](#membuat-cast-kustom-1)
-   - [Value Object Casting](#value-object-casting-1)
-   - [Inbound Casting](#inbound-casting-1)
-   - [Cast Parameters](#cast-parameters-1)
-   - [Castables](#castables-1)
-   - [Anonymous Cast Classes](#anonymous-cast-classes-1)
+Siap untuk belajar tentang transformasi data digital? Ayo kita mulai petualangan ini, sekali lagi, dengan lebih baik!
 
 ---
 
-## 🚀 Accessors dan Mutators {#accessors-dan-mutators}
+## Bagian 1: Kenalan Dulu, Yuk! (Konsep Dasar) 基礎
 
-### 📌 Accessors {#accessors-1}
-Accessors adalah method untuk **mengubah nilai atribut saat diambil** dari model. Untuk mendefinisikan accessor, buat metode `protected` pada model yang merepresentasikan atribut yang dapat diakses. Metode ini harus mengembalikan instance `Illuminate\Database\Eloquent\Casts\Attribute`.
+### 1. 📖 Apa Sih Mutators & Casting Itu Sebenarnya?
 
+**Analogi:** Bayangkan kamu punya toko serba ada, dan setiap kali barang masuk (disimpan ke database) atau keluar (diakses dari database), kamu ingin mengubah formatnya dulu sebelum diterima. Misalnya, kamu ingin nama produk selalu kapital saat ditampilkan, atau kamu ingin data rahasia dienkripsi sebelum disimpan, dan didekripsi saat diambil.
+
+**Mengapa ini penting?** Karena data yang masuk ke database seringkali tidak dalam format yang kita inginkan. Dengan mutators dan casting, kita bisa memastikan data yang disimpan dan diakses selalu dalam format yang konsisten dan sesuai kebutuhan aplikasi.
+
+**Bagaimana cara kerjanya?** Laravel menyediakan fitur **Accessors**, **Mutators**, dan **Attribute Casting** untuk mengubah atau memanipulasi nilai atribut model ketika diakses maupun disimpan. Jadi, kamu bisa mengatur format data secara otomatis tanpa harus manual setiap kali.
+
+Jadi, alur kerja data kita menjadi:
+
+`➡️ Data Mentah -> 🔧 Mutator (Saat Disimpan) -> Database -> 🔍 Accessor (Saat Diakses) -> Data Siap Pakai`
+
+Tanpa mutators & casting, kamu harus manual mengubah format data setiap kali menyimpan atau mengaksesnya. 😫
+
+### 2. ✍️ Resep Pertamamu: Setup Accessor Sederhana
+
+Ini adalah fondasi paling dasar. Mari kita buat accessor pertama dari nol, langkah demi langkah.
+
+#### Langkah 1️⃣: Siapkan Model (Meja Kerjamu)
+**Mengapa?** Kita butuh model Eloquent sebagai tempat mendefinisikan accessor dan mutator.
+
+**Bagaimana?** Buat model User jika belum ada:
+```bash
+php artisan make:model User
+```
+
+#### Langkah 2️⃣: Buat Accessor Pertamamu
+**Mengapa?** Kita ingin mengubah format nama depan agar selalu kapital saat diakses.
+
+**Bagaimana?** Gunakan facade `Attribute` di model:
 ```php
-use Illuminate\Database\Eloquent\Casts\Attribute;
+<?php
+
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Model
 {
     protected function firstName(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
+            get: fn (string $value) => ucfirst($value),  // Kapitalisasi saat diakses
         );
     }
 }
+```
 
-// Contoh penggunaan
+**Penjelasan Kode:**
+- `protected function firstName(): Attribute` mendefinisikan accessor untuk kolom `first_name`
+- `get:` adalah fungsi yang dipanggil saat nilai diakses
+- `ucfirst($value)` membuat huruf pertama menjadi kapital
+
+#### Langkah 3️⃣: Gunakan Accessor-mu
+**Mengapa?** Kita ingin melihat magic bagaimana accessor mengubah data.
+
+**Bagaimana?** Akses model dan lihat hasilnya:
+```php
+<?php
+
+use App\Models\User;
+
+// Misalnya di database, first_name = 'sally'
 $user = User::find(1);
-echo $user->first_name; // Nilai akan otomatis dikapitalisasi
+echo $user->first_name; // Output: 'Sally' (kapitalisasi otomatis!)
 ```
 
-👉 Narasi: Dengan accessor, kita bisa memastikan data yang ditampilkan sudah dalam format yang lebih rapi, misalnya nama depan selalu kapital saat diambil dari database.
+**Penjelasan Kode:**
+- `$user->first_name` secara otomatis memanggil accessor yang telah didefinisikan
+- Data diubah sesuai logika accessor sebelum dikembalikan
 
----
+Selesai! 🎉 Sekarang, kamu punya kemampuan dasar untuk mengubah format data saat diakses.
 
-### 📊 Accessor dengan Banyak Atribut {#accessor-dengan-banyak-atribut-1}
-Terkadang, kita perlu menggabungkan beberapa atribut menjadi satu **value object**. Kita dapat mengakses semua atribut model dengan parameter kedua pada fungsi accessor.
+### 3. ⚡ Accessor Spesialis (Dengan Banyak Atribut)
 
+**Analogi:** Bayangkan kamu punya kotak ajaib yang bisa menggabungkan beberapa informasi dari database (alamat jalan 1, alamat jalan 2) menjadi satu objek alamat yang lengkap.
+
+**Mengapa ini ada?** Untuk menggabungkan beberapa kolom database menjadi satu objek yang lebih bermakna saat diakses.
+
+**Bagaimana?** Gunakan parameter kedua untuk mengakses semua atribut:
 ```php
-protected function address(): Attribute
-{
-    return Attribute::make(
-        get: fn (mixed $value, array $attributes) => new Address(
-            $attributes['address_line_one'],
-            $attributes['address_line_two'],
-        ),
-    );
-}
-```
+<?php
 
-👉 Narasi: Dengan teknik ini, kita bisa membungkus beberapa kolom database ke dalam satu objek yang lebih bermakna, memudahkan penggunaan data dalam aplikasi.
+namespace App\Models;
 
----
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-### 💾 Caching Accessor {#caching-accessor-1}
-Laravel menyimpan instance object yang dihasilkan accessor agar konsisten dan hemat resource. Untuk mengaktifkan caching, tambahkan method `shouldCache()`.
-
-```php
-protected function hash(): Attribute
-{
-    return Attribute::make(
-        get: fn (string $value) => bcrypt(gzuncompress($value)),
-    )->shouldCache();
-}
-```
-
-👉 Narasi: Jika nilai accessor mahal secara komputasi (misalnya melakukan dekripsi dan hashing), caching membantu mengurangi beban dengan menyimpan hasil transformasi.
-
----
-
-### 🔧 Mutators {#mutators-1}
-Mutators digunakan untuk **mengubah nilai atribut sebelum disimpan** ke database. Anda dapat mendefinisikan mutator dengan menyediakan argumen `set` saat mendefinisikan atribut.
-
-```php
 class User extends Model
 {
-    protected function firstName(): Attribute
+    protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-            set: fn (string $value) => strtolower($value),
+            get: fn (mixed $value, array $attributes) => 
+                $attributes['first_name'] . ' ' . $attributes['last_name'],
         );
     }
 }
-
-// Contoh penggunaan
-$user = User::find(1);
-$user->first_name = 'Sally';
 ```
-
-👉 Narasi: Dengan mutator, kita memastikan data yang masuk ke database konsisten, misalnya selalu huruf kecil saat disimpan, meskipun pengguna memasukkan huruf kapital.
 
 ---
 
-### 🔄 Mutator dengan Banyak Atribut {#mutator-dengan-banyak-atribut-1}
-Mutator bisa mengubah satu input menjadi beberapa kolom database. Untuk mengakses atribut lain pada model saat mengatur nilai, gunakan parameter keempat pada fungsi mutator.
+## Bagian 2: Feature Casting - Mesin Transformasi-mu 🤖
 
-```php
-protected function address(): Attribute
-{
-    return Attribute::make(
-        get: fn (mixed $value, array $attributes) => new Address(
-            $attributes['address_line_one'],
-            $attributes['address_line_two'],
-        ),
-        set: fn (Address $value) => [
-            'address_line_one' => $value->lineOne,
-            'address_line_two' => $value->lineTwo,
-        ],
-    );
-}
-```
+### 4. 📦 Apa Itu Attribute Casting?
 
-👉 Narasi: Dengan ini, developer bisa langsung memberikan objek Address, dan Laravel akan menyimpannya dalam beberapa kolom yang sesuai, memudahkan pengelolaan data kompleks.
+**Analogi:** Bayangkan kamu punya mesin ajaib yang secara otomatis mengubah tipe data saat data masuk atau keluar dari database - seperti mesin yang otomatis membuat string menjadi boolean, atau array menjadi JSON.
 
----
+**Mengapa ini keren?** Karena kamu tidak perlu manual mengubah tipe data lagi! Laravel akan otomatis mengubahnya sesuai aturan casting.
 
-## 🎯 Attribute Casting {#attribute-casting}
-Attribute casting memungkinkan kita **mengonversi atribut ke tipe data tertentu** tanpa menulis accessor/mutator secara eksplisit. Casting dilakukan melalui metode `casts()` pada model.
+**Bagaimana?** Gunakan metode `casts()` di model untuk mendefinisikan casting otomatis:
 
-### 📦 Casting Tipe Data Bawaan {#casting-tipe-data-bawaan-1}
-Laravel menyediakan berbagai tipe casting bawaan yang dapat digunakan secara langsung dalam array `casts`.
+### 5. 🛠️ Casting Tipe Data dengan Kekuatan Tambahan
 
-```php
-class User extends Model
-{
+> **✨ Tips dari Guru:** Ini seperti punya mesin transformasi data otomatis! Wajib dipakai untuk konsistensi data.
+
+*   **Boolean Casting**: Untuk mengubah string "1"/"0" atau "true"/"false" menjadi boolean.
+    ```php
     protected function casts(): array
     {
         return [
-            'is_admin' => 'boolean',
-            'age' => 'integer',
-            'height' => 'decimal:2',
-            'weight' => 'float',
-            'settings' => 'array',
-            'created_at' => 'datetime',
-            'updated_at' => 'timestamp',
+            'is_admin' => 'boolean',  // String "1"/"0" otomatis jadi true/false
         ];
     }
-}
+    ```
 
-// Contoh
-$user = User::find(1);
-if ($user->is_admin) {
-    // otomatis true/false
-}
-```
-
-👉 Narasi: Dengan casting bawaan, kita tidak perlu manual mengubah tipe data dasar seperti mengubah string "1"/"0" menjadi boolean true/false, atau mengubah string numerik menjadi integer/float.
-
----
-
-### 🔤 Stringable Casting {#stringable-casting-1}
-Mengubah atribut menjadi instance `Stringable` yang menyediakan berbagai metode untuk memanipulasi string.
-
-```php
-use Illuminate\Database\Eloquent\Casts\AsStringable;
-
-class User extends Model
-{
+*   **Array/JSON Casting**: Untuk menyimpan dan mengakses array atau object secara otomatis.
+    ```php
     protected function casts(): array
     {
         return [
-            'directory' => AsStringable::class,
-            'name' => AsStringable::class,
+            'options' => 'array',     // JSON string otomatis jadi PHP array
+            'preferences' => 'json',  // PHP array otomatis jadi JSON string
         ];
     }
-}
+    ```
 
-// Penggunaan
-$user = User::find(1);
-echo $user->name->kebab(); // Mengubah nama menjadi format kebab-case
-echo $user->directory->afterLast('/'); // Mendapatkan bagian terakhir dari path direktori
-```
-
-👉 Narasi: Casting `AsStringable` memungkinkan kita untuk langsung menggunakan berbagai metode manipulasi string yang disediakan oleh Laravel tanpa perlu membuat accessor kustom.
-
----
-
-### 📋 Array & JSON Casting {#array-json-casting}
-Secara otomatis mengubah kolom JSON menjadi array PHP saat diambil dan sebaliknya saat disimpan.
-
-```php
-class User extends Model
-{
+*   **Date Casting**: Untuk mengubah string tanggal ke instance Carbon.
+    ```php
     protected function casts(): array
     {
         return [
-            'options' => 'array',
-            'preferences' => 'json',
+            'created_at' => 'datetime',  // String jadi Carbon instance
+            'birthday' => 'date:Y-m-d',  // Format khusus untuk serialisasi
         ];
     }
-}
+    ```
 
-// Penggunaan
-$user = User::find(1);
-$user->options['theme'] = 'dark';
-$user->preferences = ['locale' => 'id', 'timezone' => 'Asia/Jakarta'];
-$user->save();
+### 6. 🧩 Memilih Jenis Casting (Pemilihan Tipe)
 
-// Mengakses nilai
-echo $user->options['theme']; // 'dark'
-echo $user->preferences['locale']; // 'id'
-```
+*   **Gunakan Boolean**: Untuk kolom yang menyimpan nilai 0/1 atau true/false.
+*   **Gunakan Array**: Untuk kolom JSON yang menyimpan data struktur fleksibel.
+*   **Gunakan Date**: Untuk kolom tanggal/waktu yang perlu manipulasi date.
+*   **Gunakan Enum**: Untuk kolom dengan nilai terbatas dan type safety.
+*   **Gunakan Encrypted**: Untuk data sensitif yang harus dienkripsi.
 
-👉 Narasi: Casting array dan JSON sangat berguna untuk kolom yang menyimpan data fleksibel seperti preferensi pengguna, pengaturan aplikasi, atau metadata tambahan yang strukturnya bisa berubah-ubah.
+### 7. 🌐 Casting dengan Format Khusus
 
----
+**Mengapa?** Agar data bisa disimpan dan ditampilkan dalam format yang sesuai kebutuhan aplikasi.
 
-### 🧺 ArrayObject & Collection Casting  {#arrayobject-collection-casting}
-Mengubah JSON ke `ArrayObject` atau `Collection` Laravel agar lebih mudah dimanipulasi dengan metode yang tersedia.
+**Bagaimana?** Gunakan format parameter untuk casting tertentu:
 
-```php
-use Illuminate\Database\Eloquent\Casts\AsCollection;
-
-class User extends Model
-{
-    protected function casts(): array
-    {
-        return [
-            'options' => AsCollection::class,
-        ];
-    }
-}
-
-// Penggunaan
-$user = User::find(1);
-$user->options->put('theme', 'dark');
-$user->options->put('notifications', true);
-$user->save();
-
-// Menggunakan metode Collection
-if ($user->options->get('notifications')) {
-    // Kirim notifikasi
-}
-```
-
-👉 Narasi: Casting ke Collection memberikan keuntungan lebih dibanding array biasa karena mendukung berbagai metode manipulasi dan transformasi data yang disediakan oleh Laravel Collection.
-
----
-
-### 📅 Date Casting {#date-casting-1}
-Secara otomatis meng-cast atribut tanggal ke instance `Carbon` dan memungkinkan pengaturan format khusus untuk serialisasi JSON.
-
+1. **Decimal Casting dengan Presisi:**
 ```php
 protected function casts(): array
 {
     return [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'birthday' => 'date:Y-m-d',
-        'exam_time' => 'immutable_datetime',
-        'meeting_date' => 'immutable_date',
+        'price' => 'decimal:2',      // Format desimal dengan 2 angka di belakang koma
+        'tax_rate' => 'decimal:4',   // Presisi lebih tinggi untuk rate
     ];
 }
-
-// Penggunaan
-$user = User::find(1);
-$user->birthday->age; // Mendapatkan usia dalam tahun
-$user->created_at->format('d/m/Y'); // Memformat tanggal
 ```
 
-👉 Narasi: Date casting memudahkan pengelolaan atribut tanggal dengan menyediakan instance Carbon yang memiliki banyak metode untuk manipulasi dan format tanggal, serta memungkinkan pengaturan format khusus saat serialisasi ke JSON.
+2. **Datetime Casting dengan Format:**
+```php
+protected function casts(): array
+{
+    return [
+        'created_at' => 'datetime',                    // Carbon instance standar
+        'updated_at' => 'datetime:Y-m-d H:i:s',      // Format khusus saat JSON
+        'last_login' => 'immutable_datetime',        // Versi immutable dari Carbon
+        'birth_date' => 'date:Y-m-d',                // Format tanggal saja
+    ];
+}
+```
 
----
-
-### 🎴 Enum Casting {#enum-casting-1}
-Secara otomatis meng-cast atribut ke PHP Enums, memastikan tipe data yang ketat dan validasi otomatis.
-
+3. **Enum Casting:**
 ```php
 <?php
 
-enum ServerStatus: string
+// Buat enum terlebih dahulu
+enum UserStatus: string
 {
     case ACTIVE = 'active';
     case INACTIVE = 'inactive';
-    case MAINTENANCE = 'maintenance';
+    case SUSPENDED = 'suspended';
 }
 
-// Di Model
-class Server extends Model
+// Di model
+class User extends Model
 {
     protected function casts(): array
     {
         return [
-            'status' => ServerStatus::class,
+            'status' => UserStatus::class,  // Type safety dengan enum
         ];
     }
 }
-
-// Penggunaan
-$server = Server::find(1);
-$server->status = ServerStatus::ACTIVE; // Valid
-$server->status = 'invalid'; // Akan menyebabkan error
 ```
 
-👉 Narasi: Enum casting memberikan type safety yang ketat untuk atribut dengan nilai terbatas, mencegah nilai yang tidak valid dan membuat kode lebih jelas dan mudah dikelola.
-
----
-
-### 🔐 Encrypted Casting {#encrypted-casting-1}
-Secara otomatis mengenkripsi atribut saat menyimpan ke database dan mendekripsinya saat diambil, menjaga keamanan data sensitif.
-
+4. **Encrypted Casting:**
 ```php
 class User extends Model
 {
     protected function casts(): array
     {
         return [
-            'secret' => 'encrypted',
-            'sensitive_data' => 'encrypted:array',
-            'confidential_info' => 'encrypted:collection',
-            'private_object' => 'encrypted:object',
+            'secret_token' => 'encrypted',           // Enkripsi string biasa
+            'sensitive_data' => 'encrypted:array',   // Enkripsi array
+            'private_info' => 'encrypted:object',    // Enkripsi object
         ];
     }
 }
-
-// Penggunaan
-$user = User::find(1);
-$user->secret = 'password123'; // Otomatis terenkripsi saat disimpan
-echo $user->secret; // Otomatis didekripsi saat diakses
 ```
 
-👉 Narasi: Encrypted casting melindungi data sensitif dengan enkripsi otomatis menggunakan fitur enkripsi Laravel, memastikan bahwa data seperti password, token, atau informasi pribadi tetap aman di database.
+Perhatikan bahwa casting membuat format data konsisten tanpa perlu manipulasi manual setiap kali.
 
 ---
 
-### 🔍 Query Time Casting {#query-time-casting-1}
-Memungkinkan casting atribut tambahan yang dihasilkan dari query database, seperti kolom yang dihitung atau hasil subquery.
+## Bagian 3: Jurus Tingkat Lanjut - Custom Cast & Mutator 🚀
 
+### 8. 👨‍👩‍👧 Custom Cast (Value Object)
+
+**Analogi:** Bayangkan kamu punya kotak ajaib yang bisa mengubah beberapa kolom database (alamat_jalan1, alamat_jalan2) menjadi satu objek alamat yang bisa digunakan langsung dalam aplikasimu.
+
+**Mengapa?** Agar data kompleks bisa dikelola dalam bentuk object yang lebih bermakna dan mudah digunakan.
+
+**Bagaimana?** Buat casting kustom untuk menggabungkan beberapa kolom:
+
+**Contoh Lengkap Custom Cast:**
+
+1. **Buat Value Object:**
 ```php
-use App\Models\Post;
+<?php
+// app/ValueObjects/Address.php
 
-$users = User::select([
-    'users.*',
-    'last_posted_at' => Post::selectRaw('MAX(created_at)')
-        ->whereColumn('user_id', 'users.id')
-])->withCasts([
-    'last_posted_at' => 'datetime'
-])->get();
+namespace App\ValueObjects;
 
-// Penggunaan
-foreach ($users as $user) {
-    echo $user->last_posted_at->diffForHumans(); // Bisa menggunakan metode Carbon
+class Address
+{
+    public function __construct(
+        public string $lineOne,
+        public string $lineTwo,
+        public string $city,
+        public string $postalCode
+    ) {}
+
+    public function fullAddress(): string
+    {
+        return $this->lineOne . ', ' . $this->lineTwo . ', ' . $this->city . ' ' . $this->postalCode;
+    }
 }
 ```
 
-👉 Narasi: Query time casting sangat berguna untuk casting atribut tambahan yang dihasilkan dari query kompleks seperti agregasi, subquery, atau join, memungkinkan kita untuk menggunakan metode yang sesuai dengan tipe data dari atribut tersebut.
-
----
-
-## ⚙️ Custom Casts {#custom-casts}
-
-### 🛠️ Membuat Cast Kustom {#membuat-cast-kustom-1}
-Laravel memungkinkan pembuatan cast kustom untuk kebutuhan transformasi data yang spesifik. Anda dapat membuat cast kustom menggunakan perintah Artisan:
-
+2. **Buat Custom Cast:**
 ```bash
-php artisan make:cast AsJson
+php artisan make:cast AsAddress
 ```
 
-Contoh implementasi cast kustom sederhana:
-
+3. **Isi Custom Cast:**
 ```php
 <?php
-
-namespace App\Casts;
-
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
-use Illuminate\Database\Eloquent\Model;
-
-class AsJson implements CastsAttributes
-{
-    /**
-     * Cast nilai atribut.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return array
-     */
-    public function get($model, $key, $value, $attributes)
-    {
-        return json_decode($value, true);
-    }
-
-    /**
-     * Persiapkan nilai atribut untuk disimpan.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return string
-     */
-    public function set($model, $key, $value, $attributes)
-    {
-        return json_encode($value);
-    }
-}
-```
-
-Penggunaan dalam model:
-```php
-class User extends Model
-{
-    protected function casts(): array
-    {
-        return [
-            'preferences' => AsJson::class,
-        ];
-    }
-}
-```
-
-👉 Narasi: Custom cast memungkinkan developer untuk menentukan cara unik mengubah atribut sesuai kebutuhan aplikasi, memberikan fleksibilitas maksimal untuk transformasi data yang kompleks atau spesifik.
-
----
-
-### 🏗️ Value Object Casting {#value-object-casting-1}
-Custom cast bisa mengembalikan objek nilai (value object) yang kompleks, memungkinkan pengelolaan data yang lebih terstruktur.
-
-```php
-<?php
+// app/Casts/AsAddress.php
 
 namespace App\Casts;
 
 use App\ValueObjects\Address;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 class AsAddress implements CastsAttributes
 {
     /**
-     * Cast nilai atribut.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return \App\ValueObjects\Address
+     * Transformasi saat mengambil dari database
      */
-    public function get($model, $key, $value, $attributes)
+    public function get($model, string $key, $value, array $attributes): ?Address
     {
+        if (!isset($attributes['address_line_one']) && !isset($attributes['address_line_two'])) {
+            return null;
+        }
+
         return new Address(
             $attributes['address_line_one'],
-            $attributes['address_line_two']
+            $attributes['address_line_two'],
+            $attributes['city'],
+            $attributes['postal_code']
         );
     }
 
     /**
-     * Persiapkan nilai atribut untuk disimpan.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return array
+     * Transformasi saat menyimpan ke database
      */
-    public function set($model, $key, $value, $attributes)
+    public function set($model, string $key, $value, array $attributes): array
     {
+        if (!$value instanceof Address) {
+            return $attributes;
+        }
+
         return [
             'address_line_one' => $value->lineOne,
             'address_line_two' => $value->lineTwo,
+            'city' => $value->city,
+            'postal_code' => $value->postalCode,
         ];
     }
 }
 ```
 
-Penggunaan dalam model:
+4. **Gunakan di Model:**
 ```php
+<?php
+
+namespace App\Models;
+
+use App\Casts\AsAddress;
+use Illuminate\Database\Eloquent\Model;
+
 class User extends Model
 {
     protected function casts(): array
@@ -507,139 +349,179 @@ class User extends Model
 }
 ```
 
-👉 Narasi: Value object casting memudahkan mapping beberapa kolom database ke dalam satu objek domain yang bermakna, menjadikan kode lebih terorganisir dan mudah dikelola.
-
----
-
-### 📥 Inbound Casting {#inbound-casting-1}
-Inbound casting hanya mentransformasi nilai saat disimpan ke database, tidak saat diambil. Berguna untuk operasi seperti hashing password.
-
+5. **Contoh Penggunaan:**
 ```php
 <?php
+
+use App\Models\User;
+use App\ValueObjects\Address;
+
+$user = User::find(1);
+
+// saat mengakses, kita mendapatkan objek Address
+$address = $user->address;
+echo $address->fullAddress(); // Output: "Jl. Merdeka No. 123, Kel. Bahagia, Jakarta 12345"
+
+// saat menyimpan, kita bisa langsung memberikan objek Address
+$newAddress = new Address(
+    'Jl. Sudirman No. 456',
+    'Lantai 3',
+    'Jakarta',
+    '12190'
+);
+
+$user->address = $newAddress;
+$user->save(); // Akan otomatis menyimpan ke kolom-kolom terkait
+```
+
+Dengan custom cast, kamu bisa menggunakan value object dalam aplikasi sambil tetap menyimpan data dalam beberapa kolom database.
+*   **Inbound Casting**: Ini seperti mesin satu arah yang hanya mentransformasi data saat menyimpan, sangat cocok untuk hashing password atau enkripsi.
+
+**Contoh Lengkap Inbound Casting:**
+
+1. **Buat Inbound Cast:**
+```php
+<?php
+// app/Casts/HashPassword.php
 
 namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
 
-class HashCast implements CastsInboundAttributes
+class HashPassword implements CastsInboundAttributes
 {
     /**
-     * Persiapkan nilai atribut untuk disimpan.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return string
+     * Transformasi saat menyimpan saja
      */
-    public function set($model, $key, $value, $attributes)
+    public function set($model, string $key, $value, array $attributes): string
     {
         return Hash::make($value);
     }
 }
 ```
 
-Penggunaan dalam model:
+2. **Gunakan di Model:**
 ```php
+<?php
+
+namespace App\Models;
+
+use App\Casts\HashPassword;
+use Illuminate\Database\Eloquent\Model;
+
 class User extends Model
 {
     protected function casts(): array
     {
         return [
-            'password' => HashCast::class,
+            'password' => HashPassword::class,
         ];
     }
 }
 ```
 
-👉 Narasi: Inbound casting cocok untuk operasi satu arah seperti hashing password, di mana kita hanya perlu mengubah nilai saat menyimpan ke database tanpa perlu membalikkan transformasi saat mengambil data.
-
----
-
-### ⚙️ Cast Parameters {#cast-parameters-1}
-Cast kustom dapat menerima parameter untuk memberikan fleksibilitas ekstra dalam transformasi data.
-
+3. **Penggunaan:**
 ```php
 <?php
+
+use App\Models\User;
+
+// Saat menyimpan, password otomatis di-hash
+$user = new User();
+$user->password = 'password123'; // Akan otomatis di-hash saat disimpan
+$user->save();
+```
+
+Inbound casting sangat berguna untuk operasi satu arah seperti hashing atau enkripsi.
+*   **Cast dengan Parameter**: Ini seperti mesin transformasi yang bisa diatur dengan pengaturan berbeda-beda.
+
+**Contoh Lengkap Parameter Cast:**
+
+1. **Buat Parameter Cast:**
+```php
+<?php
+// app/Casts/FormatValue.php
 
 namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 
-class CastWithParameter implements CastsAttributes
+class FormatValue implements CastsAttributes
 {
     public function __construct(
-        protected string $format
+        private string $format = 'default'
     ) {}
 
-    /**
-     * Cast nilai atribut.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return mixed
-     */
-    public function get($model, $key, $value, $attributes)
+    public function get($model, string $key, $value, array $attributes)
     {
-        // Gunakan parameter $this->format dalam transformasi
-        return $this->transformValue($value, $this->format);
+        switch ($this->format) {
+            case 'uppercase':
+                return strtoupper($value);
+            case 'lowercase':
+                return strtolower($value);
+            case 'title':
+                return ucwords(strtolower($value));
+            default:
+                return $value;
+        }
     }
 
-    /**
-     * Persiapkan nilai atribut untuk disimpan.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
-     * @return mixed
-     */
-    public function set($model, $key, $value, $attributes)
+    public function set($model, string $key, $value, array $attributes)
     {
-        // Gunakan parameter $this->format dalam transformasi
-        return $this->reverseTransformValue($value, $this->format);
-    }
-    
-    protected function transformValue($value, $format)
-    {
-        // Implementasi transformasi berdasarkan format
-        return $value;
-    }
-    
-    protected function reverseTransformValue($value, $format)
-    {
-        // Implementasi transformasi balik berdasarkan format
-        return $value;
+        return $value; // Tidak perlu transformasi saat menyimpan
     }
 }
 ```
 
-Penggunaan dengan parameter dalam model:
+2. **Gunakan dengan Parameter:**
 ```php
-class User extends Model
+<?php
+
+namespace App\Models;
+
+use App\Casts\FormatValue;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
 {
     protected function casts(): array
     {
         return [
-            'data' => CastWithParameter::class.':json',
-            'value' => CastWithParameter::class.':xml',
+            'name' => FormatValue::class . ':title',      // Format judul
+            'category' => FormatValue::class . ':upper',  // Format kapital
+            'description' => FormatValue::class,          // Format default
         ];
     }
 }
 ```
 
-👉 Narasi: Parameter cast memberikan fleksibilitas ekstra pada cast kustom, memungkinkan satu kelas cast untuk menangani berbagai variasi transformasi berdasarkan parameter yang diberikan.
-
----
-
-### 🎯 Castables {#castables-1}
-Objek nilai bisa mendefinisikan cast mereka sendiri dengan mengimplementasikan antarmuka `Castable`, membuat value object lebih mandiri dan reusable.
-
+3. **Penggunaan:**
 ```php
 <?php
+
+use App\Models\Product;
+
+$product = Product::create([
+    'name' => 'samsung galaxy s21',      // Akan jadi "Samsung Galaxy S21"
+    'category' => 'electronics',         // Akan jadi "ELECTRONICS"
+    'description' => 'latest smartphone' // Tetap "latest smartphone"
+]);
+
+echo $product->name; // "Samsung Galaxy S21"
+```
+
+Parameter cast memberikan fleksibilitas tinggi dalam transformasi data.
+*   **Castables**: Ini seperti memberi kemampuan pada value object untuk menentukan sendiri bagaimana ia ingin ditransformasi.
+
+**Contoh Lengkap Castables:**
+
+1. **Buat Value Object dengan Castable:**
+```php
+<?php
+// app/ValueObjects/Address.php
 
 namespace App\ValueObjects;
 
@@ -650,96 +532,782 @@ class Address implements Castable
 {
     public function __construct(
         public string $lineOne,
-        public string $lineTwo
+        public string $lineTwo,
+        public string $city,
+        public string $postalCode
     ) {}
 
-    /**
-     * Dapatkan nama kelas cast untuk value object ini.
-     *
-     * @param  array  $arguments
-     * @return string
-     */
-    public static function castUsing(array $arguments)
+    public static function castUsing(array $arguments): string
     {
         return AsAddress::class;
+    }
+
+    public function fullAddress(): string
+    {
+        return implode(', ', [$this->lineOne, $this->lineTwo, $this->city, $this->postalCode]);
     }
 }
 ```
 
-Penggunaan dalam model:
+2. **Gunakan di Model:**
 ```php
+<?php
+
+namespace App\Models;
+
+use App\ValueObjects\Address;
+use Illuminate\Database\Eloquent\Model;
+
 class User extends Model
 {
     protected function casts(): array
     {
         return [
-            'address' => Address::class,
+            'address' => Address::class,  // Otomatis menggunakan AsAddress
         ];
     }
 }
 ```
 
-👉 Narasi: Castables membuat value object lebih mandiri dengan memungkinkan objek tersebut menentukan kelas cast yang digunakan, memudahkan penggunaan value object di berbagai model tanpa perlu konfigurasi tambahan.
-
----
-
-### 📦 Anonymous Cast Classes {#anonymous-cast-classes-1}
-Bisa membuat cast langsung di dalam value object tanpa perlu membuat file cast terpisah, berguna untuk kasus sederhana atau prototyping.
-
+3. **Penggunaan:**
 ```php
 <?php
 
-namespace App\ValueObjects;
+use App\Models\User;
+use App\ValueObjects\Address;
 
-use Illuminate\Contracts\Database\Eloquent\Castable;
-use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+$user = User::find(1);
+$address = $user->address; // Langsung mendapatkan objek Address
+
+$newAddress = new Address('Jl. Baru No. 1', 'Lantai 5', 'Bandung', '40123');
+$user->address = $newAddress; // Akan otomatis menggunakan casting yang sesuai
+```
+
+Castables membuat value object lebih mandiri dan mudah digunakan.
+
+### 9. 👤 Mutator (Saat Penyimpanan Data)
+
+**Analogi:** Ini untuk saat menyimpan data yang perlu diubah formatnya - seperti alamat email yang diubah ke huruf kecil saat disimpan.
+
+**Mengapa?** Agar data yang masuk ke database selalu dalam format yang konsisten.
+
+**Bagaimana?** Gunakan argumen `set` dalam accessor untuk membuat mutator:
+```php
+<?php
+
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class Address implements Castable
+class User extends Model
 {
-    public function __construct(
-        public string $lineOne,
-        public string $lineTwo
-    ) {}
-
-    /**
-     * Dapatkan implementasi cast untuk value object ini.
-     *
-     * @param  array  $arguments
-     * @return \Illuminate\Contracts\Database\Eloquent\CastsAttributes
-     */
-    public static function castUsing(array $arguments)
+    protected function email(): Attribute
     {
-        return new class implements CastsAttributes
-        {
-            public function get($model, $key, $value, $attributes)
-            {
-                return new Address(
-                    $attributes['address_line_one'],
-                    $attributes['address_line_two']
-                );
-            }
-
-            public function set($model, $key, $value, $attributes)
-            {
-                return [
-                    'address_line_one' => $value->lineOne,
-                    'address_line_two' => $value->lineTwo,
-                ];
-            }
-        };
+        return Attribute::make(
+            get: fn (string $value) => strtolower($value),  // Format saat diakses
+            set: fn (string $value) => strtolower($value),  // Format saat disimpan
+        );
     }
 }
 ```
 
-👉 Narasi: Anonymous cast classes berguna untuk kasus kecil atau prototyping tanpa harus membuat file cast terpisah, memungkinkan definisi cast langsung dalam value object untuk kemudahan penggunaan dan pemeliharaan.
+**Contoh Lengkap Mutator:**
+
+1. **Model dengan Mutator:**
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+class User extends Model
+{
+    protected function firstName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => ucfirst($value),      // Kapitalisasi pertama saat diakses
+            set: fn (string $value) => strtolower($value),  // Huruf kecil saat disimpan
+        );
+    }
+    
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => 
+                $attributes['first_name'] . ' ' . $attributes['last_name'],
+            set: fn (string $value) => [
+                'first_name' => explode(' ', $value)[0],
+                'last_name' => explode(' ', $value)[1] ?? '',
+            ],
+        );
+    }
+}
+```
+
+2. **Penggunaan:**
+```php
+<?php
+
+use App\Models\User;
+
+// Saat menyimpan, nama akan diubah formatnya
+$user = new User();
+$user->first_name = 'SALLY';  // Akan disimpan sebagai 'sally' karena mutator
+$user->full_name = 'John Doe'; // Akan disimpan ke first_name='John', last_name='Doe'
+$user->save();
+
+// Saat mengakses, format akan diubah kembali
+echo $user->first_name; // 'Sally' (kapitalisasi karena accessor)
+```
+
+### 10. 🎨 Mendekorasi Transformasi Data-mu (Kustomisasi Casting)
+
+Kamu bisa mendekorasi casting data sesukamu:
+
+*   **Caching Accessor**: 
+    ```php
+    protected function computedHash(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => bcrypt(gzuncompress($value)),
+        )->shouldCache(); // Simpan hasil untuk efisiensi
+    }
+    ```
+
+*   **Collection Casting**: 
+    ```php
+    use Illuminate\Database\Eloquent\Casts\AsCollection;
+
+    protected function casts(): array
+    {
+        return [
+            'preferences' => AsCollection::class, // Jadi Laravel Collection
+        ];
+    }
+    ```
+
+*   **Stringable Casting**: 
+    ```php
+    use Illuminate\Database\Eloquent\Casts\AsStringable;
+
+    protected function casts(): array
+    {
+        return [
+            'description' => AsStringable::class, // Jadi Stringable object
+        ];
+    }
+    ```
+
+*   **Query Time Casting**: 
+    ```php
+    $users = User::select([
+        'users.*',
+        'last_posted_at' => Post::selectRaw('MAX(created_at)')
+            ->whereColumn('user_id', 'users.id')
+    ])->withCasts([
+        'last_posted_at' => 'datetime'  // Casting kolom hasil query
+    ])->get();
+    ```
+
+**Contoh Lengkap Kustomisasi Casting:**
+```php
+// app/Models/User.php
+<?php
+
+namespace App\Models;
+
+use App\Casts\HashPassword;
+use App\Casts\AsAddress;
+use App\ValueObjects\Address;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+class User extends Model
+{
+    protected function casts(): array
+    {
+        return [
+            'is_admin' => 'boolean',
+            'age' => 'integer',
+            'balance' => 'decimal:2',
+            'settings' => 'array',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime:Y-m-d H:i:s',
+            'options' => AsCollection::class,      // Jadi Laravel Collection
+            'bio' => AsStringable::class,         // Jadi Stringable object
+            'address' => AsAddress::class,        // Custom cast ke Value Object
+            'password' => HashPassword::class,    // Inbound cast untuk hashing
+        ];
+    }
+    
+    // Accessor tambahan
+    protected function profileUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn (mixed $value, array $attributes) => 
+                '/users/' . $attributes['id'] . '/profile',
+        )->shouldCache();
+    }
+    
+    // Mutator tambahan
+    protected function username(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => strtolower($value),
+            set: fn (string $value) => strtolower($value),
+        );
+    }
+}
+```
+
+### 11.5 🔐 Middleware untuk Validasi Casting
+
+Kamu juga bisa menambahkan middleware untuk memastikan hanya data dengan format yang benar yang bisa disimpan:
+
+*   **Middleware Validasi Format**:
+    ```php
+    php artisan make:middleware ValidateModelAttribute
+    
+    // app/Http/Middleware/ValidateModelAttribute.php
+    namespace App\Http\Middleware;
+    
+    use Closure;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Validator;
+    
+    class ValidateModelAttribute
+    {
+        public function handle(Request $request, Closure $next)
+        {
+            // Validasi format sebelum data disimpan
+            $validator = Validator::make($request->all(), [
+                'email' => 'email',
+                'age' => 'integer|min:0',
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+    
+            return $next($request);
+        }
+    }
+    ```
+
+### 11.7 🌐 Casting dengan API Resources
+
+**Mengapa?** Untuk memastikan data dikirim dalam format yang konsisten melalui API.
+
+**Bagaimana?**
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class UserResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'is_admin' => $this->is_admin,  // Boolean casting otomatis
+            'created_at' => $this->created_at->toISOString(), // Date casting otomatis
+            'settings' => $this->settings,  // Array casting otomatis
+            'profile_url' => $this->whenHas('profile_url'),  // Accessor otomatis
+        ];
+    }
+}
+```
+
+### 11. 🗑️ Menangani Data Transformasi Lama (Migrasi Format)
+
+**Mengapa?** Terkadang kita perlu mengubah format casting lama ke format baru.
+
+**Bagaimana?**
+*   **Migrasi Format**: Lakukan migrasi data secara bertahap
+*   **Backward Compatibility**: Jaga kompatibilitas format lama
+
+**Contoh Lengkap dengan Migrasi:**
+
+1. **Update Casting di Model:**
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected function casts(): array
+    {
+        return [
+            'preferences' => 'array',           // Format lama: JSON string
+            // Jika ingin mengganti ke collection:
+            // 'preferences' => AsCollection::class,  // Format baru: Collection
+        ];
+    }
+    
+    // Method migrasi backward compatibility
+    public function getPreferencesAttribute($value)
+    {
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+}
+```
+
+2. **Migration untuk Update Format:**
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        // Update data lama ke format baru jika perlu
+        DB::table('users')->whereNotNull('preferences')->chunk(100, function ($users) {
+            foreach ($users as $user) {
+                $preferences = json_decode($user->preferences, true);
+                if (is_array($preferences)) {
+                    // Validasi dan update jika perlu
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update(['preferences' => json_encode($preferences)]);
+                }
+            }
+        });
+    }
+};
+```
+
+3. **Service untuk Konversi:**
+```php
+<?php
+
+namespace App\Services;
+
+class CastMigrationService
+{
+    public function convertArrayToCollection(string $arrayJson): string
+    {
+        $array = json_decode($arrayJson, true);
+        $collection = collect($array);
+        return $collection->toJson();
+    }
+    
+    public function convertLegacyFormat($oldFormat)
+    {
+        // Logika konversi dari format lama ke format baru
+        return $oldFormat;
+    }
+}
+```
 
 ---
 
-## 🎯 Kesimpulan
-- **Accessors** → memodifikasi data saat **diambil** dari model.
-- **Mutators** → memodifikasi data saat **disimpan** ke model.
-- **Attribute Casting** → konversi otomatis tipe data umum (boolean, array, JSON, enum, dll) melalui metode `casts()`.
-- **Custom Casts** → memungkinkan developer membuat aturan transformasi sesuai kebutuhan dengan berbagai jenis cast seperti value object casting, inbound casting, dll.
+## Bagian 4: Peralatan Canggih di 'Kotak Perkakas' Casting 🧰
 
-Dengan memahami Mutators & Casting di Laravel, developer dapat menjaga **konsistensi data**, **keamanan aplikasi**, serta membuat kode lebih **bersih dan mudah dirawat** ✅
+### 12. 🔐 Middleware di Service Casting (Penjaga Konsistensi)
+
+**Mengapa?** Terkadang semua transformasi data butuh validasi dan kontrol tambahan.
+
+**Bagaimana?**
+*   **Cara Modern (👍 Rekomendasi)**: Service class dengan logika casting kompleks.
+    ```php
+    use App\Services\AdvancedCastingService;
+
+    class UserController extends Controller
+    {
+        public function __construct(
+            protected AdvancedCastingService $castingService
+        ) {}
+
+        public function store(Request $request)
+        {
+            // Gunakan service untuk transformasi data sebelum disimpan
+            $processedData = $this->castingService->processUserData($request->all());
+            User::create($processedData);
+        }
+    }
+    ```
+
+### 13. 💉 Dependency Injection (Asisten Pribadi Ajaib)
+
+**Prinsipnya: Jangan buat sendiri, minta saja!** Butuh layanan casting canggih? Tulis di parameter constructor atau method, dan Laravel akan memberikannya untukmu.
+
+**Mengapa?** Ini membuat kodemu sangat fleksibel, mudah di-test, dan tidak terikat pada satu cara pembuatan objek.
+
+**Bagaimana?**
+*   **Service Injection**: Meminta "layanan casting" yang akan digunakan di banyak method.
+    ```php
+    use App\Services\DataCastingService;
+    public function __construct(protected DataCastingService $castingService) {}
+    ```
+
+*   **Model Injection**: Meminta model dengan casting yang sudah siap.
+    ```php
+    public function show(User $user) { /* ... */ }
+    ```
+
+**Contoh Lengkap Dependency Injection:**
+
+1. **Membuat Service Casting Canggih:**
+```php
+<?php
+// app/Services/DataCastingService.php
+
+namespace App\Services;
+
+use App\Models\User;
+use App\ValueObjects\Address;
+use Illuminate\Support\Arr;
+
+class DataCastingService
+{
+    public function processUserData(array $rawData): array
+    {
+        $processed = $rawData;
+        
+        // Proses alamat jika ada
+        if (isset($rawData['full_address'])) {
+            $address = $this->parseFullAddress($rawData['full_address']);
+            $processed = array_merge($processed, [
+                'address_line_one' => $address->lineOne,
+                'address_line_two' => $address->lineTwo,
+                'city' => $address->city,
+                'postal_code' => $address->postalCode,
+            ]);
+        }
+        
+        // Proses preferensi jika ada
+        if (isset($rawData['preferences'])) {
+            $processed['preferences'] = json_encode($rawData['preferences']);
+        }
+        
+        return $processed;
+    }
+
+    public function parseFullAddress(string $fullAddress): Address
+    {
+        // Logika parsing alamat
+        $parts = explode(',', $fullAddress);
+        return new Address(
+            trim($parts[0] ?? ''),
+            trim($parts[1] ?? ''),
+            trim($parts[2] ?? ''),
+            trim($parts[3] ?? '')
+        );
+    }
+
+    public function formatUserDataForDisplay(User $user): array
+    {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'full_address' => $user->address?->fullAddress(),
+            'preferences' => $user->preferences,
+        ];
+    }
+}
+```
+
+2. **Controller dengan Constructor Injection:**
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Services\DataCastingService;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+
+class UserController extends Controller
+{
+    // Constructor injection - service akan di-inject ke semua method
+    public function __construct(
+        protected DataCastingService $castingService
+    ) {}
+
+    public function index(): View
+    {
+        $users = User::all();
+        $formattedUsers = $users->map(function($user) {
+            return $this->castingService->formatUserDataForDisplay($user);
+        });
+        
+        return view('users.index', compact('formattedUsers'));
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $processedData = $this->castingService->processUserData($request->all());
+        
+        $user = User::create($processedData);
+        
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $this->castingService->formatUserDataForDisplay($user)
+        ]);
+    }
+
+    public function show(string $id): JsonResponse
+    {
+        $user = User::findOrFail($id);
+        
+        return response()->json([
+            'user' => $this->castingService->formatUserDataForDisplay($user)
+        ]);
+    }
+}
+```
+
+3. **Form Request Class (untuk validasi user):**
+```php
+<?php
+// app/Http/Requests/StoreUserRequest.php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreUserRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        // Pastikan user bisa menyimpan user (mungkin hanya admin)
+        return auth()->check();
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'full_address' => 'nullable|string',
+            'preferences' => 'nullable|array',
+            'preferences.theme' => 'string|in:light,dark',
+            'preferences.notifications' => 'boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Nama harus disediakan.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'preferences.theme.in' => 'Tema hanya bisa light atau dark.',
+        ];
+    }
+}
+```
+
+Dependency Injection membuat kode kamu:
+- **Lebih modular**: Setiap class punya tanggung jawab sendiri
+- **Lebih mudah di-test**: Kamu bisa mock dependencies saat testing
+- **Lebih fleksibel**: Mudah untuk mengganti implementasi service
+- **Lebih bersih**: Controller tidak kotor dengan pembuatan objek manual
+
+### 13.5 🏗️ Constructor dan Method Injection Detail
+
+Ada beberapa pendekatan untuk dependency injection di controller:
+
+**1. Constructor Injection dengan Visibility Modifiers:**
+```php
+class UserController extends Controller
+{
+    // Protected akan membuat property bisa diakses dari class ini dan child class
+    public function __construct(protected DataCastingService $castingService) {}
+    
+    // Atau bisa juga dengan property promotion lebih eksplisit:
+    public function __construct(
+        protected DataCastingService $castingService,
+        protected AuthService $authService
+    ) {}
+}
+```
+
+**2. Method Injection untuk Request Spesifik:**
+```php
+public function store(StoreUserRequest $request) 
+{
+    // StoreUserRequest adalah kelas Form Request yang berisi aturan validasi
+    $validated = $request->validated();
+    // ...
+}
+
+public function update(Request $request, string $id) 
+{
+    // Request otomatis di-inject
+}
+```
+
+### 14. 👮 Autorisasi (Kartu Akses Ajaib)
+
+**Mengapi?** Untuk memastikan hanya orang yang berhak yang bisa mengubah data dengan casting kompleks.
+
+**Bagaimana?** Helper `authorize` ini seperti men-scan kartu akses. Laravel akan otomatis mengecek ke "sistem keamanan" (**Policy** class) apakah kartumu (user-mu) punya izin.
+
+```php
+public function update(Request $request, string $id)
+{
+    $user = User::findOrFail($id);
+    $this->authorize('updateCastedData', $user); // Pindai kartu akses!
+    // Jika diizinkan, lanjutkan...
+    
+    $user->update($request->all());
+}
+```
+
+**Contoh Lengkap Otorisasi:**
+
+1. **Buat Policy:**
+```bash
+php artisan make:policy UserCastingPolicy
+```
+
+2. **Isi Policy:**
+```php
+<?php
+// app/Policies/UserCastingPolicy.php
+
+namespace App\Policies;
+
+use App\Models\User as AuthUser;
+use App\Models\User;
+
+class UserCastingPolicy
+{
+    public function updateCastedData(AuthUser $authUser, User $user): bool
+    {
+        // User hanya bisa mengupdate data casting miliknya sendiri atau jika admin
+        return $authUser->id === $user->id || $authUser->hasRole('admin');
+    }
+    
+    public function viewCastedData(AuthUser $authUser, User $user): bool
+    {
+        return $authUser->id === $user->id || $authUser->hasRole('admin');
+    }
+}
+```
+
+3. **Gunakan di Controller:**
+```php
+class UserController extends Controller
+{
+    public function show(string $id)
+    {
+        $user = User::findOrFail($id);
+        $this->authorize('viewCastedData', $user);
+        
+        return view('users.show', compact('user'));
+    }
+    
+    public function update(Request $request, string $id)
+    {
+        $user = User::findOrFail($id);
+        $this->authorize('updateCastedData', $user);
+        
+        $user->update($request->all());
+        
+        return redirect()->route('users.show', $user)
+            ->with('status', 'Data pengguna diperbarui dengan casting otomatis!');
+    }
+}
+```
+
+---
+
+## Bagian 5: Menjadi Master Mutators & Casting 🏆
+
+### 15. ✨ Wejangan dari Guru
+
+1.  **Gunakan Casting untuk Konsistensi**: Gunakan casting untuk memastikan data selalu dalam format yang benar tanpa perlu transformasi manual.
+2.  **Pilih Tipe yang Tepat**: Gunakan boolean untuk data true/false, array untuk JSON, date untuk tanggal, dll.
+3.  **Caching untuk Performa**: Gunakan `shouldCache()` pada accessor yang mahal secara komputasi.
+4.  **Custom Cast untuk Kompleksitas**: Gunakan custom cast untuk data kompleks seperti value object atau struktur data khusus.
+5.  **Inbound Cast untuk Operasi Satu Arah**: Gunakan inbound cast untuk hashing, enkripsi, atau transformasi hanya saat menyimpan.
+
+### 16. 📋 Cheat Sheet & Referensi Cepat
+
+Untuk membantumu mengingat semua yang telah dipelajari, berikut ini adalah referensi cepat untuk berbagai fitur Mutators & Casting di Laravel:
+
+#### 📦 Tipe Casting Bawaan
+| Perintah | Fungsi |
+|----------|--------|
+| `'active' => 'boolean'` | Konversi ke boolean |
+| `'age' => 'integer'` | Konversi ke integer |
+| `'balance' => 'decimal:2'` | Konversi ke desimal dengan presisi |
+| `'options' => 'array'` | Konversi JSON ke PHP array |
+| `'created_at' => 'datetime'` | Konversi ke Carbon instance |
+
+#### 🎯 Accessor & Mutator
+| Perintah | Hasil |
+|----------|--------|
+| `get: fn ($value) => ...` | Transformasi saat diakses |
+| `set: fn ($value) => ...` | Transformasi saat disimpan |
+| `->shouldCache()` | Aktifkan caching accessor |
+| `fn ($value, $attributes) => ...` | Akses semua atribut model |
+
+#### 🔧 Casting Kustom
+| Perintah | Fungsi |
+|----------|--------|
+| `AsCollection::class` | Konversi ke Laravel Collection |
+| `AsStringable::class` | Konversi ke Stringable object |
+| `AsAddress::class` | Custom cast ke value object |
+| `'encrypted'` | Enkripsi otomatis |
+| `UserStatus::class` | Enum casting |
+
+#### 🌐 Casting Lanjutan
+| Perintah | Fungsi |
+|----------|--------|
+| `withCasts([...])` | Query time casting |
+| `'datetime:Y-m-d'` | Format custom untuk serialisasi |
+| `CastsInboundAttributes` | Interface untuk inbound casting |
+| `Castable` | Interface untuk value object casting |
+
+#### 🚀 Performance & Format
+| Perintah | Fungsi |
+|----------|--------|
+| `AsCollection::class` | Collection casting |
+| `'encrypted:array'` | Enkripsi array |
+| `immutable_datetime` | Carbon immutable |
+| `'decimal:4'` | Desimal dengan presisi 4 |
+
+#### 🔐 Keamanan
+| Perintah | Fungsi |
+|----------|--------|
+| `'encrypted'` | Enkripsi data sensitif |
+| `'encrypted:collection'` | Enkripsi collection |
+| `HashPassword::class` | Inbound casting untuk hashing |
+| `AsAddress::class` | Custom cast dengan validasi |
+
+#### 🧰 Service dan Tools
+| Tool | Fungsi |
+|------|--------|
+| `DataCastingService` | Service untuk transformasi data kompleks |
+| `AsAddress` | Custom cast untuk value object |
+| `FormatValue` | Parameter cast dengan format berbeda |
+| `HashPassword` | Inbound cast untuk password |
+
+### 17. 🎯 Kesimpulan
+
+Luar biasa! 🥳 Kamu sudah menyelesaikan seluruh materi Mutators & Casting, dari yang paling dasar sampai yang paling rumit. Kamu hebat! Ingat, Mutators & Casting adalah alat transformasi dari aplikasi. Menguasainya berarti kamu sudah siap membangun aplikasi Laravel yang **konsisten**, **aman**, dan **siap produksi**.
+
+Jangan pernah berhenti belajar dan mencoba. Perlakukan casting seperti asisten pintar yang selalu menjaga format data tetap konsisten! Selamat ngoding, murid kesayanganku!
