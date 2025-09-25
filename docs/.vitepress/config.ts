@@ -68,7 +68,7 @@ export default defineConfig({
       },
 
       {
-        text: "Databse",
+        text: "Database",
         collapsed: true,
         items: [
           {
