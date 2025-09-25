@@ -1,625 +1,540 @@
-# 🌐 Browser Testing dengan Laravel Dusk
+# 🌐 Browser Testing dengan Laravel Dusk: Panduan dari Guru Kesayanganmu (Edisi Super Lengkap)
 
-Dokumentasi ini menjelaskan cara melakukan browser testing di Laravel menggunakan Dusk, termasuk pengujian interaksi pengguna, form, JavaScript, dan skenario kompleks di browser.
+Hai murid-murid kesayanganku! Di dunia pengembangan web, ada saatnya kamu harus memastikan aplikasimu bekerja **sempurna** seperti yang dilihat oleh pengguna sungguhan. Bayangkan kamu adalah seorang manajer restoran, dan kamu ingin memastikan bahwa **setiap pelanggan** bisa memesan makanan dengan mudah, dari awal hingga akhir, di **browser mereka sendiri**. Tidak ada yang boleh "error" atau "aneh". Itulah **Browser Testing** - kamu menguji aplikasimu seolah-olah kamu benar-benar duduk di meja pelanggan, menekan tombol, mengisi form, dan menonton animasi. **Laravel Dusk** adalah juru masak canggih yang bisa meniru semua gerakan pelanggan itu secara otomatis! 
 
-## 🚀 Pendahuluan
+Siap belajar bagaimana menjadi "manajer kualitas restoran digital" yang hebat? Ayo kita mulai petualangan ini!
 
-Laravel Dusk menyediakan API otomatisasi dan pengujian browser yang ekspresif dan mudah digunakan. Secara default, Dusk tidak memerlukan instalasi JDK atau Selenium di komputer lokal Anda. Sebagai gantinya, Dusk menggunakan instalasi ChromeDriver yang mandiri.
+---
 
-### ✨ Fitur Utama Dusk
-- ✅ Pengujian browser end-to-end
-- ✅ Interaksi dengan JavaScript
-- ✅ Otomatisasi form dan autentikasi
-- ✅ Screenshot dan debugging
-- ✅ Page Objects untuk organisasi kode
+## Bagian 1: Kenalan Dulu, Yuk! (Konsep Dasar) 基礎
 
-### 🆕 Rekomendasi Terbaru
-Pest 4 sekarang menyertakan pengujian browser otomatis yang menawarkan peningkatan kinerja dan kegunaan yang signifikan dibandingkan Laravel Dusk. Untuk proyek baru, kami merekomendasikan menggunakan Pest untuk pengujian browser.
+### 1. 📖 Apa Sih Browser Testing & Laravel Dusk Itu Sebenarnya?
 
-Namun, dokumentasi ini akan membahas Laravel Dusk secara komprehensif untuk proyek yang sudah ada atau yang memiliki kebutuhan spesifik.
+**Analogi:** Bayangkan kamu adalah **inspektur kualitas restoran**. Kamu tidak hanya melihat resepnya (unit test), tapi kamu **benar-benar masuk ke restoran itu**, memesan makanan, mengisi formulir, menekan tombol, dan mengamati apakah semuanya berjalan lancar **seperti yang akan dilakukan pelanggan sungguhan**. Laravel Dusk adalah **robot pelayan otomatis** yang bisa meniru semua tindakan itu berulang-ulang untukmu, dan melaporkan jika sesuatu tidak berjalan seperti yang seharusnya.
 
-## ⚙️ Instalasi dan Konfigurasi Dusk
+**Mengapa ini penting?** Karena:
+1.  **Kamu bisa menguji pengalaman nyata pengguna** (end-to-end).
+2.  **Kamu bisa menguji interaksi JavaScript** yang kompleks.
+3.  **Kamu bisa memastikan form dan autentikasi bekerja** dengan benar.
+4.  **Kamu bisa tangkap bug yang mungkin terlewat oleh unit test**.
 
-### 📦 Instalasi Dasar
-Untuk memulai, instal Google Chrome dan tambahkan dependensi Composer laravel/dusk ke proyek Anda:
+**Bagaimana cara kerjanya?** Secara umum, alurnya seperti ini:
+`➡️ Test Dusk Ditulis -> 🤖 Dusk Buka Browser (Chrome) -> 👆 Dusk Lakukan Interaksi -> ✅ Dusk Cek Hasil -> 📊 Laporan (Pass/Fail)`
 
+Tanpa Browser Testing, kamu mungkin merilis fitur yang terlihat bagus di kodingan, tapi ternyata tidak bisa digunakan oleh pengguna sungguhan karena error di sisi browser!
+
+### 2. ✍️ Resep Pertamamu: Setup Dusk dari Nol
+
+Ini adalah fondasi paling dasar. Mari kita setup Laravel Dusk dari nol, langkah demi langkah.
+
+#### Langkah 1️⃣: Install Google Chrome & Package Dusk
+**Mengapa?** Dusk menggunakan ChromeDriver untuk mengendalikan browser Chrome.
+
+**Bagaimana?** Pastikan kamu punya Chrome dan install package Dusk.
 ```bash
 composer require laravel/dusk --dev
 ```
 
-⚠️ **Peringatan Keamanan**: Jika Anda secara manual mendaftarkan service provider Dusk, jangan pernah mendaftarkannya di lingkungan produksi, karena hal ini bisa menyebabkan pengguna sembarang dapat mengautentikasi dengan aplikasi Anda.
+#### Langkah 2️⃣: Setup Awal Dusk
+**Mengapa?** Untuk membuat struktur test dan install ChromeDriver.
 
-### 🛠️ Setup Awal
-Setelah menginstal paket Dusk, jalankan perintah Artisan dusk:install:
-
+**Bagaimana?** Jalankan Artisan command.
 ```bash
 php artisan dusk:install
 ```
+**Penjelasan Kode:**
+- Command ini membuat folder `tests/Browser/` untuk test-test Dusk.
+- Menginstall binary ChromeDriver ke `vendor/laravel/dusk/bin/` (ini yang mengendalikan Chrome).
+- Membuat contoh test dasar.
 
-Perintah ini akan membuat:
-- Direktori `tests/Browser`
-- Contoh test Dusk
-- Menginstal biner Chrome Driver untuk sistem operasi Anda
+#### Langkah 3️⃣: Atur Environment (APP_URL)
+**Mengapa?** Karena Dusk harus tahu alamat aplikasimu untuk mengujinya.
 
-### ⚙️ Konfigurasi Environment
-Setel variabel `APP_URL` di file `.env` aplikasi Anda. Nilai ini harus sesuai dengan URL yang Anda gunakan untuk mengakses aplikasi Anda di browser.
-
+**Bagaimana?** Pastikan `APP_URL` di `.env` benar.
 ```bash
 APP_URL=http://localhost:8000
 ```
+Jika kamu akan jalankan `php artisan serve` di port 8000, ini adalah nilai yang benar.
 
-### 🔄 Mengelola Instalasi ChromeDriver
-Jika Anda ingin menginstal versi ChromeDriver yang berbeda dari yang diinstal oleh Laravel Dusk melalui perintah dusk:install, Anda dapat menggunakan perintah dusk:chrome-driver:
+#### Langkah 4️⃣: Generate Test Pertamamu
+**Mengapa?** Supaya kamu punya file kosong untuk menulis test Dusk-mu.
 
-```bash
-# Instal versi terbaru ChromeDriver untuk OS Anda
-php artisan dusk:chrome-driver
-
-# Instal versi tertentu ChromeDriver untuk OS Anda
-php artisan dusk:chrome-driver 86
-
-# Instal versi tertentu ChromeDriver untuk semua OS yang didukung
-php artisan dusk:chrome-driver --all
-
-# Instal versi ChromeDriver yang sesuai dengan versi Chrome/Chromium terdeteksi
-php artisan dusk:chrome-driver --detect
-```
-
-Pastikan biner chromedriver dapat dieksekusi:
-```bash
-chmod -R 0755 vendor/laravel/dusk/bin/
-```
-
-## 🏗️ Membuat Browser Test
-
-### 🆕 Generate Test
-Untuk membuat test Dusk, gunakan perintah Artisan dusk:make:
-
+**Bagaimana?** Gunakan Artisan command.
 ```bash
 php artisan dusk:make LoginTest
 ```
+File test akan dibuat di `tests/Browser/LoginTest.php`.
 
-Test yang dihasilkan akan ditempatkan di direktori `tests/Browser`.
+Selesai! 🎉 Sekarang kamu telah berhasil menyiapkan Laravel Dusk dan siap menulis test pertamamu!
 
-### 🗃️ Reset Database Setelah Setiap Test
-Sebagian besar test yang Anda tulis akan berinteraksi dengan halaman yang mengambil data dari database aplikasi Anda. Namun, test Dusk Anda tidak boleh menggunakan trait `RefreshDatabase` karena menggunakan transaksi database yang tidak akan berlaku atau tersedia di seluruh permintaan HTTP.
+### 3. ⚡ Perbedaan Dusk vs Unit Test vs Feature Test
 
-#### 🔁 Menggunakan Database Truncation (Disarankan)
+**Analogi:** Jika unit test adalah memeriksa bahan-bahan masakan satu per satu, dan feature test adalah melihat apakah tombol di dapur bisa ditekan, maka **browser test (dengan Dusk)** adalah memeriksa apakah hidangan yang disajikan ke pelanggan benar-benar bisa dimakan dan enak!
+
+**Mengapa ini penting?** Karena kamu harus tahu kapan harus pakai yang mana.
+
+**Perbedaannya:**
+*   **Unit Test**: Menguji fungsi/kelas secara individual (sangat cepat, tidak butuh database).
+*   **Feature Test**: Menguji request HTTP ke aplikasi (lebih lambat, bisa pakai database, tidak render frontend).
+*   **Browser Test (Dusk)**: Menguji aplikasi **dalam browser nyata** (paling lambat, menguji frontend dan interaksi pengguna sesungguhnya).
+
+Contoh:
 ```php
-<?php
+// Unit Test - Test fungsi sederhana
+public function test_addition()
+{
+    $this->assertEquals(4, 2 + 2);
+}
 
-use Illuminate\Foundation\Testing\DatabaseTruncation;
-use Laravel\Dusk\Browser;
+// Feature Test - Test endpoint API
+public function test_user_can_login()
+{
+    $response = $this->post('/login', ['email' => 'test@test.com', 'password' => 'pass']);
+    $response->assertStatus(200);
+}
 
-uses(DatabaseTruncation::class);
-
-test('basic example', function () {
+// Browser Test (Dusk) - Test proses login di halaman browser
+test('user can login via browser', function () {
     $this->browse(function (Browser $browser) {
-        // Test implementation
+        $browser->visit('/login')
+                ->type('email', 'test@test.com')
+                ->type('password', 'pass')
+                ->click('Login')
+                ->assertPathIs('/dashboard'); // Pastikan halaman berubah
     });
 });
 ```
 
-## 🧭 Dasar-dasar Browser Testing
+---
 
-### 🌐 Membuat Browser Instance
-Untuk memulai, mari kita tulis test yang memverifikasi kita dapat masuk ke aplikasi kita:
+## Bagian 2: Interaksi Dasar dengan Browser 🤖
 
+### 4. 🌐 Memulai Test Dusk Sederhana
+
+**Analogi:** Ini seperti kamu mengajari robot pelayan pertamamu cara membuka pintu restoran (mengunjungi halaman). Hanya langkah dasar untuk memulai.
+
+**Mengapa ini penting?** Karena semua test Dusk dimulai dengan membuka halaman dan melakukan interaksi.
+
+**Bagaimana?** Gunakan `browse()` dan method-method browser.
+
+**Contoh Lengkap:**
 ```php
 <?php
+// tests/Browser/LoginTest.php
+namespace Tests\Browser;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 
-uses(DatabaseMigrations::class);
+test('user can visit homepage', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/') // Kunjungi halaman utama
+                ->assertSee('Welcome'); // Pastikan teks "Welcome" muncul
+    });
+});
+```
 
-test('basic example', function () {
+### 5. 🛠️ Interaksi Umum: Type, Click, Select
+
+**Analogi:** Jika sebelumnya kamu hanya mengajari robot cara membuka pintu, sekarang kamu ajarkan cara **mengisi formulir pesanan** (type), **menekan tombol** (click), dan **memilih ukuran makanan** (select).
+
+**Mengapa ini penting?** Karena ini adalah interaksi dasar yang sering dilakukan pengguna.
+
+**Bagaimana?** Gunakan method `type`, `click`, `press`, `select`, dll.
+
+**Contoh Lengkap:**
+```php
+<?php
+// tests/Browser/LoginTest.php
+namespace Tests\Browser;
+
+use App\Models\User;
+use Laravel\Dusk\Browser;
+
+test('user can login', function () {
     $user = User::factory()->create([
-        'email' => 'taylor@laravel.com',
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
     ]);
 
     $this->browse(function (Browser $browser) use ($user) {
-        $browser->visit('/login')
-                ->type('email', $user->email)
-                ->type('password', 'password')
-                ->press('Login')
-                ->assertPathIs('/home');
+        $browser->visit('/login') // Kunjungi halaman login
+                ->type('email', $user->email) // Isi email
+                ->type('password', 'password') // Isi password
+                ->press('Login') // Klik tombol login
+                ->assertPathIs('/dashboard'); // Pastikan diarahkan ke dashboard
     });
 });
 ```
 
-### 👥 Membuat Multiple Browsers
-Terkadang Anda mungkin memerlukan beberapa browser untuk menguji skenario kompleks:
+**Penjelasan Method:**
+*   `visit('/')`: Buka halaman dengan path tertentu.
+*   `type('email', 'value')`: Isi input field dengan name/email dengan value tertentu.
+*   `press('Login')`: Klik tombol dengan teks tertentu (bisa juga pakai selector CSS).
+*   `assertPathIs('/dashboard')`: Aserikan bahwa URL path sekarang adalah `/dashboard`.
 
+### 6. 🏷️ Aserisi (Assertions) Dasar
+
+**Analogi:** Ini seperti menanyakan ke robot, "Apakah pelanggan benar-benar melihat menu yang kamu sajikan?" atau "Apakah pelanggan sekarang berada di ruang makan?" Aserisi adalah cara untuk **mengonfirmasi** bahwa sesuatu benar-benar terjadi seperti yang diharapkan.
+
+**Mengapa ini penting?** Karena tanpa aserisi, test hanya "berjalan", tapi kamu tidak tahu apakah itu berhasil atau tidak.
+
+**Bagaimana?** Gunakan method `assert...`.
+
+**Contoh Lengkap:**
 ```php
-$this->browse(function (Browser $first, Browser $second) {
-    $first->loginAs(User::find(1))
-          ->visit('/home')
-          ->waitForText('Message');
-
-    $second->loginAs(User::find(2))
-           ->visit('/home')
-           ->waitForText('Message')
-           ->type('message', 'Hey Taylor')
-           ->press('Send');
-
-    $first->waitForText('Hey Taylor')
-          ->assertSee('Jeffrey Way');
-});
-```
-
-### 🧭 Navigasi
-```php
-// Kunjungi URI tertentu
-$browser->visit('/login');
-
-// Kunjungi route bernama
-$browser->visitRoute($routeName, $parameters);
-
-// Navigasi maju dan mundur
-$browser->back();
-$browser->forward();
-
-// Refresh halaman
-$browser->refresh();
-```
-
-### 🖥️ Resizing Browser Windows
-```php
-// Atur ukuran window
-$browser->resize(1920, 1080);
-
-// Maksimalkan window
-$browser->maximize();
-
-// Sesuaikan dengan konten
-$browser->fitContent();
-
-// Pindahkan posisi window
-$browser->move($x = 100, $y = 100);
-```
-
-### 🎯 Browser Macros
-Untuk mendefinisikan metode browser kustom yang dapat digunakan kembali:
-
-```php
-<?php
-
-namespace App\Providers;
-
-use Illuminate\Support\ServiceProvider;
-use Laravel\Dusk\Browser;
-
-class DuskServiceProvider extends ServiceProvider
-{
-    public function boot(): void
-    {
-        Browser::macro('scrollToElement', function (string $element = null) {
-            $this->script("$('html, body').animate({ scrollTop: $('$element').offset().top }, 0);");
-            return $this;
-        });
-    }
-}
-```
-
-Penggunaan:
-```php
-$this->browse(function (Browser $browser) use ($user) {
-    $browser->visit('/pay')
-            ->scrollToElement('#credit-card-details')
-            ->assertSee('Enter Credit Card Details');
-});
-```
-
-## 🔐 Menguji Form dan Autentikasi
-
-### 🔑 Authentication
-Gunakan metode `loginAs` untuk menghindari berinteraksi dengan layar login aplikasi Anda selama setiap test:
-
-```php
-use App\Models\User;
-use Laravel\Dusk\Browser;
-
-$this->browse(function (Browser $browser) {
-    $browser->loginAs(User::find(1))
-            ->visit('/home');
-});
-```
-
-### 📝 Interacting With Forms
-```php
-// Typing values
-$browser->type('email', 'taylor@laravel.com');
-
-// Append text
-$browser->type('tags', 'foo')
-        ->append('tags', ', bar, baz');
-
-// Clear value
-$browser->clear('email');
-
-// Type slowly
-$browser->typeSlowly('mobile', '+1 (202) 555-5555');
-
-// Dropdowns
-$browser->select('size', 'Large');
-$browser->select('categories', ['Art', 'Music']);
-
-// Checkboxes
-$browser->check('terms');
-$browser->uncheck('terms');
-
-// Radio buttons
-$browser->radio('size', 'large');
-
-// Attach files
-$browser->attach('photo', __DIR__.'/photos/mountains.png');
-
-// Press buttons
-$browser->press('Login');
-$browser->pressAndWaitFor('Save', 1);
-```
-
-### 🔗 Clicking Links
-```php
-// Click link
-$browser->clickLink($linkText);
-
-// Check if link visible
-if ($browser->seeLink($linkText)) {
-    // ...
-}
-```
-
-## ⚡ Menguji Interaksi JavaScript
-
-### ⌨️ Using the Keyboard
-```php
-// Complex input sequences
-$browser->keys('selector', ['{shift}', 'taylor'], 'swift');
-
-// Keyboard shortcuts
-$browser->keys('.app', ['{command}', 'j']);
-
-// Fluent keyboard interactions
-use Laravel\Dusk\Keyboard;
-
-$browser->withKeyboard(function (Keyboard $keyboard) {
-    $keyboard->press('c')
-             ->pause(1000)
-             ->release('c')
-             ->type(['c', 'e', 'o']);
-});
-```
-
-### 🖱️ Using the Mouse
-```php
-// Clicking elements
-$browser->click('.selector');
-$browser->clickAtXPath('//div[@class="selector"]');
-$browser->clickAtPoint($x = 0, $y = 0);
-$browser->doubleClick();
-$browser->rightClick();
-
-// Mouseover
-$browser->mouseover('.selector');
-
-// Drag and drop
-$browser->drag('.from-selector', '.to-selector');
-$browser->dragLeft('.selector', $pixels = 10);
-```
-
-### 💬 JavaScript Dialogs
-```php
-// Wait for dialog
-$browser->waitForDialog($seconds = null);
-
-// Assert dialog opened
-$browser->assertDialogOpened('Dialog message');
-
-// Type in dialog prompt
-$browser->typeInDialog('Hello World');
-
-// Close dialogs
-$browser->acceptDialog();
-$browser->dismissDialog();
-```
-
-## 🧪 Menguji Skenario Kompleks
-
-### ⏳ Waiting for Elements
-```php
-// Pause execution
-$browser->pause(1000);
-
-// Wait for selectors
-$browser->waitFor('.selector');
-$browser->waitFor('.selector', 1);
-$browser->waitForTextIn('.selector', 'Hello World');
-
-// Wait for text
-$browser->waitForText('Hello World');
-
-// Wait for links
-$browser->waitForLink('Create');
-
-// Wait for location
-$browser->waitForLocation('/secret');
-$browser->waitForRoute($routeName, $parameters);
-
-// Wait with JavaScript expressions
-$browser->waitUntil('App.data.servers.length > 0');
-```
-
-### 🔍 Scoping Selectors
-```php
-// Scope operations within selector
-$browser->with('.table', function (Browser $table) {
-    $table->assertSee('Hello World')
-          ->clickLink('Delete');
-});
-
-// Execute assertions outside current scope
-$browser->with('.table', function (Browser $table) {
-    $browser->elsewhere('.page-title', function (Browser $title) {
-        $title->assertSee('Hello World');
+test('form validation works', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/register')
+                ->press('Register') // Submit form kosong
+                ->assertSee('The name field is required'); // Harus muncul error
     });
 });
 ```
 
-## 📄 Menggunakan Page Objects
+**Aserisi Umum:**
+*   `assertSee('text')`: Pastikan teks muncul di halaman.
+*   `assertSeeIn('.selector', 'text')`: Pastikan teks muncul dalam elemen tertentu.
+*   `assertPathIs('/path')`: Pastikan path URL sekarang adalah path tertentu.
+*   `assertTitle('title')`: Pastikan title halaman benar.
+*   `assertVisible('.selector')`: Pastikan elemen tertentu terlihat.
+*   `assertPresent('.selector')`: Pastikan elemen tertentu ada di DOM (bisa saja tidak terlihat).
+*   `assertMissing('.selector')`: Pastikan elemen tertentu tidak ada di halaman.
+*   `assertInputValue('field', 'value')`: Pastikan input field memiliki value tertentu.
+*   `assertChecked('field')`: Pastikan checkbox tertentu dicentang.
+*   `assertSelected('field', 'value')`: Pastikan item di dropdown dipilih.
 
-Page Objects memungkinkan Anda mendefinisikan tindakan ekspresif yang kemudian dapat dilakukan pada halaman tertentu melalui satu metode.
+---
 
-### 🏗️ Generating Pages
+## Bagian 3: Jurus Tingkat Lanjut - Interaksi Kompleks dengan JavaScript & Async 🚀
+
+### 7. ⚡ Menunggu Elemen (Waiting) - Taktik Sabar
+
+**Analogi:** Bayangkan robot pelayanmu mengirim pesanan ke dapur, tapi dia langsung pergi sebelum pesanan siap. Dia harus **menunggu** sebentar sampai makanan datang. Di dunia browser, seringkali kamu harus **menunggu** elemen muncul atau data selesai dimuat sebelum bisa berinteraksi dengannya.
+
+**Mengapa ini penting?** Karena aplikasi modern sering menggunakan JavaScript untuk memuat data secara async (tidak langsung). Jika tidak menunggu, test bisa gagal karena mencoba berinteraksi dengan elemen yang belum siap.
+
+**Bagaimana?** Gunakan method `waitFor...`.
+
+**Contoh Lengkap:**
+```php
+test('async data loads', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/products')
+                ->click('@load-more') // Klik tombol untuk memuat lebih banyak
+                ->waitFor('.product-item', 5) // Tunggu maksimal 5 detik, sampai .product-item muncul
+                ->assertSee('New Product Name'); // Pastikan produk baru muncul
+    });
+});
+```
+
+**Method Tunggu Umum:**
+*   `waitFor('.selector')`: Tunggu elemen muncul.
+*   `waitForText('some text')`: Tunggu teks muncul di halaman.
+*   `waitForTextIn('.selector', 'text')`: Tunggu teks muncul dalam elemen tertentu.
+*   `waitForLocation('/path')`: Tunggu URL berubah ke path tertentu.
+*   `pause(milliseconds)`: Tunggu sejenak (tidak direkomendasikan, lebih baik `waitFor`).
+*   `waitUntil('javascript expression')`: Tunggu JavaScript expression benar.
+
+### 8. 🧭 Menguji Interaksi JavaScript
+
+**Analogi:** Banyak restoran modern punya menu digital interaktif. Robot pelayanmu harus bisa **mengklik tab**, **membuka dropdown**, atau **mengisi form yang muncul setelah klik**. Ini adalah interaksi JavaScript!
+
+**Mengapa ini penting?** Karena sebagian besar aplikasi web modern sangat bergantung pada JavaScript.
+
+**Bagaimana?** Dusk bisa menangani sebagian besar interaksi JS secara otomatis. Untuk yang kompleks, kamu bisa pakai `script` atau `executeAsyncScript`.
+
+**Contoh Lengkap:**
+```php
+test('javascript dropdown works', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/profile')
+                ->click('#settings-menu') // Klik tombol yang buka dropdown JS
+                ->waitFor('#settings-dropdown') // Tunggu dropdown muncul
+                ->click('#logout-button') // Klik tombol logout di dropdown
+                ->assertPathIs('/login'); // Pastikan diarahkan ke login
+    });
+});
+```
+
+### 9. 🖱️ Interaksi Mouse & Keyboard
+
+**Analogi:** Robot pelayan harus bisa tidak hanya menekan tombol, tapi juga **menggeser**, **meng-klik kanan**, atau bahkan **mengetik di keyboard** untuk menavigasi aplikasi.
+
+**Mengapa ini penting?** Karena beberapa fitur mungkin tergantung pada interaksi mouse/keyboard yang spesifik.
+
+**Bagaimana?** Gunakan method seperti `click`, `doubleClick`, `rightClick`, `keys`.
+
+**Contoh Lengkap:**
+```php
+test('keyboard shortcut works', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/app')
+                ->keys('.app-container', ['{command}', 'k']) // Tekan Cmd+K (macOS) / Ctrl+K (Win)
+                ->waitFor('.command-palette') // Tunggu command palette muncul
+                ->assertVisible('.command-palette');
+    });
+});
+```
+
+---
+
+## Bagian 4: Organisasi & Peningkatan Kode dengan Page Objects & Components 🧰
+
+### 10. 📄 Page Objects - Pelayan Profesional dengan Buku Panduan
+
+**Analogi:** Bayangkan kamu punya banyak robot pelayan, dan kamu tidak ingin mengulang instruksi "buka halaman login, isi email, isi password, klik login" di setiap test. Kamu buat **buku panduan khusus untuk halaman login** yang berisi semua instruksi itu. Inilah **Page Object**!
+
+**Mengapa ini penting?** Karena membuat test menjadi lebih rapi, mudah dibaca, dan gampang dipelihara. Jika layout login berubah, kamu hanya perlu ubah satu file Page Object, bukan semua test.
+
+**Bagaimana?** Buat class Page yang menggambarkan satu halaman.
+
+**1. Buat Page Object:**
 ```bash
-php artisan dusk:page Login
+php artisan dusk:page LoginPage
 ```
 
-### ⚙️ Configuring Pages
+**2. Isi Page Object (contoh):**
 ```php
 <?php
-
+// tests/Browser/Pages/LoginPage.php
 namespace Tests\Browser\Pages;
 
-use Laravel\Dusk\Browser;
 use Laravel\Dusk\Page;
 
-class Login extends Page
+class LoginPage extends Page
 {
-    /**
-     * Get the URL for the page.
-     */
     public function url(): string
     {
-        return '/login';
+        return '/login'; // Alamat halaman
     }
 
-    /**
-     * Assert that the browser is on the page.
-     */
-    public function assert(Browser $browser): void
+    public function assert($browser): void
     {
-        $browser->assertPathIs($this->url());
+        $browser->assertPathIs($this->url()); // Pastikan di halaman yang benar
     }
 
-    /**
-     * Get the element shortcuts for the page.
-     */
     public function elements(): array
     {
         return [
-            '@email' => 'input[name=email]',
+            '@email' => 'input[name=email]', // Alias untuk selector
             '@password' => 'input[name=password]',
-            '@login' => 'button[type=submit]',
+            '@login-button' => 'button[type=submit]',
         ];
     }
 
-    /**
-     * Log into the application.
-     */
-    public function login(Browser $browser, $email, $password): void
+    // Method untuk melakukan login di halaman ini
+    public function login($browser, $email, $password): void
     {
         $browser->type('@email', $email)
                 ->type('@password', $password)
-                ->press('@login');
+                ->click('@login-button');
     }
 }
 ```
 
-### 🚀 Navigating to Pages
+**3. Gunakan di Test:**
 ```php
-use Tests\Browser\Pages\Login;
-
-$browser->visit(new Login)
-        ->login('taylor@laravel.com', 'secret');
+test('user can login via page object', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit(new LoginPage()) // Kunjungi halaman login
+                ->login('test@example.com', 'password') // Gunakan method login dari page object
+                ->assertPathIs('/dashboard');
+    });
+});
 ```
 
-## 🔄 CI/CD dengan Browser Tests
+### 11. 🧩 Components - Modul UI yang Dapat Digunakan Ulang
 
-### ⚙️ Konfigurasi Umum
-Sebagian besar konfigurasi CI Dusk mengharapkan aplikasi Laravel Anda dilayani menggunakan server pengembangan PHP bawaan di port 8000.
+**Analogi:** Di restoranmu, kamu punya modul-menu yang sama di beberapa meja: sistem pemesanan minuman atau sistem rating. Alih-alih mengulang kode untuk modul itu di setiap halaman, kamu buat satu **komponen modul pemesanan minuman** dan gunakan ulang di mana pun.
 
-### 🐙 GitHub Actions
-```yaml
-name: CI
-on: [push]
-jobs:
-  dusk-php:
-    runs-on: ubuntu-latest
-    env:
-      APP_URL: "http://127.0.0.1:8000"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare The Environment
-        run: cp .env.example .env
-      - name: Install Composer Dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
-      - name: Generate Application Key
-        run: php artisan key:generate
-      - name: Upgrade Chrome Driver
-        run: php artisan dusk:chrome-driver --detect
-      - name: Start Chrome Driver
-        run: ./vendor/laravel/dusk/bin/chromedriver-linux --port=9515 &
-      - name: Run Laravel Server
-        run: php artisan serve --no-reload &
-      - name: Run Dusk Tests
-        run: php artisan dusk
-```
+**Mengapa ini penting?** Untuk menghindari duplikasi kode dan membuat test lebih modular untuk elemen UI yang digunakan di banyak tempat.
 
-## ✅ Available Assertions
+**Bagaimana?** Seperti Page Object, tapi untuk bagian UI kecil yang digunakan ulang.
 
-Dusk menyediakan berbagai asersi yang dapat Anda buat terhadap aplikasi Anda:
-
-### 📰 Text Assertions
-```php
-$browser->assertSee($text);
-$browser->assertDontSee($text);
-$browser->assertSeeIn($selector, $text);
-$browser->assertDontSeeIn($selector, $text);
-```
-
-### 🏷️ Title and URL Assertions
-```php
-$browser->assertTitle($title);
-$browser->assertTitleContains($title);
-$browser->assertUrlIs($url);
-$browser->assertPathIs('/home');
-$browser->assertPathIsNot('/home');
-```
-
-### 📥 Form Assertions
-```php
-$browser->assertInputValue($field, $value);
-$browser->assertChecked($field);
-$browser->assertNotChecked($field);
-$browser->assertRadioSelected($field, $value);
-$browser->assertSelected($field, $value);
-```
-
-### 👁️ Visibility Assertions
-```php
-$browser->assertVisible($selector);
-$browser->assertPresent($selector);
-$browser->assertMissing($selector);
-```
-
-### 🔐 Authentication Assertions
-```php
-$browser->assertAuthenticated();
-$browser->assertGuest();
-$browser->assertAuthenticatedAs($user);
-```
-
-### 🍪 Cookie Assertions
-```php
-$browser->assertHasCookie($name);
-$browser->assertCookieValue($name, $value);
-$browser->assertCookieMissing($name);
-```
-
-### 🧪 JavaScript Assertions
-```php
-$browser->assertScript('window.isLoaded');
-$browser->assertDialogOpened($message);
-```
-
-## 🧩 Components
-
-Components mirip dengan "page objects" Dusk, tetapi dimaksudkan untuk bagian UI dan fungsionalitas yang digunakan kembali di seluruh aplikasi Anda.
-
-### 🏗️ Generating Components
+**1. Buat Component:**
 ```bash
-php artisan dusk:component DatePicker
+php artisan dusk:component StarRating
 ```
 
-### 🧱 Component Example
+**2. Isi Component (contoh):**
 ```php
 <?php
-
+// tests/Browser/Components/StarRating.php
 namespace Tests\Browser\Components;
 
-use Laravel\Dusk\Browser;
 use Laravel\Dusk\Component as BaseComponent;
 
-class DatePicker extends BaseComponent
+class StarRating extends BaseComponent
 {
-    /**
-     * Get the root selector for the component.
-     */
     public function selector(): string
     {
-        return '.date-picker';
+        return '.star-rating'; // Root selector komponen
     }
 
-    /**
-     * Assert that the browser page contains the component.
-     */
-    public function assert(Browser $browser): void
-    {
-        $browser->assertVisible($this->selector());
-    }
-
-    /**
-     * Get the element shortcuts for the component.
-     */
     public function elements(): array
     {
         return [
-            '@date-field' => 'input.datepicker-input',
-            '@year-list' => 'div > div.datepicker-years',
-            '@month-list' => 'div > div.datepicker-months',
-            '@day-list' => 'div > div.datepicker-days',
+            '@star' => 'span.star', // Selector untuk bintang-bintang
+            '@rating-text' => '.rating-display',
         ];
     }
 
-    /**
-     * Select the given date.
-     */
-    public function selectDate(Browser $browser, int $year, int $month, int $day): void
+    // Method untuk memberikan rating, misalnya klik 4 bintang
+    public function rate($browser, $stars): void
     {
-        $browser->click('@date-field')
-                ->within('@year-list', function (Browser $browser) use ($year) {
-                    $browser->click($year);
-                })
-                ->within('@month-list', function (Browser $browser) use ($month) {
-                    $browser->click($month);
-                })
-                ->within('@day-list', function (Browser $browser) use ($day) {
-                    $browser->click($day);
-                });
+        for ($i = 1; $i <= $stars; $i++) {
+            $browser->click("@star:nth-child($i)"); // Klik bintang ke-i
+        }
     }
 }
 ```
 
-### 🚀 Using Components
+**3. Gunakan di Test:**
 ```php
-$browser->visit('/')
-        ->within(new DatePicker, function (Browser $browser) {
-            $browser->selectDate(2019, 1, 30);
-        })
-        ->assertSee('January');
+test('user can rate product', function () {
+    $this->browse(function (Browser $browser) {
+        $browser->visit('/product/1')
+                ->within(new StarRating, function ($browser) { // Gunakan komponen
+                    $browser->rate(4); // Berikan rating 4 bintang
+                })
+                ->assertSee('You rated this 4 stars');
+    });
+});
 ```
 
-## 🎯 Kesimpulan
+### 12. 🔄 Mengelola Data Sesi Test (Database & Autentikasi)
 
-Browser testing dengan Laravel Dusk menyediakan cara yang kuat untuk menguji aplikasi web Anda secara end-to-end. Dengan fitur-fitur seperti:
+**Analogi:** Bayangkan kamu harus setup meja makan dan peralatannya sebelum setiap uji coba, lalu bersihkan semua setelahnya agar tidak mengganggu uji coba berikutnya.
 
-### 🔑 Keuntungan Utama
-- ✅ **Real Browser Testing**: Menggunakan Chrome nyata untuk pengujian akurat
-- ✅ **Interaksi JavaScript**: Mendukung pengujian aplikasi SPA dan AJAX
-- ✅ **Page Objects**: Organisasi kode yang baik untuk test yang kompleks
-- ✅ **Components**: Reusability untuk UI elements yang umum
-- ✅ **CI/CD Integration**: Mudah diintegrasikan dengan pipeline CI/CD
-- ✅ **Screenshot Debugging**: Bantuan visual untuk debugging test yang gagal
+**Mengapa ini penting?** Karena test harus bersifat independen dan tidak saling mempengaruhi.
 
-### 🚀 Best Practices
-1. **Gunakan Page Objects** untuk test yang kompleks
-2. **Gunakan Components** untuk elemen UI yang digunakan berulang
-3. **Gunakan Assertions yang tepat** untuk verifikasi yang akurat
-4. **Gunakan Waiting Methods** untuk menangani async operations
-5. **Gunakan Dusk Selectors** (@attribute) untuk seleksi yang stabil
-6. **Jaga Test Database** tetap bersih dengan truncation
+**Bagaimana?** Gunakan trait untuk mengelola database dan autentikasi.
 
-Dengan mengikuti panduan ini, Anda dapat membangun suite pengujian browser yang kuat dan dapat diandalkan untuk aplikasi Laravel Anda.
+#### A. Mengelola Database:
+Karena test Dusk melibatkan HTTP request penuh, kamu tidak bisa pakai `RefreshDatabase`. Gunakan `DatabaseTruncation`.
+
+```php
+<?php
+// tests/Browser/LoginTest.php
+use Illuminate\Foundation\Testing\DatabaseTruncation;
+
+uses(DatabaseTruncation::class); // Gunakan trait ini
+
+test('user can login', function () {
+    // Data akan di-truncate setelah test
+    $user = User::factory()->create([
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    $this->browse(function (Browser $browser) use ($user) {
+        // ... test code
+    });
+});
+```
+
+#### B. Mengelola Autentikasi:
+Alih-alih mengisi form login di setiap test, kamu bisa pakai `loginAs`.
+
+```php
+test('authenticated user access dashboard', function () {
+    $user = User::factory()->create();
+
+    $this->browse(function (Browser $browser) use ($user) {
+        $browser->loginAs($user) // Login secara otomatis
+                ->visit('/dashboard')
+                ->assertSee('Welcome, ' . $user->name);
+    });
+});
+```
+
+---
+
+## Bagian 5: Menjadi Master Browser Testing 🏆
+
+### 13. ✨ Wejangan dari Guru
+
+1.  **Gunakan Page Objects untuk Halaman Kompleks**: Ini membuat test jauh lebih mudah dibaca.
+2.  **Gunakan Components untuk UI yang Digunakan Ulang**: Mencegah duplikasi kode.
+3.  **Jangan Gunakan `pause()` Berlebihan**: Selalu coba `waitFor` terlebih dahulu.
+4.  **Gunakan `@` Selector di Page Objects**: Buat selector lebih stabil dan mudah diganti.
+5.  **Atur Environment Dengan Benar**: Jangan lupa `APP_URL` dan pastikan server aktif.
+6.  **Gunakan DatabaseTruncation**: Untuk menjaga test tetap bersih dan independen.
+7.  **Pertimbangkan Pest Browser Testing**: Laravel Dusk bagus, tapi Pest menawarkan pengalaman yang lebih modern dan cepat.
+
+### 14. 📋 Cheat Sheet & Referensi Cepat
+
+Untuk membantumu mengingat semua yang telah dipelajari, berikut ini adalah referensi cepat untuk Laravel Dusk:
+
+#### 📦 Instalasi & Setup
+| Perintah | Fungsi |
+|----------|--------|
+| `composer require laravel/dusk --dev` | Install package Dusk |
+| `php artisan dusk:install` | Setup awal (folder test, ChromeDriver) |
+| `php artisan dusk:page Login` | Buat Page Object |
+| `php artisan dusk:component DatePicker` | Buat Component |
+| `php artisan dusk:chrome-driver` | Update ChromeDriver |
+
+#### 🧪 Menulis & Menjalankan Test
+| Perintah | Fungsi |
+|----------|--------|
+| `php artisan dusk` | Jalankan semua test Dusk |
+| `php artisan dusk --filter=testName` | Jalankan test tertentu |
+| `php artisan dusk:make LoginTest` | Buat test file baru |
+
+#### 🌐 Interaksi Browser Umum
+| Method | Fungsi |
+|--------|--------|
+| `visit('/path')` | Buka halaman |
+| `type('selector', 'value')` | Isi input |
+| `click('selector')` / `press('text')` | Klik elemen |
+| `select('selector', 'value')` | Pilih dropdown option |
+| `check('selector')` / `uncheck('selector')` | Centang/Hapus centang checkbox |
+| `attach('selector', 'path')` | Upload file |
+| `loginAs($user)` | Login tanpa form |
+| `keys('selector', ['{shift}', 'a'])` | Interaksi keyboard kompleks |
+
+#### ⏳ Menunggu & Scoping
+| Method | Fungsi |
+|--------|--------|
+| `waitFor('.selector')` | Tunggu elemen muncul |
+| `waitForText('text')` | Tunggu teks muncul |
+| `pause(milliseconds)` | Tunggu sejenak (tidak direkomendasikan) |
+| `with('.selector', fn)` | Scoping operasi dalam elemen tertentu |
+| `elsewhere('.selector', fn)` | Eksekusi di luar scope saat ini |
+
+#### ✅ Aserisi Umum
+| Method | Fungsi |
+|--------|--------|
+| `assertSee('text')` | Pastikan teks muncul |
+| `assertPathIs('/path')` | Pastikan URL path benar |
+| `assertTitle('title')` | Pastikan title halaman benar |
+| `assertVisible('.selector')` | Pastikan elemen terlihat |
+| `assertPresent('.selector')` | Pastikan elemen ada di DOM |
+| `assertMissing('.selector')` | Pastikan elemen tidak ada |
+| `assertInputValue('field', 'value')` | Pastikan input value benar |
+| `assertChecked('field')` | Pastikan checkbox dicentang |
+| `assertSelected('field', 'value')` | Pastikan dropdown option dipilih |
+| `assertAuthenticated()` | Pastikan user login |
+| `assertGuest()` | Pastikan user tidak login |
+
+#### 🧰 Page Objects & Components
+| Method | Tempat | Fungsi |
+|--------|--------|--------|
+| `url()` | Page | Tentukan path halaman |
+| `assert()` | Page/Component | Aserisi untuk halaman/komponen |
+| `elements()` | Page/Component | Daftar alias selector |
+| `visit(new Page())` | Test | Kunjungi halaman via object |
+| `within(new Component(), fn)` | Test | Gunakan komponen |
+
+#### 🔄 Database & Auth Traits
+| Trait | Fungsi |
+|--------|--------|
+| `DatabaseTruncation::class` | Truncate tabel setelah test |
+| `loginAs($user)` | Login user secara otomatis |
+
+### 15. 🎯 Kesimpulan
+
+Luar biasa! 🌟 Kamu sudah menyelesaikan seluruh materi Browser Testing dengan Laravel Dusk, dari yang paling dasar sampai yang paling rumit. Sekarang kamu tahu bagaimana menguji aplikasimu secara end-to-end di browser nyata, bagaimana mengotomatiskan interaksi pengguna, dan bagaimana menyusun test-test kompleks dengan rapi menggunakan Page Objects dan Components. Kamu bisa menjadi "manajer kualitas restoran digital" yang hebat! Browser Testing adalah alat penting untuk memastikan aplikasimu siap disajikan ke pengguna nyata.
+
+Jangan pernah berhenti belajar dan mencoba. Selamat ngoding, murid kesayanganku!
